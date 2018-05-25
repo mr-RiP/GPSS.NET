@@ -1,23 +1,21 @@
-﻿using GPSS.Interfaces;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace GPSS
 {
     public class Model
     {
-        internal Model(IModelData data)
+        public static Model CreateModel()
         {
             throw new NotImplementedException();
         }
 
-        public static IModelBuilder BeginModeling()
+        public Simulation CreateSimulation()
         {
             throw new NotImplementedException();
         }
 
-        public Report Simulate(int trasactCount)
-        {
-            throw new NotImplementedException();
-        }
+        public int BlocksCount { get => throw new NotImplementedException(); }
     }
 }

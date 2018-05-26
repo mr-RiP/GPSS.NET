@@ -1,6 +1,6 @@
 ﻿namespace GPSS.Attributes
 {
-    public interface ISaveValueAttributes
+    public interface ISavevalueAttributes
     {
     }
 }

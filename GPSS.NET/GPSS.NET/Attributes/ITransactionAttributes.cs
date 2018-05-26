@@ -23,7 +23,7 @@
         /// <summary>
         /// Current absolute system clock value minus value in 
         /// Transaction Parameter <paramref name="parameterName"/>.
-        /// Parameter must exist and be numeric type.
+        /// Parameter must exist and be of numeric type.
         /// GPSS World MPParameter SNA.
         /// </summary>
         /// <param name="parameterName">Name of Active Transaction's parameter.</param>
@@ -48,6 +48,12 @@
         /// <param name="parameterName">Parameter name.</param>
         /// <returns>Parameter value.</returns>
         T Parameter<T>(string parameterName);
+        /*
+        double ParameterDouble(string parameterName);
+        int ParameterInteger(string parameterName);
+        string ParameterString(string parameterName);
+        bool ParameterBoolean(string parameterName);
+        */
 
         /// <summary>
         /// Transaction priority.

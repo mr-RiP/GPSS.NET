@@ -12,7 +12,6 @@
         /// </returns>
         int EntryCount(int blockNumber);
 
-        // WEntnum - Current Block count.The current number of Transactions in Block Entnum is returned.
         /// <summary>
         /// Block transactions count.
         /// GPSS World WEntnum SNA.

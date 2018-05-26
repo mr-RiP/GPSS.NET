@@ -16,6 +16,6 @@ namespace GPSS
             throw new NotImplementedException();
         }
 
-        public int BlocksCount { get => throw new NotImplementedException(); }
+
     }
 }

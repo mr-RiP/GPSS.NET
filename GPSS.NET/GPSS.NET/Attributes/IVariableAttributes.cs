@@ -1,6 +1,7 @@
 ﻿namespace GPSS.Attributes
 {
-    public interface IVariableAttributes
+    public interface IVariableAttributes<T>
     {
+        T Value();
     }
 }

@@ -4,12 +4,12 @@ namespace GPSS
 {
     public class Simulation
     {
-        internal Simulation(ModelData data)
+        internal Simulation(Model model)
         {
             throw new NotImplementedException();
         }
 
-        public Report Start(int trasactCount)
+        public Report Start(int trasactionsCount)
         {
             throw new NotImplementedException();
         }

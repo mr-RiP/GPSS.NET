@@ -1,4 +1,4 @@
-﻿namespace GPSS.Attributes
+﻿namespace GPSS.StandardAttributes
 {
     public interface ITransactionAttributes
     {
@@ -10,7 +10,7 @@
 
         /// <summary>
         /// Match Assembly Set of the Active Transaction with Transaction at selected Block.
-        /// GPSS World MBEntnum SNA.
+        /// GPSS World MB$Entnum SNA.
         /// </summary>
         /// <param name="blockNumber">Number of the Block</param>
         /// <returns>

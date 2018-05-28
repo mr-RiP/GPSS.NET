@@ -4,7 +4,11 @@ using System.Text;
 
 namespace GPSS.Entities.Groups
 {
-    internal class TransactionAssembly
+    internal class TransactionAssembly : ICloneable
     {
+        public object Clone()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

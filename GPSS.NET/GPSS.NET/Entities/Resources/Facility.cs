@@ -4,7 +4,11 @@ using System.Text;
 
 namespace GPSS.Entities.Resources
 {
-    internal class Facility
+    internal class Facility : ICloneable
     {
+        public object Clone()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

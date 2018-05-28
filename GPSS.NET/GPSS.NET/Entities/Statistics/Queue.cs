@@ -4,7 +4,11 @@ using System.Text;
 
 namespace GPSS.Entities.Statistics
 {
-    internal class Queue
+    internal class Queue : ICloneable
     {
+        public object Clone()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

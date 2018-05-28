@@ -4,7 +4,11 @@ using System.Text;
 
 namespace GPSS.Entities.Calculations
 {
-    internal class Function
+    internal class Function : ICloneable
     {
+        public object Clone()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

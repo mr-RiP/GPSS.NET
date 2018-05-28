@@ -4,7 +4,11 @@ using System.Text;
 
 namespace GPSS.Entities.General
 {
-    internal abstract class Command
+    internal abstract class Command : ICloneable
     {
+        public object Clone()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

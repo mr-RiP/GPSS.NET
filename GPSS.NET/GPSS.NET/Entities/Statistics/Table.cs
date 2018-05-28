@@ -4,7 +4,11 @@ using System.Text;
 
 namespace GPSS.Entities.Statistics
 {
-    internal class Table
+    internal class Table : ICloneable
     {
+        public object Clone()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

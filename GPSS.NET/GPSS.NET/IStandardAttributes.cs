@@ -1,4 +1,4 @@
-﻿using GPSS.Attributes;
+﻿using GPSS.StandardAttributes;
 using System;
 
 namespace GPSS
@@ -11,7 +11,7 @@ namespace GPSS
     /// <summary>
     /// Model entities attributes (GPSS World SNAs) interaction interface.
     /// </summary>
-    interface IModelEntitiesAttributes
+    interface IStandardAttributes
     {
         /// <summary>
         /// Transcation attributes interaction.
@@ -22,9 +22,9 @@ namespace GPSS
         /// <summary>
         /// Block attributes interaction.
         /// </summary>
-        /// <param name="blockNumber">Number of Block to interact with.</param>
+        /// <param name="blockName">Name of Block to interact with.</param>
         /// <returns>Block attributes interface.</returns>
-        IBlockAttributes Block(int blockNumber);
+        IBlockAttributes Block(string blockName);
 
         /// <summary>
         /// Facility attributes interaction.

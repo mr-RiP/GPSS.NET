@@ -1,4 +1,4 @@
-﻿namespace GPSS.Attributes
+﻿namespace GPSS.StandardAttributes
 {
     public interface IVariableAttributes<T>
     {

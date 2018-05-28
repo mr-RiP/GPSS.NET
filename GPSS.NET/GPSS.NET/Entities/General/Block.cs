@@ -4,10 +4,12 @@ using System.Text;
 
 namespace GPSS.Entities.General
 {
-    internal abstract class Block
+    internal abstract class Block : ICloneable
     {
-        abstract public string GpssName { get; }
+        abstract public string TypeName { get; }
 
-        abstract public void Run(Transaction transaction);
+        abstract public object Clone();
+
+        abstract public void Run(Simulation s);
     }
 }

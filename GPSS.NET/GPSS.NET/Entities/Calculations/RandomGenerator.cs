@@ -4,7 +4,11 @@ using System.Text;
 
 namespace GPSS.Entities.Calculations
 {
-    internal class RandomGenerator
+    internal class RandomGenerator : ICloneable
     {
+        public object Clone()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

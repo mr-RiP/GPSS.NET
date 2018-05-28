@@ -4,7 +4,11 @@ using System.Text;
 
 namespace GPSS.Entities.Calculations
 {
-    internal class Matrix
+    internal class Matrix : ICloneable
     {
+        public object Clone()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

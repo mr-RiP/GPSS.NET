@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using GPSS.StandardAttributes;
+using System;
 
 namespace GPSS.Entities.General
 {
-    internal abstract class Block : ICloneable
+    internal abstract class Block : ICloneable, IBlockAttributes
     {
         abstract public string TypeName { get; }
+
+        public int EntryCount { get; protected set; }
+
+        public int TransactionsCount { get; protected set; }
 
         abstract public object Clone();
 

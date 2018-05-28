@@ -87,7 +87,7 @@ namespace GPSS
         /// </summary>
         /// <param name="userChainName">Name of the User Chain.</param>
         /// <returns>User Chain attributes interface.</returns>
-        IUserChainAttributes UserChain(string userChainName);
+        IUserchainAttributes Userchain(string userChainName);
 
         /// <summary>
         /// Boolean variable attributes interaction.

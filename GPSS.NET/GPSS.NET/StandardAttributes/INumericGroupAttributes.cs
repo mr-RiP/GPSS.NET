@@ -3,14 +3,11 @@
     public interface INumericGroupAttributes
     {
         /// <summary>
-        /// Numeric Group count.
+        /// Numeric Group membership count.
         /// </summary>
         /// <remarks>
         /// GPSS World GN$Entnum SNA.
         /// </remarks>
-        /// <returns>
-        /// Returns the membership count of Numeric Group Entity.
-        /// </returns>
-        int Count();
+        int Count { get; }
     }
 }

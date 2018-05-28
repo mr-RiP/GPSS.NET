@@ -16,12 +16,12 @@ namespace GPSS.SimulationParts
 
         public IBlockAttributes Block(string blockName)
         {
-            throw new NotImplementedException();
+            return simulation.General.Blocks[simulation.General.Labels[blockName]];
         }
 
         public IVariableAttributes<bool> BoolVariable(string variableName)
         {
-            throw new NotImplementedException();
+            throw simulation.
         }
 
         public IFacilityAttributes Facility(int facilityName)
@@ -94,7 +94,7 @@ namespace GPSS.SimulationParts
             throw new NotImplementedException();
         }
 
-        public IUserChainAttributes UserChain(string userChainName)
+        public IUserchainAttributes Userchain(string userChainName)
         {
             throw new NotImplementedException();
         }

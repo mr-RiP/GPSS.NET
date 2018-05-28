@@ -4,14 +4,12 @@
     {
         /// <summary>
         /// Logicswitch set.
+        /// True if the Logicswitch is in the "set" state,
+        /// false otherwise.
         /// </summary>
         /// <remarks>
         /// GPSS World LS$Entnum SNA.
         /// </remarks>
-        /// <returns>
-        /// Returns true if Logicswitch is in the "set" state,
-        /// false otherwise.
-        /// </returns>
-        bool Set();
+        bool Set { get; }
     }
 }

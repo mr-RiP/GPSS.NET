@@ -2,6 +2,12 @@
 {
     public interface ISavevalueAttributes
     {
-        // Нужно решить, что делать с Variable и Savevalue - они могут быть bool, int, double или string
+        /// <summary>
+        /// The value of Savevalue Entity.
+        /// </summary>
+        /// <remarks>
+        /// GPSS World X$Entnum SNA.
+        /// </remarks>
+        dynamic Value { get; }
     }
 }

@@ -5,8 +5,18 @@ using System.Text;
 
 namespace GPSS.Entities.Groups
 {
-    internal class UserChain : ICloneable
+    internal class Userchain : ICloneable, IUserchainAttributes
     {
+        public double AverageContent => throw new NotImplementedException();
+
+        public int TotalEntries => throw new NotImplementedException();
+
+        public int CurrentContent => throw new NotImplementedException();
+
+        public int MaximumContent => throw new NotImplementedException();
+
+        public double AverageResidenceTime => throw new NotImplementedException();
+
         public object Clone()
         {
             throw new NotImplementedException();

@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using GPSS.StandardAttributes;
+using System;
 
 namespace GPSS.Entities.Calculations
 {
-    internal class Savevalue : ICloneable
+    internal class Savevalue : ICloneable, ISavevalueAttributes
     {
+        public dynamic Value { get; set; }
+
         public object Clone()
         {
             throw new NotImplementedException();

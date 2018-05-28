@@ -15,7 +15,7 @@
         /// Matrix column index.
         /// </param>
         /// <returns>
-        /// Access to Attributes of Savevalue stored in Matrix.
+        /// Interface to access Attributes of Savevalue stored in the Matrix.
         /// </returns>
         ISavevalueAttributes Savevalue(int row, int column);
     }

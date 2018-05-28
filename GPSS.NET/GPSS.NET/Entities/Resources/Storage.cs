@@ -1,11 +1,14 @@
-﻿using System;
+﻿using GPSS.StandardAttributes;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace GPSS.Entities.Resources
 {
-    internal class Storage : ICloneable
+    internal class Storage : ICloneable, ILogicSwitchAttributes
     {
+        public bool Set => throw new NotImplementedException();
+
         public object Clone()
         {
             throw new NotImplementedException();

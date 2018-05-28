@@ -4,13 +4,13 @@
     public interface IRandomGeneratorAttributes
     {
         /// <summary>
-        /// Random number between 0 and 999.
+        /// Random integer between 0 and 999.
         /// </summary>
         /// <remarks>
         /// GPSS World RN$Entnum SNA.
         /// </remarks>
         /// <returns>
-        /// A random integer 0-999 from the Random Number Generator.
+        /// Random integer between 0 and 999.
         /// </returns>
         int RandomNumber();
     }

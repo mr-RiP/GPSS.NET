@@ -3,14 +3,11 @@
     public interface IFunctionAttributes
     {
         /// <summary>
-        /// Result of evaluating Function.
+        /// Result of evaluating the Function.
         /// </summary>
         /// <remarks>
         /// GPSS World FN$Entnum SNA.
         /// </remarks>
-        /// <returns>
-        /// Result of evaluating Function $Entnum.
-        /// </returns>
-        double Result();
+        double Result { get; }
     }
 }

@@ -3,29 +3,35 @@
     public interface ITransactionAttributes
     {
         /// <summary>
-        /// Assembly Set of the Active Transaction. GPSS World A1 SNA.
+        /// Assembly Set Number of the Active Transaction.
         /// </summary>
-        /// <returns>Integer index of Active Transaction Assembly Set.</returns>
-        int Assembly();
+        /// <remarks>
+        /// GPSS World A1 SNA.
+        /// </remarks>
+        int Assembly { get; }
 
         /// <summary>
         /// Match Assembly Set of the Active Transaction with Transaction at selected Block.
-        /// GPSS World MB$Entnum SNA.
         /// </summary>
-        /// <param name="blockNumber">Number of the Block</param>
+        /// <remarks>
+        /// GPSS World MB$Entnum SNA.
+        /// </remarks>
+        /// <param name="blockName">Number of the Block</param>
         /// <returns>
-        /// True if there is a Transaction at Block <paramref name="blockNumber"/> 
+        /// True if there is a Transaction at Block <paramref name="blockName"/> 
         /// which is in the same Assembly Set as the Active Transaction.
         /// False otherwise.
         /// </returns>
-        bool MatchAtBlock(int blockNumber);
+        bool MatchAtBlock(string blockName);
 
         /// <summary>
         /// Current absolute system clock value minus value in 
         /// Transaction Parameter <paramref name="parameterName"/>.
         /// Parameter must exist and be of numeric type.
-        /// GPSS World MPParameter SNA.
         /// </summary>
+        /// <remarks>
+        /// GPSS World MP*Parameter SNA.
+        /// </remarks>
         /// <param name="parameterName">Name of Active Transaction's parameter.</param>
         /// <returns>
         /// Current absolute system clock value minus value in 
@@ -35,37 +41,35 @@
 
         /// <summary>
         /// Absolute system clock minus the "Mark Time" of the Transaction.
-        /// GPSS World M1 SNA.
         /// </summary>
-        /// <returns>Absolute system clock minus the "Mark Time" of the Transaction.</returns>
+        /// <remarks>
+        /// GPSS World M1 SNA.
+        /// </remarks>
         double TransitTime();
 
         /// <summary>
         /// Parameter value.
-        /// GPSS World PParameter SNA.
         /// </summary>
-        /// <typeparam name="T">Parameter type.</typeparam>
+        /// <remarks>
+        /// GPSS World P*Parameter SNA.
+        /// </remarks>
         /// <param name="parameterName">Parameter name.</param>
-        /// <returns>Parameter value.</returns>
-        T Parameter<T>(string parameterName);
-        /*
-        double ParameterDouble(string parameterName);
-        int ParameterInteger(string parameterName);
-        string ParameterString(string parameterName);
-        bool ParameterBoolean(string parameterName);
-        */
+        dynamic Parameter(string parameterName);
 
         /// <summary>
         /// Transaction priority.
-        /// GPSS World PR SNA.
         /// </summary>
-        /// <returns>Transaction priority.</returns>
-        int Priority();
+        /// <remarks>
+        /// GPSS World PR SNA.
+        /// </remarks>
+        int Priority { get; }
 
         /// <summary>
         /// The Transaction Number of the Active Transaction.
         /// </summary>
-        /// <returns>The Transaction Number of the Active Transaction.</returns>
-        int ActiveTransaction();
+        /// <remarks>
+        /// GPSS World XN1 SNA.
+        /// </remarks>
+        int Number { get; }
     }
 }

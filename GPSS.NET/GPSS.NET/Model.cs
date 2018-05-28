@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GPSS
 {
-    public class Model
+    public class Model : ICloneable
     {
         private Model()
         {            
@@ -21,11 +21,23 @@ namespace GPSS
             return new Simulation(this);
         }
 
-        internal General General { get; } = new General();
-        internal Calculations Calculations { get; } = new Calculations();
-        internal Groups Groups { get; } = new Groups();
-        internal Resources Resources { get; } = new Resources();
-        internal Statistics Statistics { get; } = new Statistics();
+        public object Clone()
+        {
+            return new Model()
+            {
+                General = (General)General.Clone(),
+                Calculations = (Calculations)Calculations.Clone(),
+                Groups = (Groups)Groups.Clone(),
+                Resources = (Resources)Resources.Clone(),
+                Statistics = (Statistics)Statistics.Clone(),
+            };
+        }
+
+        internal General General { get; private set; } = new General();
+        internal Calculations Calculations { get; private set; } = new Calculations();
+        internal Groups Groups { get; private set; } = new Groups();
+        internal Resources Resources { get; private set; } = new Resources();
+        internal Statistics Statistics { get; private set; } = new Statistics();
 
         #region GPSS Blocks
 

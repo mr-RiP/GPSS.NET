@@ -21,9 +21,11 @@ namespace GPSS.Entities.Statistics
 
         public double AverageNonZeroResidenceTime => throw new NotImplementedException();
 
-        public object Clone()
+        public Queue Clone()
         {
             throw new NotImplementedException();
         }
+
+        object ICloneable.Clone() => Clone();
     }
 }

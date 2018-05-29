@@ -9,9 +9,11 @@ namespace GPSS.Entities.Resources
     {
         public bool Set => throw new NotImplementedException();
 
-        public object Clone()
+        public LogicSwitch Clone()
         {
             throw new NotImplementedException();
         }
+
+        object ICloneable.Clone() => Clone();
     }
 }

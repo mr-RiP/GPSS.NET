@@ -12,16 +12,12 @@ namespace GPSS.ModelParts
 
         public Dictionary<string, int> Labels { get; private set; } = new Dictionary<string, int>();
 
-        public List<int> Generators { get; private set; } = new List<int>();
-
-        public object Clone()
+        public General Clone() => new General
         {
-            return new General
-            {
-                Blocks = Blocks.Clone(),
-                Labels = new Dictionary<string, int>(Labels, Labels.Comparer),
-                Generators = new List<int>(Generators),
-            };
-        }
+            Blocks = Blocks.Clone(),
+            Labels = new Dictionary<string, int>(Labels, Labels.Comparer),
+        };
+
+        object ICloneable.Clone() => Clone();
     }
 }

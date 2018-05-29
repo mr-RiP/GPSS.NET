@@ -7,10 +7,12 @@ namespace GPSS.Entities.Calculations
 {
     internal class Matrix : ICloneable, IMatrixAttributes
     {
-        public object Clone()
+        public Matrix Clone()
         {
             throw new NotImplementedException();
         }
+
+        object ICloneable.Clone() => Clone();
 
         public ISavevalueAttributes Savevalue(int row, int column)
         {

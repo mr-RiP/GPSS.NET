@@ -6,9 +6,13 @@ namespace GPSS.Entities.General.Blocks
 {
     internal class Generate : Block
     {
+        protected Generate()
+        {
+        }
+
         public override string TypeName => throw new NotImplementedException();
 
-        public override object Clone()
+        public override Block Clone()
         {
             throw new NotImplementedException();
         }

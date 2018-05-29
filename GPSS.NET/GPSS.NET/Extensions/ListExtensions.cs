@@ -9,7 +9,7 @@ namespace GPSS.Extensions
     {
         public static List<T> Clone<T>(this List<T> original) where T : ICloneable
         {
-            return original.Select(item => (T)item.Clone()).ToList();
+            return original.Select(item => (T)item.Clone).ToList();
         }
     }
 }

@@ -11,7 +11,8 @@ namespace GPSS.Entities.General
 
         public int TransactionsCount { get; protected set; }
 
-        abstract public object Clone();
+        abstract public Block Clone();
+        object ICloneable.Clone() => Clone();
 
         abstract public void Run(Simulation s);
     }

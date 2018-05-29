@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using GPSS.ModelParts;
 using GPSS.StandardAttributes;
 
 namespace GPSS.SimulationParts
@@ -16,12 +17,13 @@ namespace GPSS.SimulationParts
 
         public IBlockAttributes Block(string blockName)
         {
-            return simulation.General.Blocks[simulation.General.Labels[blockName]];
+            General general = simulation.Model.General;
+            return general.Blocks[general.Labels[blockName]];
         }
 
         public IVariableAttributes<bool> BoolVariable(string variableName)
         {
-            throw simulation.
+            return simulation.Model.Calculations.BoolVariables[variableName];
         }
 
         public IFacilityAttributes Facility(int facilityName)

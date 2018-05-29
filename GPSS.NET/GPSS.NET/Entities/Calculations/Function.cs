@@ -9,9 +9,11 @@ namespace GPSS.Entities.Calculations
     {
         public double Result => throw new NotImplementedException();
 
-        public object Clone()
+        public Function Clone()
         {
             throw new NotImplementedException();
         }
+
+        object ICloneable.Clone() => Clone();
     }
 }

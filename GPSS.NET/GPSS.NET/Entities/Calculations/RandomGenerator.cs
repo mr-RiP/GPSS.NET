@@ -10,9 +10,11 @@ namespace GPSS.Entities.Calculations
             throw new NotImplementedException();
         }
 
-        public object Clone()
+        public RandomGenerator Clone()
         {
             throw new NotImplementedException();
         }
+
+        object ICloneable.Clone() => Clone();
     }
 }

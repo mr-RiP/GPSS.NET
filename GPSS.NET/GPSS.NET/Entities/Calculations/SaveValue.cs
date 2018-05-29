@@ -7,9 +7,11 @@ namespace GPSS.Entities.Calculations
     {
         public dynamic Value { get; set; }
 
-        public object Clone()
+        public Savevalue Clone()
         {
             throw new NotImplementedException();
         }
+
+        object ICloneable.Clone() => Clone();
     }
 }

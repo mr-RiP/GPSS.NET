@@ -13,14 +13,13 @@ namespace GPSS.ModelParts
 
         public Dictionary<string, Storage> Storages { get; private set; } = new Dictionary<string, Storage>();
 
-        public object Clone()
+        public Resources Clone() => new Resources
         {
-            return new Resources
-            {
-                Facilities = Facilities.Clone(),
-                LogicSwitches = LogicSwitches.Clone(),
-                Storages = Storages.Clone(),
-            };
-        }
+            Facilities = Facilities.Clone(),
+            LogicSwitches = LogicSwitches.Clone(),
+            Storages = Storages.Clone(),
+        };
+
+        object ICloneable.Clone() => Clone();
     }
 }

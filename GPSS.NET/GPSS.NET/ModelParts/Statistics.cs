@@ -12,13 +12,12 @@ namespace GPSS.ModelParts
 
         public Dictionary<string, Table> Tables { get; private set; } = new Dictionary<string, Table>();
 
-        public object Clone()
+        public Statistics Clone()=> new Statistics
         {
-            return new Statistics
-            {
-                Queues = Queues.Clone(),
-                Tables = Tables.Clone()
-            };
-        }
+            Queues = Queues.Clone(),
+            Tables = Tables.Clone()
+        };
+
+        object ICloneable.Clone() => Clone();
     }
 }

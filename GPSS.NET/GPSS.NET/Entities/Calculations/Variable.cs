@@ -7,9 +7,11 @@ namespace GPSS.Entities.Calculations
     {
         public T Result { get; set; }
 
-        public object Clone()
+        public Variable<T> Clone()
         {
-            throw new NotImplementedException();
+            return new Variable<T> { Result = Result };
         }
+
+        object ICloneable.Clone() => Clone();
     }
 }

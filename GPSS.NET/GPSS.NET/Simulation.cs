@@ -14,8 +14,7 @@ namespace GPSS
         }
 
         internal Model Model { get; private set; }
-        internal Clock Clock { get; private set; }
-        internal Transcations Transcations { get; private set; }
+        internal Events Events { get; private set; }
         internal StandardAttributesAccess StandardAttributes { get; private set; }
 
         private void InitializeSimulationData()

@@ -13,9 +13,11 @@ namespace GPSS.Entities.Statistics
 
         public double StandardDeviation => throw new NotImplementedException();
 
-        public object Clone()
+        public Table Clone()
         {
             throw new NotImplementedException();
         }
+
+        object ICloneable.Clone() => Clone();
     }
 }

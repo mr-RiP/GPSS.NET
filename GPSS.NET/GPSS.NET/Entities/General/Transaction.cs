@@ -1,4 +1,5 @@
-﻿using GPSS.StandardAttributes;
+﻿using GPSS.Enums;
+using GPSS.StandardAttributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -23,9 +24,21 @@ namespace GPSS.Entities.General
 
         public int TargetBlockIndex { get; set; }
 
-        public object Clone()
+        public TransactionState Chain { get; set; }
+
+        public Transaction Clone() => new Transaction
         {
-            throw new NotImplementedException();
-        }
+            Number = Number,
+            Assembly = Assembly,
+            Priority = Priority,
+            CurrentTime = CurrentTime,
+            TransitTime = TransitTime,
+            CreationTime = CreationTime,
+            CurrentBlockIndex = CurrentBlockIndex,
+            TargetBlockIndex = TargetBlockIndex,
+            Chain = Chain,
+        };
+
+        object ICloneable.Clone() => Clone();
     }
-}
+}                      

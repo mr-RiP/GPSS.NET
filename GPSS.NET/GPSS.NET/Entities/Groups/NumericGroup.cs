@@ -7,9 +7,11 @@ namespace GPSS.Entities.Groups
     {
         public int Count => throw new NotImplementedException();
 
-        public object Clone()
+        public NumericGroup Clone()
         {
             throw new NotImplementedException();
         }
+
+        object ICloneable.Clone() => Clone();
     }
 }

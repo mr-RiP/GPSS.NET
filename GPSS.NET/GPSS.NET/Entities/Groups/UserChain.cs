@@ -17,9 +17,11 @@ namespace GPSS.Entities.Groups
 
         public double AverageResidenceTime => throw new NotImplementedException();
 
-        public object Clone()
+        public Userchain Clone()
         {
             throw new NotImplementedException();
         }
+
+        object ICloneable.Clone() => Clone();
     }
 }

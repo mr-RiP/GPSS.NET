@@ -19,9 +19,11 @@ namespace GPSS.Entities.Resources
 
         public bool Available => throw new NotImplementedException();
 
-        public object Clone()
+        public Facility Clone()
         {
             throw new NotImplementedException();
         }
+
+        object ICloneable.Clone() => Clone();
     }
 }

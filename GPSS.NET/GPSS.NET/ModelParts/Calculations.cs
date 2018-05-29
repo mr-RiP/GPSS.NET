@@ -25,19 +25,18 @@ namespace GPSS.ModelParts
 
         public Dictionary<string, Variable<bool>> BoolVariables { get; private set; } = new Dictionary<string, Variable<bool>>();
 
-        public object Clone()
+        public Calculations Clone() => new Calculations
         {
-            return new Calculations
-            {
-                DefaultRandomGenerator = DefaultRandomGenerator,
-                RandomGenerators = RandomGenerators.Clone(),
-                Functions = Functions.Clone(),
-                Matrices = Matrices.Clone(),
-                Savevalues = Savevalues.Clone(),
-                Variables = Variables.Clone(),
-                FloatVariables = FloatVariables.Clone(),
-                BoolVariables = BoolVariables.Clone(),
-            };
-        }
+            DefaultRandomGenerator = DefaultRandomGenerator,
+            RandomGenerators = RandomGenerators.Clone(),
+            Functions = Functions.Clone(),
+            Matrices = Matrices.Clone(),
+            Savevalues = Savevalues.Clone(),
+            Variables = Variables.Clone(),
+            FloatVariables = FloatVariables.Clone(),
+            BoolVariables = BoolVariables.Clone(),
+        };
+
+        object ICloneable.Clone() => Clone();
     }
 }

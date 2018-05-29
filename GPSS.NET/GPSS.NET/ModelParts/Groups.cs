@@ -11,13 +11,12 @@ namespace GPSS.ModelParts
 
         public Dictionary<string, TransactionGroup> TransactionGroups { get; private set; } = new Dictionary<string, TransactionGroup>();
 
-        public object Clone()
+        public Groups Clone() => new Groups
         {
-            return new Groups
-            {
-                NumericGroups = NumericGroups.Clone(),
-                TransactionGroups = TransactionGroups.Clone(),
-            };
-        }
+            NumericGroups = NumericGroups.Clone(),
+            TransactionGroups = TransactionGroups.Clone(),
+        };
+
+        object ICloneable.Clone() => Clone();
     }
 }

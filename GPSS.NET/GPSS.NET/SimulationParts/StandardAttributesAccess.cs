@@ -105,5 +105,15 @@ namespace GPSS.SimulationParts
         {
             throw new NotImplementedException();
         }
+
+        public ISystemAttributes System()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Clear()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

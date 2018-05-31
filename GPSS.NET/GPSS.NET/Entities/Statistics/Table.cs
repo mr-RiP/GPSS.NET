@@ -18,6 +18,11 @@ namespace GPSS.Entities.Statistics
             throw new NotImplementedException();
         }
 
+        public void Clear()
+        {
+            throw new NotImplementedException();
+        }
+
         object ICloneable.Clone() => Clone();
     }
 }

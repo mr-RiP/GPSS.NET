@@ -14,6 +14,11 @@ namespace GPSS.Entities.Resources
             throw new NotImplementedException();
         }
 
+        public void Clear()
+        {
+            throw new NotImplementedException();
+        }
+
         object ICloneable.Clone() => Clone();
     }
 }

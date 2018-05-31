@@ -12,6 +12,11 @@ namespace GPSS.Entities.Groups
             throw new NotImplementedException();
         }
 
+        public void Clear()
+        {
+            throw new NotImplementedException();
+        }
+
         object ICloneable.Clone() => Clone();
     }
 }

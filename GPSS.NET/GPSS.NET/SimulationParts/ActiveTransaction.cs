@@ -1,6 +1,8 @@
 ﻿using GPSS.Entities.General;
+using GPSS.Enums;
 using GPSS.StandardAttributes;
-
+using System;
+using System.Linq;
 
 namespace GPSS.SimulationParts
 {
@@ -19,22 +21,57 @@ namespace GPSS.SimulationParts
 
         public bool MatchAtBlock(string blockName)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public dynamic Parameter(string parameterName)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public double TransitTime(string parameterName)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public double TransitTime()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
+        }
+
+        public bool Set()
+        {
+            return Transaction != null && Transaction.Chain == TransactionState.Active;
+        }
+
+        public bool Set(TransactionChains chains)
+        {
+            if (!Set())
+            {
+                if (!chains.CurrentEvents.Any())
+                    chains.UpdateCurrentEvents();
+
+                Transaction = chains.ActiveTransaction();
+                if (Transaction != null)
+                {
+                    Transaction.Chain = TransactionState.Active;
+                    return true;
+                }
+                else
+                    return false;
+            }
+            else
+                return true;
+        }
+
+        internal void RunNextBlock(Simulation simulation)
+        {
+            simulation.Model.General.Blocks[Transaction.NextBlock].Run(simulation);
+        }
+
+        public void Clear()
+        {
+            throw new NotImplementedException();
         }
     }
 }

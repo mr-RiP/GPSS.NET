@@ -5,11 +5,16 @@ using System.Text;
 
 namespace GPSS.Entities.Groups
 {
-    class TransactionGroup : ICloneable, ITransactionGroupAttributes
+    internal class TransactionGroup : ICloneable, ITransactionGroupAttributes
     {
         public int Count => throw new NotImplementedException();
 
         public TransactionGroup Clone()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Clear()
         {
             throw new NotImplementedException();
         }

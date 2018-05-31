@@ -11,7 +11,7 @@ namespace GPSS
     /// <summary>
     /// Model entities attributes (GPSS World SNAs) interaction interface.
     /// </summary>
-    interface IStandardAttributes
+    public interface IStandardAttributes
     {
         /// <summary>
         /// Transaction attributes interaction.
@@ -155,7 +155,7 @@ namespace GPSS
         ITransactionGroupAttributes TransactionGroup(string transactionGroupName);
 
         /// <summary>
-        /// Random Number Generator attributes interaction.
+        /// Default Random Number Generator attributes interaction.
         /// </summary>
         /// <returns>
         /// Random Number Generator attributes interface.
@@ -170,5 +170,13 @@ namespace GPSS
         /// Random Number Generator attributes interface.
         /// </returns>
         IRandomGeneratorAttributes RandomNumberGenerator(int seed);
+
+        /// <summary>
+        /// System attributes interaction.
+        /// </summary>
+        /// <returns>
+        /// System attributes interface.
+        /// </returns>
+        ISystemAttributes System();
     }
 }

@@ -10,32 +10,33 @@ namespace GPSS.Entities.General
     {
         public int Number { get; set; }
 
-        public int Assembly { get; set; }
-
         public int Priority { get; set; }
 
-        public double CurrentTime { get; set; }
+        public int Assembly { get; set; }
 
-        public double TransitTime { get; set; }
+        public double TimeIncrement { get; set; }
 
-        public double CreationTime { get; set; }
+        public double MarkTime { get; set; }
 
-        public int CurrentBlockIndex { get; set; }
+        public bool Trace { get; set; }
 
-        public int TargetBlockIndex { get; set; }
+        public int CurrentBlock { get; set; }
+
+        public int NextBlock { get; set; }
 
         public TransactionState Chain { get; set; }
+
+        public bool Preempted { get; set; }
 
         public Transaction Clone() => new Transaction
         {
             Number = Number,
             Assembly = Assembly,
             Priority = Priority,
-            CurrentTime = CurrentTime,
-            TransitTime = TransitTime,
-            CreationTime = CreationTime,
-            CurrentBlockIndex = CurrentBlockIndex,
-            TargetBlockIndex = TargetBlockIndex,
+            TimeIncrement = TimeIncrement,
+            MarkTime = MarkTime,
+            CurrentBlock = CurrentBlock,
+            NextBlock = NextBlock,
             Chain = Chain,
         };
 

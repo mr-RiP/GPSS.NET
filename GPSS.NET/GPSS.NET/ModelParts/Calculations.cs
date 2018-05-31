@@ -37,6 +37,11 @@ namespace GPSS.ModelParts
             BoolVariables = BoolVariables.Clone(),
         };
 
+        public void Clear()
+        {
+            throw new NotImplementedException();
+        }
+
         object ICloneable.Clone() => Clone();
     }
 }

@@ -18,10 +18,10 @@ namespace GPSS.SimulationParts
             throw new System.NotImplementedException();
         }
 
-        public void UpdateClock(Transaction transaction)
+        public void UpdateClock(double timeIncrement)
         {
-            AbsoluteClock += transaction.TimeIncrement;
-            RelativeClock += transaction.TimeIncrement;
+            AbsoluteClock += timeIncrement;
+            RelativeClock += timeIncrement;
         }
     }
 }

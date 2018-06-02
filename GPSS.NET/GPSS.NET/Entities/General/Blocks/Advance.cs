@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GPSS.Enums;
+using GPSS.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,16 +8,45 @@ namespace GPSS.Entities.General.Blocks
 {
     internal class Advance : Block
     {
-        public override string TypeName => throw new NotImplementedException();
-
-        public override Block Clone()
+        private Advance()
         {
-            throw new NotImplementedException();
+
         }
 
-        public override void Run(Simulation s)
+        public Advance(Func<IStandardAttributes, double> delay)
         {
-            throw new NotImplementedException();
+            Delay = delay;
+        }
+
+        public Func<IStandardAttributes, double> Delay { get; private set; }
+
+        public override string TypeName => "ADVANCE";
+
+        public override Block Clone() => new Advance
+        {
+            Delay = Delay,
+            EntryCount = EntryCount,
+            TransactionsCount = TransactionsCount,
+        };
+
+        public override void Run(Simulation simulation)
+        {
+            EnterBlock();
+            double time = Delay(simulation.StandardAttributes);
+            if (time < 0.0)
+                throw new ModelStructureException("Negative time increment.", GetBlockIndex(simulation));
+
+            var transaction = simulation.ActiveTransaction.Transaction;
+            transaction.Chain = TransactionState.Suspended;
+
+            var chains = simulation.Chains;
+            chains.CurrentEvents.Remove(transaction);
+
+            if (time == 0.0)
+                chains.PlaceInCurrentEvents(transaction);
+            else
+                chains.PlaceInFutureEvents(transaction);
+            ExitBlock();
         }
     }
 }

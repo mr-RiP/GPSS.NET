@@ -37,7 +37,7 @@ namespace GPSS
         /// <returns>
         /// Facility attributes interface.
         /// </returns>
-        IFacilityAttributes Facility(int facilityName);
+        IFacilityAttributes Facility(string facilityName);
 
         /// <summary>
         /// Function attributes interaction.
@@ -53,7 +53,7 @@ namespace GPSS
         /// <returns>
         /// Logic Switch attributes interface.
         /// </returns>
-        ILogicSwitchAttributes LogicSwitch(string logicSwitchName);
+        ILogicswitchAttributes Logicswitch(string logicSwitchName);
 
         /// <summary>
         /// Matrix attributes interaction.
@@ -160,7 +160,7 @@ namespace GPSS
         /// <returns>
         /// Random Number Generator attributes interface.
         /// </returns>
-        IRandomGeneratorAttributes RandomNumberGenerator();
+        IRandomNumberGeneratorAttributes RandomNumberGenerator();
 
         /// <summary>
         /// Random Number Generator attributes interaction.
@@ -169,7 +169,7 @@ namespace GPSS
         /// <returns>
         /// Random Number Generator attributes interface.
         /// </returns>
-        IRandomGeneratorAttributes RandomNumberGenerator(int seed);
+        IRandomNumberGeneratorAttributes RandomNumberGenerator(int seed);
 
         /// <summary>
         /// System attributes interaction.

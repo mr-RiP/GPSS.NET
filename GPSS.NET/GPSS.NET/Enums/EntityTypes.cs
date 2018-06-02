@@ -14,11 +14,23 @@ namespace GPSS.Enums
         Function,
         Matrix,
         RandomGenerator,
-        SaveValue,
+        Savevalue,
+        BoolVariable,
+        FloatVariable,
         Variable,
 
         // Groups
+        NumericGroup,
+        TransactionGroup,
+        Userchain,
 
+        // Resources
+        Facility,
+        Logicswitch,
+        Storage,
 
+        // Statistics
+        Queue,
+        Table
     }
 }

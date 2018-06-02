@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using GPSS.Entities.Calculations;
+using GPSS.Enums;
+using GPSS.Exceptions;
 using GPSS.ModelParts;
 using GPSS.StandardAttributes;
 
@@ -18,102 +21,136 @@ namespace GPSS.SimulationParts
         public IBlockAttributes Block(string blockName)
         {
             General general = simulation.Model.General;
-            return general.Blocks[general.Labels[blockName]];
+            if (general.Labels.ContainsKey(blockName))
+                return general.Blocks[general.Labels[blockName]];
+            else
+                throw new StandardAttributeAccessException(
+                    "Block with given name does not exists.", EntityTypes.Block);
         }
 
         public IVariableAttributes<bool> BoolVariable(string variableName)
         {
-            return simulation.Model.Calculations.BoolVariables[variableName];
+            return AccessDictionary(simulation.Model.Calculations.BoolVariables,
+                variableName, EntityTypes.BoolVariable);
         }
 
-        public IFacilityAttributes Facility(int facilityName)
+        public IFacilityAttributes Facility(string facilityName)
         {
-            throw new NotImplementedException();
+            return AccessDictionary(simulation.Model.Resources.Facilities,
+                facilityName, EntityTypes.Facility);
         }
 
         public IVariableAttributes<double> FloatVariable(string variableName)
         {
-            throw new NotImplementedException();
+            return AccessDictionary(simulation.Model.Calculations.FloatVariables,
+                variableName, EntityTypes.FloatVariable);
         }
 
         public IFunctionAttributes Function(string functionName)
         {
-            throw new NotImplementedException();
+            return AccessDictionary(simulation.Model.Calculations.Functions,
+                functionName, EntityTypes.Function);
         }
 
-        public ILogicSwitchAttributes LogicSwitch(string logicSwitchName)
+        public ILogicswitchAttributes Logicswitch(string logicSwitchName)
         {
-            throw new NotImplementedException();
+            return AccessDictionary(simulation.Model.Resources.Logicswitches,
+                logicSwitchName, EntityTypes.Logicswitch);
         }
 
         public IMatrixAttributes Matrix(string matrixName)
         {
-            throw new NotImplementedException();
+            return AccessDictionary(simulation.Model.Calculations.Matrices,
+                matrixName, EntityTypes.Matrix);
         }
 
         public INumericGroupAttributes NumericGroup(string numericGroupName)
         {
-            throw new NotImplementedException();
+            return AccessDictionary(simulation.Model.Groups.NumericGroups,
+                numericGroupName, EntityTypes.NumericGroup);
         }
 
         public IQueueAttributes Queue(string queueName)
         {
-            throw new NotImplementedException();
+            return AccessDictionary(simulation.Model.Statistics.Queues,
+                queueName, EntityTypes.Queue);
         }
 
-        public IRandomGeneratorAttributes RandomNumberGenerator()
+        public IRandomNumberGeneratorAttributes RandomNumberGenerator()
         {
-            throw new NotImplementedException();
+            return simulation.Model.Calculations.DefaultRandomGenerator;
         }
 
-        public IRandomGeneratorAttributes RandomNumberGenerator(int seed)
+        public IRandomNumberGeneratorAttributes RandomNumberGenerator(int seed)
         {
-            throw new NotImplementedException();
+            var dictionary = simulation.Model.Calculations.RandomGenerators;
+            if (dictionary.ContainsKey(seed))
+                return dictionary[seed];
+            else
+            {
+                var generator = new RandomNumberGenerator(seed);
+                dictionary.Add(seed, generator);
+                return generator;
+            }
         }
 
         public ISavevalueAttributes Savevalue(string saveValueName)
         {
-            throw new NotImplementedException();
+            return AccessDictionary(simulation.Model.Calculations.Savevalues,
+                saveValueName, EntityTypes.Savevalue);
         }
 
         public IStorageAttributes Storage(string storageName)
         {
-            throw new NotImplementedException();
+            return AccessDictionary(simulation.Model.Resources.Storages,
+                storageName, EntityTypes.Storage);
         }
 
         public ITableAttributes Table(string tableName)
         {
-            throw new NotImplementedException();
+            return AccessDictionary(simulation.Model.Statistics.Tables,
+                tableName, EntityTypes.Table);
         }
 
         public ITransactionAttributes Transaction()
         {
-            throw new NotImplementedException();
+            if (simulation.ActiveTransaction.IsSet())
+                return simulation.ActiveTransaction;
+            else
+                throw new StandardAttributeAccessException("Active transaction does not set.",
+                    EntityTypes.Transaction);
         }
 
         public ITransactionGroupAttributes TransactionGroup(string transactionGroupName)
         {
-            throw new NotImplementedException();
+            return AccessDictionary(simulation.Model.Groups.TransactionGroups,
+                transactionGroupName, EntityTypes.TransactionGroup);
         }
 
         public IUserchainAttributes Userchain(string userChainName)
         {
-            throw new NotImplementedException();
+            return AccessDictionary(simulation.Chains.UserChains,
+                userChainName, EntityTypes.Userchain);
         }
 
         public IVariableAttributes<int> Variable(string variableName)
         {
-            throw new NotImplementedException();
+            return AccessDictionary(simulation.Model.Calculations.Variables,
+                variableName, EntityTypes.Variable);
         }
 
         public ISystemAttributes System()
         {
-            throw new NotImplementedException();
+            return simulation.System;
         }
 
-        public void Clear()
+        private T AccessDictionary<T>(Dictionary<string, T> dictionary, string name, EntityTypes entityType)
         {
-            throw new NotImplementedException();
+            if (dictionary.ContainsKey(name))
+                return dictionary[name];
+            else
+                throw new StandardAttributeAccessException(
+                    entityType.ToString() + " with given name does not exists.", entityType);
         }
     }
 }

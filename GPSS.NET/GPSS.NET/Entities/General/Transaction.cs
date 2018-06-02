@@ -28,6 +28,8 @@ namespace GPSS.Entities.General
 
         public bool Preempted { get; set; }
 
+        public Dictionary<string, dynamic> Parameters { get; private set; } = new Dictionary<string, dynamic>();
+
         public Transaction Clone() => new Transaction
         {
             Number = Number,
@@ -38,6 +40,7 @@ namespace GPSS.Entities.General
             CurrentBlock = CurrentBlock,
             NextBlock = NextBlock,
             Chain = Chain,
+            Parameters = new Dictionary<string, dynamic>(Parameters),
         };
 
         object ICloneable.Clone() => Clone();

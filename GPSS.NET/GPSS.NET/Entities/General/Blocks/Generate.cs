@@ -47,10 +47,11 @@ namespace GPSS.Entities.General.Blocks
 
         public override void Run(Simulation simulation)
         {
-            if (simulation.ActiveTransaction.Set())
+            if (simulation.ActiveTransaction.IsSet())
                 throw new ModelStructureException("Active Transaction must not entry GENERATE blocks.",
                     GetBlockIndex(simulation));
 
+            EnterBlock();
             try
             {
                 bool firstGeneration = EntryCount == 0;
@@ -71,18 +72,15 @@ namespace GPSS.Entities.General.Blocks
                 else
                     throw error;
             }
-
+            ExitBlock();
         }
 
         private void EnchainTransaction(Simulation simulation, Transaction transaction)
         {
             if (transaction.TimeIncrement == 0.0)
-            {
-                int index = simulation.Chains.CurrentEvents.FindLastIndex(t => t.Priority > transaction.Priority);
-                simulation.Chains.CurrentEvents.Insert(index + 1, transaction);
-            }
+                simulation.Chains.PlaceInCurrentEvents(transaction);
             else
-                simulation.Chains.FutureEvents.Add(transaction);
+                simulation.Chains.PlaceInFutureEvents(transaction);
         }
 
         private Transaction GenerateTransaction(Simulation simulation, bool firstGeneration)

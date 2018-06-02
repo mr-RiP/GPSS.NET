@@ -1,11 +1,12 @@
-﻿using GPSS.StandardAttributes;
+﻿using GPSS.Entities.General;
+using GPSS.StandardAttributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace GPSS.Entities.Groups
 {
-    internal class Userchain : ICloneable, IUserchainAttributes
+    internal class Userchain : List<Transaction>, ICloneable, IUserchainAttributes
     {
         public double AverageContent => throw new NotImplementedException();
 

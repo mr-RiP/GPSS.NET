@@ -1,5 +1,6 @@
 ﻿using GPSS.SimulationParts;
 using System;
+using System.Linq;
 
 namespace GPSS
 {
@@ -22,7 +23,7 @@ namespace GPSS
         {
             Chains = new TransactionChains();
             System = new SystemCounters();
-            ActiveTransaction = new ActiveTransaction();
+            ActiveTransaction = new ActiveTransaction(this);
             StandardAttributes = new StandardAttributesAccess(this);
         }
 
@@ -38,20 +39,31 @@ namespace GPSS
 
         public Report Start(int terminationCount)
         {
-            Clear();
-            System.TerminationCount = terminationCount;
+            ResetSimulation(terminationCount);
             while (System.TerminationCount > 0)
             {
-                if (ActiveTransaction.Set(Chains))
-                {
-                    UpdateTime();
-                    RunModel();
-                }
+                if (Chains.CurrentEvents.Any())
+                    RunCurrentEvents();
+                else if (Chains.FutureEvents.Any())
+                    UpdateEvents();
                 else
-                    GenerateTransactions();
+                    GenerateEvents();
             }
 
             return new Report(this);
+        }
+
+        private void UpdateEvents()
+        {
+            Chains.UpdateCurrentEvents();
+            System.UpdateClock(Chains.CurrentTimeIncrement());
+            Chains.RefreshTimeIncrement();
+        }
+
+        private void ResetSimulation(int terminationCount)
+        {
+            Clear();
+            System.TerminationCount = terminationCount;
         }
 
         public void Clear()
@@ -65,18 +77,17 @@ namespace GPSS
             System.Clear();
         }
 
-        private void UpdateTime()
+        private void RunCurrentEvents()
         {
-            System.UpdateClock(ActiveTransaction.Transaction);
+            while (Chains.CurrentEvents.Any())
+            {
+                ActiveTransaction.Reset();
+                while (ActiveTransaction.IsSet())
+                    ActiveTransaction.RunNextBlock();
+            }
         }
 
-        private void RunModel()
-        {
-            while (ActiveTransaction.Set())
-                ActiveTransaction.RunNextBlock(this);
-        }
-
-        private void GenerateTransactions()
+        private void GenerateEvents()
         {
             Model.General.Generators.ForEach(g => g.Run(this));
         }

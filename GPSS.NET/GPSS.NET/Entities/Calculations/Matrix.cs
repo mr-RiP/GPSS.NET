@@ -18,5 +18,10 @@ namespace GPSS.Entities.Calculations
         {
             throw new NotImplementedException();
         }
+
+        internal void Clear()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

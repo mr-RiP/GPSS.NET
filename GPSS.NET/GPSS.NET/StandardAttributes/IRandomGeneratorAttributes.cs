@@ -1,7 +1,7 @@
 ﻿namespace GPSS.StandardAttributes
 {
     // TODO - Добавить генерацию случайных распределений.
-    public interface IRandomGeneratorAttributes
+    public interface IRandomNumberGeneratorAttributes
     {
         /// <summary>
         /// Random integer between 0 and 999.

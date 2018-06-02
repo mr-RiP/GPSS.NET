@@ -1,5 +1,6 @@
 ﻿using GPSS.Entities.General;
 using GPSS.Enums;
+using GPSS.Exceptions;
 using GPSS.StandardAttributes;
 using System;
 using System.Linq;
@@ -11,7 +12,14 @@ namespace GPSS.SimulationParts
     // TODO - добавить в него необходимые элементы
     internal class ActiveTransaction : ITransactionAttributes
     {
-        public Transaction Transaction { get; set; }
+        public ActiveTransaction(Simulation simulation)
+        {
+            this.simulation = simulation;
+        }
+
+        private Simulation simulation;
+
+        public Transaction Transaction { get; private set; }
 
         public int Assembly => Transaction.Assembly;
 
@@ -21,12 +29,27 @@ namespace GPSS.SimulationParts
 
         public bool MatchAtBlock(string blockName)
         {
-            throw new NotImplementedException();
+            var modelGeneral = simulation.Model.General;
+            if (modelGeneral.Labels.ContainsKey(blockName))
+            {
+                int blockIndex = modelGeneral.Labels[blockName];
+                var chains = simulation.Chains;
+                return chains.CurrentEvents.Any(t => t.CurrentBlock == blockIndex) ||
+                    chains.FutureEvents.Any(t => t.CurrentBlock == blockIndex) ||
+                    chains.DelayChains.Any(kvp => kvp.Value.Any(t => t.CurrentBlock == blockIndex)) ||
+                    chains.PendingChains.Any(kvp => kvp.Value.Any(t => t.CurrentBlock == blockIndex)) ||
+                    chains.UserChains.Any(kvp => kvp.Value.Any(t => t.CurrentBlock == blockIndex));
+            }
+            else
+                throw new StandardAttributeAccessException("Block with given name does not exists.", EntityTypes.Transaction);
         }
 
         public dynamic Parameter(string parameterName)
         {
-            throw new NotImplementedException();
+            if (Transaction.Parameters.ContainsKey(parameterName))
+                return Transaction.Parameters[parameterName];
+            else
+                throw new StandardAttributeAccessException("Active transaction does not have parameter with given name.", EntityTypes.Transaction);
         }
 
         public double TransitTime(string parameterName)
@@ -39,39 +62,26 @@ namespace GPSS.SimulationParts
             throw new NotImplementedException();
         }
 
-        public bool Set()
+        public bool IsSet()
         {
             return Transaction != null && Transaction.Chain == TransactionState.Active;
         }
 
-        public bool Set(TransactionChains chains)
+        public void Reset()
         {
-            if (!Set())
-            {
-                if (!chains.CurrentEvents.Any())
-                    chains.UpdateCurrentEvents();
-
-                Transaction = chains.ActiveTransaction();
-                if (Transaction != null)
-                {
-                    Transaction.Chain = TransactionState.Active;
-                    return true;
-                }
-                else
-                    return false;
-            }
-            else
-                return true;
+            Transaction = simulation.Chains.GetActiveTransaction();
+            if (Transaction != null)
+                Transaction.Chain = TransactionState.Active;
         }
 
-        internal void RunNextBlock(Simulation simulation)
+        internal void RunNextBlock()
         {
             simulation.Model.General.Blocks[Transaction.NextBlock].Run(simulation);
         }
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            Transaction = null;
         }
     }
 }

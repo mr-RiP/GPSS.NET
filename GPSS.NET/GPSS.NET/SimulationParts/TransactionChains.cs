@@ -22,9 +22,20 @@ namespace GPSS.SimulationParts
         // the highest priority Transaction remaining on the CEC becomes the Active Transaction.
         public List<Transaction> CurrentEvents { get; private set; } = new List<Transaction>();
 
-        public Transaction ActiveTransaction()
+        public Transaction GetActiveTransaction()
         {
-            return CurrentEvents.FirstOrDefault();
+            return CurrentEvents.LastOrDefault();
+        }
+
+        public void PlaceInCurrentEvents(Transaction transaction)
+        {
+            int index = CurrentEvents.FindIndex(t => t.Priority >= transaction.Priority);
+            CurrentEvents.Insert(index, transaction);
+        }
+
+        public void PlaceInFutureEvents(Transaction transaction)
+        {
+            FutureEvents.Add(transaction);
         }
 
         public void UpdateCurrentEvents()
@@ -32,13 +43,32 @@ namespace GPSS.SimulationParts
             double minTime = FutureEvents.Min(t => t.TimeIncrement);
             CurrentEvents = FutureEvents
                 .Where(t => t.TimeIncrement == minTime)
-                .OrderByDescending(t => t.Priority)
+                .OrderBy(t => t.Priority)
                 .ToList();
         }
 
         internal void Clear()
         {
-            throw new NotImplementedException();
+            UserChains.Clear();
+            DelayChains.Clear();
+            PendingChains.Clear();
+            FutureEvents.Clear();
+            CurrentEvents.Clear();
+        }
+
+        public void RefreshTimeIncrement()
+        {
+            if (CurrentEvents.Any())
+            {
+                double time = CurrentEvents.First().TimeIncrement;
+                CurrentEvents.ForEach(t => t.TimeIncrement = 0.0);
+                FutureEvents.ForEach(t => t.TimeIncrement -= time);
+            }
+        }
+
+        public double CurrentTimeIncrement()
+        {
+            return CurrentEvents.FirstOrDefault()?.TimeIncrement ?? 0.0;
         }
     }
 }

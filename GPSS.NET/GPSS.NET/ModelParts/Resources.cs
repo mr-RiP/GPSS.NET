@@ -9,14 +9,14 @@ namespace GPSS.ModelParts
     {
         public Dictionary<string, Facility> Facilities { get; private set; } = new Dictionary<string, Facility>();
 
-        public Dictionary<string, LogicSwitch> LogicSwitches { get; private set; } = new Dictionary<string, LogicSwitch>();
+        public Dictionary<string, Logicswitch> Logicswitches { get; private set; } = new Dictionary<string, Logicswitch>();
 
         public Dictionary<string, Storage> Storages { get; private set; } = new Dictionary<string, Storage>();
 
         public Resources Clone() => new Resources
         {
             Facilities = Facilities.Clone(),
-            LogicSwitches = LogicSwitches.Clone(),
+            Logicswitches = Logicswitches.Clone(),
             Storages = Storages.Clone(),
         };
 

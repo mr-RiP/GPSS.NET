@@ -26,5 +26,16 @@ namespace GPSS.Entities.General
         {
             return simulation.Model.General.Blocks.IndexOf(this);
         }
+
+        protected void EnterBlock()
+        {
+            EntryCount++;
+            TransactionsCount++;
+        }
+
+        protected void ExitBlock()
+        {
+            TransactionsCount--;
+        }
     }
 }

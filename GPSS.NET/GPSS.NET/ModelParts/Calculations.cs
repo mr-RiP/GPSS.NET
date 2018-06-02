@@ -8,10 +8,10 @@ namespace GPSS.ModelParts
     internal class Calculations : ICloneable
     {
         // Генератор по-умолчанию - от времени
-        public RandomGenerator DefaultRandomGenerator { get; private set; } = new RandomGenerator();
+        public RandomNumberGenerator DefaultRandomGenerator { get; private set; } = new RandomNumberGenerator();
         
         // Пользовательские генераторы c пользовательским seed
-        public Dictionary<int, RandomGenerator> RandomGenerators { get; private set; } = new Dictionary<int, RandomGenerator>();
+        public Dictionary<int, RandomNumberGenerator> RandomGenerators { get; private set; } = new Dictionary<int, RandomNumberGenerator>();
 
         public Dictionary<string, Function> Functions { get; private set; } = new Dictionary<string, Function>();
 
@@ -39,7 +39,20 @@ namespace GPSS.ModelParts
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            foreach (var matrix in Matrices.Values)
+                matrix.Clear();
+
+            foreach (var savevalue in Savevalues.Values)
+                savevalue.Clear();
+
+            foreach (var variable in Variables.Values)
+                variable.Clear();
+
+            foreach (var variable in FloatVariables.Values)
+                variable.Clear();
+
+            foreach (var variable in BoolVariables.Values)
+                variable.Clear();
         }
 
         object ICloneable.Clone() => Clone();

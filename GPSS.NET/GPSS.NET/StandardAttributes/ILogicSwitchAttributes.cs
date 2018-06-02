@@ -1,6 +1,6 @@
 ﻿namespace GPSS.StandardAttributes
 {
-    public interface ILogicSwitchAttributes
+    public interface ILogicswitchAttributes
     {
         /// <summary>
         /// Logicswitch set.

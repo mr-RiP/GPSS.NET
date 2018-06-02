@@ -5,11 +5,11 @@ using System.Text;
 
 namespace GPSS.Entities.Resources
 {
-    internal class LogicSwitch : ICloneable, ILogicSwitchAttributes
+    internal class Logicswitch : ICloneable, ILogicswitchAttributes
     {
         public bool Set => throw new NotImplementedException();
 
-        public LogicSwitch Clone()
+        public Logicswitch Clone()
         {
             throw new NotImplementedException();
         }

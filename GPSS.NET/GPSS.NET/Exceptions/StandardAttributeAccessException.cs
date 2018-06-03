@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GPSS.Exceptions
 {
-    public class StandardAttributeAccessException : GpssException
+    public class StandardAttributeAccessException : ArgumentException
     {
         public StandardAttributeAccessException(string message, EntityTypes entityType) : base(message)
         {

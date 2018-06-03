@@ -1,4 +1,5 @@
-﻿using GPSS.StandardAttributes;
+﻿using GPSS.Extensions;
+using GPSS.StandardAttributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,11 +11,6 @@ namespace GPSS.Entities.Groups
         public int Count => throw new NotImplementedException();
 
         public TransactionGroup Clone()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Clear()
         {
             throw new NotImplementedException();
         }

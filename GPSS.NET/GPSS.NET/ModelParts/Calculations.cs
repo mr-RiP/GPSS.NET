@@ -37,24 +37,6 @@ namespace GPSS.ModelParts
             BoolVariables = BoolVariables.Clone(),
         };
 
-        public void Clear()
-        {
-            foreach (var matrix in Matrices.Values)
-                matrix.Clear();
-
-            foreach (var savevalue in Savevalues.Values)
-                savevalue.Clear();
-
-            foreach (var variable in Variables.Values)
-                variable.Clear();
-
-            foreach (var variable in FloatVariables.Values)
-                variable.Clear();
-
-            foreach (var variable in BoolVariables.Values)
-                variable.Clear();
-        }
-
         object ICloneable.Clone() => Clone();
     }
 }

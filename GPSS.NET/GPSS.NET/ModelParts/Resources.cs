@@ -20,11 +20,6 @@ namespace GPSS.ModelParts
             Storages = Storages.Clone(),
         };
 
-        public void Clear()
-        {
-            throw new NotImplementedException();
-        }
-
         object ICloneable.Clone() => Clone();
     }
 }

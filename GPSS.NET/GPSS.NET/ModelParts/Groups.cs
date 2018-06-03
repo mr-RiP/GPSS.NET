@@ -17,11 +17,6 @@ namespace GPSS.ModelParts
             TransactionGroups = TransactionGroups.Clone(),
         };
 
-        public void Clear()
-        {
-            throw new NotImplementedException();
-        }
-
         object ICloneable.Clone() => Clone();
     }
 }

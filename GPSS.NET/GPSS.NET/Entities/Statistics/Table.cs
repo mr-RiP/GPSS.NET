@@ -1,4 +1,5 @@
-﻿using GPSS.StandardAttributes;
+﻿using GPSS.Extensions;
+using GPSS.StandardAttributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,11 +15,6 @@ namespace GPSS.Entities.Statistics
         public double StandardDeviation => throw new NotImplementedException();
 
         public Table Clone()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Clear()
         {
             throw new NotImplementedException();
         }

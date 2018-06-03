@@ -22,7 +22,7 @@ namespace GPSS
             return new Simulation(this);
         }
 
-        internal General General { get; private set; } = new General();
+        internal Statements Statements { get; private set; } = new Statements();
         internal Calculations Calculations { get; private set; } = new Calculations();
         internal Groups Groups { get; private set; } = new Groups();
         internal Resources Resources { get; private set; } = new Resources();
@@ -30,7 +30,7 @@ namespace GPSS
 
         public Model Clone() => new Model()
         {
-            General = General.Clone(),
+            Statements = Statements.Clone(),
             Calculations = Calculations.Clone(),
             Groups = Groups.Clone(),
             Resources = Resources.Clone(),
@@ -70,7 +70,7 @@ namespace GPSS
                 creationLimit ?? (sna => null),
                 priority ?? (sna => 0));
 
-            General.Blocks.Add(generate);
+            Statements.Blocks.Add(generate);
             return this;
         }
 
@@ -83,7 +83,7 @@ namespace GPSS
         public Model Advance(Func<IStandardAttributes, double> delayTime)
         {
             var advance = new Advance(delayTime ?? (sna => 0.0));
-            General.Blocks.Add(advance);
+            Statements.Blocks.Add(advance);
             return this;
         }
 
@@ -96,7 +96,7 @@ namespace GPSS
         public Model Terminate(Func<IStandardAttributes, int> terminationDecrement)
         {
             var terminate = new Terminate(terminationDecrement ?? (sna => 0));
-            General.Blocks.Add(terminate);
+            Statements.Blocks.Add(terminate);
             return this;
         }
 

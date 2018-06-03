@@ -1,4 +1,5 @@
-﻿using GPSS.StandardAttributes;
+﻿using GPSS.Extensions;
+using GPSS.StandardAttributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -22,11 +23,6 @@ namespace GPSS.Entities.Statistics
         public double AverageNonZeroResidenceTime => throw new NotImplementedException();
 
         public Queue Clone()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Clear()
         {
             throw new NotImplementedException();
         }

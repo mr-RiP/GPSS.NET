@@ -18,11 +18,6 @@ namespace GPSS.ModelParts
             Tables = Tables.Clone()
         };
 
-        public void Clear()
-        {
-            throw new NotImplementedException();
-        }
-
         object ICloneable.Clone() => Clone();
     }
 }

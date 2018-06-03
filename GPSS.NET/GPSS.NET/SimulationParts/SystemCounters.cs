@@ -1,5 +1,5 @@
 ﻿using GPSS.StandardAttributes;
-using GPSS.Entities.General;
+using GPSS.Extensions;
 
 namespace GPSS.SimulationParts
 {
@@ -15,7 +15,15 @@ namespace GPSS.SimulationParts
 
         public void Clear()
         {
-            throw new System.NotImplementedException();
+            GenerationCount = 0;
+            TerminationCount = 0.0;
+            AbsoluteClock = 0.0;
+            RelativeClock = 0.0;
+        }
+
+        public void Reset()
+        {
+            RelativeClock = 0.0;
         }
 
         public void UpdateClock(double timeIncrement)

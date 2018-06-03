@@ -20,7 +20,7 @@ namespace GPSS.SimulationParts
 
         public IBlockAttributes Block(string blockName)
         {
-            General general = simulation.Model.General;
+            Statements general = simulation.Model.Statements;
             if (general.Labels.ContainsKey(blockName))
                 return general.Blocks[general.Labels[blockName]];
             else

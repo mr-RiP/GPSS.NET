@@ -108,11 +108,5 @@ namespace GPSS.Entities.General.Blocks
                 Preempted = false,
             };
         }
-
-        public override void Clear()
-        {
-            base.Clear();
-            GenerationLimitValue = null;
-        }
     }
 }

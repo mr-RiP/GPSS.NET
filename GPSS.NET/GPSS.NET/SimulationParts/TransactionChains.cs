@@ -8,7 +8,7 @@ namespace GPSS.SimulationParts
 {
     // http://www.minutemansoftware.com/reference/r9.htm#9.1
     internal class TransactionChains
-    {   
+    {
         public Dictionary<string, Userchain> UserChains { get; private set; } = new Dictionary<string, Userchain>();
 
         public Dictionary<int, List<Transaction>> DelayChains { get; private set; } = new Dictionary<int, List<Transaction>>();

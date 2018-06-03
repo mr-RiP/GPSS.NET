@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace GPSS.ModelParts
 {
-    internal class General : ICloneable
+    internal class Statements : ICloneable
     {
         public List<Block> Blocks { get; private set; } = new List<Block>();
 
@@ -14,10 +14,10 @@ namespace GPSS.ModelParts
 
         public Dictionary<string, int> Labels { get; private set; } = new Dictionary<string, int>();
 
-        public General Clone()
+        public Statements Clone()
         {
             List<Block> cloneBlocks = Blocks.Clone();
-            return new General
+            return new Statements
             {
                 Blocks = cloneBlocks,
                 Labels = new Dictionary<string, int>(Labels, Labels.Comparer),
@@ -26,11 +26,6 @@ namespace GPSS.ModelParts
                     .Select(i => cloneBlocks[i])
                     .ToList(),
             };
-        }
-
-        public void Clear()
-        {
-            throw new NotImplementedException();
         }
 
         object ICloneable.Clone() => Clone();

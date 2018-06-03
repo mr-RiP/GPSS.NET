@@ -9,32 +9,36 @@ namespace GPSS
         internal Simulation(Model model)
         {
             ValidateModel(model);
-            CloneModel(model);
-            InitializeSimulationData();
+            CloneInitialModel(model);
+            InitializeAccessors();
         }
 
+        // Клон изначальной модели, используется как прототип при дальнейшем моделировании
+        private Model initialModel;
+
+        // Данные моделирования - не существуют до старта симуляции (или хранят данные прошлой симуляции)
         internal Model Model { get; private set; }
         internal TransactionChains Chains { get; private set; }
         internal SystemCounters System { get; private set; }
+
+        // Аксессоры
         internal ActiveTransaction ActiveTransaction { get; private set; }
         internal StandardAttributesAccess StandardAttributes { get; private set; }
 
-        private void InitializeSimulationData()
+        private void InitializeAccessors()
         {
-            Chains = new TransactionChains();
-            System = new SystemCounters();
             ActiveTransaction = new ActiveTransaction(this);
             StandardAttributes = new StandardAttributesAccess(this);
         }
 
-        private void ValidateModel(Model model)
+        private static void ValidateModel(Model model)
         {
             throw new NotImplementedException();
         }
 
-        private void CloneModel(Model model)
+        private void CloneInitialModel(Model model)
         {
-            Model = model.Clone();
+            initialModel = model.Clone();
         }
 
         public Report Start(int terminationCount)
@@ -52,7 +56,7 @@ namespace GPSS
 
             return new Report(this);
         }
-
+        
         private void UpdateEvents()
         {
             Chains.UpdateCurrentEvents();
@@ -62,19 +66,11 @@ namespace GPSS
 
         private void ResetSimulation(int terminationCount)
         {
-            Clear();
-            System.TerminationCount = terminationCount;
-        }
+            Model = initialModel.Clone();
+            Chains = new TransactionChains();
+            System = new SystemCounters();
 
-        public void Clear()
-        {
-            Model.General.Clear();
-            Model.Calculations.Clear();
-            Model.Groups.Clear();
-            Model.Resources.Clear();
-            Model.Statistics.Clear();
-            Chains.Clear();
-            System.Clear();
+            System.TerminationCount = terminationCount;
         }
 
         private void RunCurrentEvents()
@@ -89,7 +85,7 @@ namespace GPSS
 
         private void GenerateEvents()
         {
-            Model.General.Generators.ForEach(g => g.Run(this));
+            Model.Statements.Generators.ForEach(g => g.Run(this));
         }
     }
 }

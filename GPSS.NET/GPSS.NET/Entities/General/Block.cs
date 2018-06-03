@@ -1,4 +1,5 @@
-﻿using GPSS.StandardAttributes;
+﻿using GPSS.Extensions;
+using GPSS.StandardAttributes;
 using System;
 
 namespace GPSS.Entities.General
@@ -16,15 +17,9 @@ namespace GPSS.Entities.General
 
         abstract public void Run(Simulation simulation);
 
-        public virtual void Clear()
-        {
-            EntryCount = 0;
-            TransactionsCount = 0;
-        }
-
         protected int GetBlockIndex(Simulation simulation)
         {
-            return simulation.Model.General.Blocks.IndexOf(this);
+            return simulation.Model.Statements.Blocks.IndexOf(this);
         }
 
         protected void EnterBlock()

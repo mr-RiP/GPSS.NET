@@ -1,4 +1,5 @@
-﻿using GPSS.StandardAttributes;
+﻿using GPSS.Extensions;
+using GPSS.StandardAttributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,7 +20,7 @@ namespace GPSS.Entities.Calculations
             throw new NotImplementedException();
         }
 
-        internal void Clear()
+        public void Reset()
         {
             throw new NotImplementedException();
         }

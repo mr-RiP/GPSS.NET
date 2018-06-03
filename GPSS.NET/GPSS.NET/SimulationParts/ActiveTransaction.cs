@@ -1,6 +1,7 @@
 ﻿using GPSS.Entities.General;
 using GPSS.Enums;
 using GPSS.Exceptions;
+using GPSS.Extensions;
 using GPSS.StandardAttributes;
 using System;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace GPSS.SimulationParts
 
         public bool MatchAtBlock(string blockName)
         {
-            var modelGeneral = simulation.Model.General;
+            var modelGeneral = simulation.Model.Statements;
             if (modelGeneral.Labels.ContainsKey(blockName))
             {
                 int blockIndex = modelGeneral.Labels[blockName];
@@ -76,7 +77,7 @@ namespace GPSS.SimulationParts
 
         internal void RunNextBlock()
         {
-            simulation.Model.General.Blocks[Transaction.NextBlock].Run(simulation);
+            simulation.Model.Statements.Blocks[Transaction.NextBlock].Run(simulation);
         }
 
         public void Clear()

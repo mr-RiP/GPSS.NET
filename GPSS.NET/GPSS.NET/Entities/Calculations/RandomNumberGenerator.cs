@@ -5,6 +5,12 @@ namespace GPSS.Entities.Calculations
 {
     internal class RandomNumberGenerator : ICloneable, IRandomNumberGeneratorAttributes
     {
+        // 0 < x < 1
+        // 0.99999999999999978 - верхний предел метода Random.NextDouble()
+        // https://msdn.microsoft.com/ru-ru/library/system.random.nextdouble(v=vs.110).aspx
+        // 4.94065645841247E-324 = (1.0 - 0.99999999999999978) / 2.0
+        private const double nextDoubleFix = 4.94065645841247E-324;
+
         public RandomNumberGenerator()
         {
             random = new Random();
@@ -27,12 +33,8 @@ namespace GPSS.Entities.Calculations
         public double StandardUniform()
         {
             lock (lockObject)
-            {
-                // 0 < x < 1
-                // 0.99999999999999978 - верхний предел метода Random.NextDouble()
-                // https://msdn.microsoft.com/ru-ru/library/system.random.nextdouble(v=vs.110).aspx
-                // 4.94065645841247E-324 = (1.0 - 0.99999999999999978) / 2.0
-                return random.NextDouble() + 4.94065645841247E-324;
+            {              
+                return random.NextDouble() + nextDoubleFix;
             }
         }
 

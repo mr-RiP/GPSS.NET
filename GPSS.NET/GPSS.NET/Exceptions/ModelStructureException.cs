@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GPSS.Exceptions
 {
-    public class ModelStructureException : GpssException
+    public class ModelStructureException : Exception
     {
         public ModelStructureException(string message, int blockIndex) : base(message)
         {

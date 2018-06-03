@@ -1,4 +1,5 @@
-﻿using GPSS.StandardAttributes;
+﻿using GPSS.Extensions;
+using GPSS.StandardAttributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,11 +21,6 @@ namespace GPSS.Entities.Resources
         public bool Available => throw new NotImplementedException();
 
         public Facility Clone()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Clear()
         {
             throw new NotImplementedException();
         }

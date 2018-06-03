@@ -13,5 +13,7 @@
         /// Random integer between 0 and 999.
         /// </returns>
         int RandomNumber();
+
+        IProbabilityDistributions ProbabilityDistributions { get; }
     }
 }

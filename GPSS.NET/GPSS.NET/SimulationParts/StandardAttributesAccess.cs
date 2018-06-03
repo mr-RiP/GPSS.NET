@@ -30,7 +30,7 @@ namespace GPSS.SimulationParts
 
         public IVariableAttributes<bool> BoolVariable(string variableName)
         {
-            return AccessDictionary(simulation.Model.Calculations.BoolVariables,
+            return AccessVariable(simulation.Model.Calculations.BoolVariables,
                 variableName, EntityTypes.BoolVariable);
         }
 
@@ -42,7 +42,7 @@ namespace GPSS.SimulationParts
 
         public IVariableAttributes<double> FloatVariable(string variableName)
         {
-            return AccessDictionary(simulation.Model.Calculations.FloatVariables,
+            return AccessVariable(simulation.Model.Calculations.FloatVariables,
                 variableName, EntityTypes.FloatVariable);
         }
 
@@ -135,7 +135,7 @@ namespace GPSS.SimulationParts
 
         public IVariableAttributes<int> Variable(string variableName)
         {
-            return AccessDictionary(simulation.Model.Calculations.Variables,
+            return AccessVariable(simulation.Model.Calculations.Variables,
                 variableName, EntityTypes.Variable);
         }
 
@@ -150,7 +150,32 @@ namespace GPSS.SimulationParts
                 return dictionary[name];
             else
                 throw new StandardAttributeAccessException(
-                    entityType.ToString() + " with given name does not exists.", entityType);
+                    entityType.ToString() + " with given name does not exists.",
+                    entityType);
+        }
+
+        private Variable<T> AccessVariable<T>(Dictionary<string, Variable<T>> dictionary, string name, EntityTypes entityType)
+        {
+            var variable = AccessDictionary(dictionary, name, entityType);
+            try
+            {
+                variable.Calculate(this);
+            }
+            catch (StandardAttributeAccessException error)
+            {
+                throw new StandardAttributeAccessException(
+                    entityType.ToString() + " Expression could not access " + error.EntityType.ToString() + " attributes.",
+                    entityType,
+                    error);
+            }
+            catch (Exception error)
+            {
+                throw new StandardAttributeAccessException(
+                    entityType.ToString() + " Expression could not been calculated.",
+                    entityType,
+                    error);
+            }
+            return variable;
         }
     }
 }

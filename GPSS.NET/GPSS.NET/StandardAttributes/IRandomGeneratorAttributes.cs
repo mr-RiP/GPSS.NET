@@ -14,6 +14,9 @@
         /// </returns>
         int RandomNumber();
 
+        /// <summary>
+        /// Probability Distributions Generators access using current Random Number Generator.
+        /// </summary>
         IProbabilityDistributions ProbabilityDistributions { get; }
     }
 }

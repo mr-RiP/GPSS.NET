@@ -1,10 +1,12 @@
-﻿using GPSS.Extensions;
+﻿using GPSS.Enums;
+using GPSS.Exceptions;
+using GPSS.Extensions;
 using GPSS.StandardAttributes;
 using System;
 
 namespace GPSS.Entities.Calculations
 {
-    internal class Variable<T> : ICloneable, IVariableAttributes<T>
+    internal class Variable<T> : ICloneable, IVariableAttributes<T>, ICalculatable<T>
     {
         public Variable(Func<IStandardAttributes, T> expression)
         {
@@ -17,10 +19,39 @@ namespace GPSS.Entities.Calculations
 
         public void Calculate(IStandardAttributes sna)
         {
-            Result = Expression(sna);
+            try
+            {
+                Result = Expression(sna);
+            }
+            catch (StandardAttributeAccessException error)
+            {
+                var entityType = GetEntityType();
+                throw new StandardAttributeAccessException(
+                    entityType.ToString() + " Expression could not access " + error.EntityType.ToString() + " attributes.",
+                    entityType,
+                    error);
+            }
+            catch (Exception error)
+            {
+                var entityType = GetEntityType();
+                throw new StandardAttributeAccessException(
+                    entityType.ToString() + " Expression could not been calculated.",
+                    entityType,
+                    error);
+            }
         }
 
         public Variable<T> Clone() => new Variable<T>(Expression);      
         object ICloneable.Clone() => Clone();
+
+        private EntityTypes GetEntityType()
+        {
+            if (Result is double)
+                return EntityTypes.FloatVariable;
+            else if (Result is bool)
+                return EntityTypes.BoolVariable;
+            else
+                return EntityTypes.Variable;
+        }
     }
 }

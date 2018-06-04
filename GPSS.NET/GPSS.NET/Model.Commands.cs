@@ -1,5 +1,6 @@
 ﻿using GPSS.Entities.Calculations;
 using GPSS.Entities.Calculations.Functions;
+using GPSS.Entities.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -252,6 +253,21 @@ namespace GPSS
                 throw new ArgumentOutOfRangeException(nameof(name), "Function with given name already exists in the Model.");
             else
                 Calculations.Functions.Add(name, new AttributeListFunction(argument, values));
+
+            return this;
+        }
+
+        public Model Storage(string name, int capacity)
+        {
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
+            if (capacity <= 0)
+                throw new ArgumentOutOfRangeException(nameof(capacity), "Argument value must be positive.");
+
+            if (Resources.Storages.ContainsKey(name))
+                throw new ArgumentOutOfRangeException(nameof(name), "Storage with given name already exists in the Model.");
+            else
+                Resources.Storages.Add(name, new Storage(capacity));
 
             return this;
         }

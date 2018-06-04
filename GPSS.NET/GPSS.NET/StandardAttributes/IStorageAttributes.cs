@@ -30,7 +30,7 @@
         /// <remarks>
         /// GPSS World SA$Entnum SNA.
         /// </remarks>
-        double AverageCapacity { get; }
+        double AverageCapacity();
 
         /// <summary>
         /// Storage use count.
@@ -69,7 +69,7 @@
         /// <remarks>
         /// GPSS World SR$Entnum SNA.
         /// </remarks>
-        double Utilization { get; }
+        double Utilization();
 
         /// <summary>
         /// Maximum storage in use at the Storage Entity. 
@@ -78,7 +78,7 @@
         /// <remarks>
         /// GPSS World SM$Entnum SNA.
         /// </remarks>
-        int MaximumCapacityUsed { get; }
+        int MaximumCapacityUsed();
 
         /// <summary>
         /// Average holding time per unit at the Storage Entity.
@@ -86,7 +86,7 @@
         /// <remarks>
         /// GPSS World ST$Entnum SNA.
         /// </remarks>
-        double AverageHoldingTime { get; }
+        double AverageHoldingTime();
 
         /// <summary>
         /// Storage Entity in available state.

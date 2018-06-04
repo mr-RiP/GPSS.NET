@@ -102,7 +102,7 @@ namespace GPSS.Entities.General.Blocks
                 TimeIncrement = timeIncrement,
                 CurrentBlock = blockIndex,
                 NextBlock = blockIndex + 1,
-                Chain = TransactionState.Passive,
+                Chain = TransactionState.Suspended,
                 Priority = Priority(simulation.StandardAttributes),
                 Trace = false,
                 Preempted = false,

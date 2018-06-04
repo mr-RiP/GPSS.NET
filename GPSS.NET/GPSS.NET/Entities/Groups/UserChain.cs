@@ -7,8 +7,10 @@ using System.Text;
 
 namespace GPSS.Entities.Groups
 {
-    internal class Userchain : List<Transaction>, ICloneable, IUserchainAttributes
+    internal class Userchain : ICloneable, IUserchainAttributes
     {
+        public LinkedList<Transaction> Chain { get; private set; } = new LinkedList<Transaction>();
+            
         public double AverageContent => throw new NotImplementedException();
 
         public int TotalEntries => throw new NotImplementedException();

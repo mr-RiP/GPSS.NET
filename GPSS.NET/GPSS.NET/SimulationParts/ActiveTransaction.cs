@@ -37,8 +37,9 @@ namespace GPSS.SimulationParts
                 var chains = simulation.Chains;
                 return chains.CurrentEvents.Any(t => t.CurrentBlock == blockIndex) ||
                     chains.FutureEvents.Any(t => t.CurrentBlock == blockIndex) ||
-                    chains.DelayChains.Any(kvp => kvp.Value.Any(t => t.CurrentBlock == blockIndex)) ||
-                    chains.PendingChains.Any(kvp => kvp.Value.Any(t => t.CurrentBlock == blockIndex)) ||
+                    chains.StorageDelayChains.Any(kvp => kvp.Value.Any(t => t.CurrentBlock == blockIndex)) ||
+                    chains.FacilityDelayChains.Any(kvp => kvp.Value.Any(t => t.CurrentBlock == blockIndex)) ||
+                    chains.FacilityPendingChains.Any(kvp => kvp.Value.Any(t => t.CurrentBlock == blockIndex)) ||
                     chains.UserChains.Any(kvp => kvp.Value.Any(t => t.CurrentBlock == blockIndex));
             }
             else

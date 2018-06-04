@@ -59,7 +59,7 @@ namespace GPSS
         
         private void UpdateEvents()
         {
-            Chains.UpdateCurrentEvents();
+            Chains.UpdateEvents();
             System.UpdateClock(Chains.CurrentTimeIncrement());
             Chains.RefreshTimeIncrement();
         }

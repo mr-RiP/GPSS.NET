@@ -37,11 +37,10 @@ namespace GPSS.Entities.General.Blocks
                 throw new ModelStructureException("Negative time increment.", GetBlockIndex(simulation));
 
             var transaction = simulation.ActiveTransaction.Transaction;
-            transaction.Chain = TransactionState.Suspended;
-
             var chains = simulation.Chains;
-            chains.CurrentEvents.Remove(transaction);
 
+            transaction.Chain = TransactionState.Suspended;
+            chains.CurrentEvents.Remove(transaction);
             if (time == 0.0)
                 chains.PlaceInCurrentEvents(transaction);
             else

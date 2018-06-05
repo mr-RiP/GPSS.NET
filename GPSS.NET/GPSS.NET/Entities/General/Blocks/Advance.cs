@@ -29,23 +29,23 @@ namespace GPSS.Entities.General.Blocks
             TransactionsCount = TransactionsCount,
         };
 
-        public override void Run(Simulation simulation)
+        public override void EnterBlock(Simulation simulation)
         {
-            EnterBlock();
-            double time = Delay(simulation.StandardAttributes);
-            if (time < 0.0)
-                throw new ModelStructureException("Negative time increment.", GetBlockIndex(simulation));
+            base.EnterBlock(simulation);
 
             var transaction = simulation.ActiveTransaction.Transaction;
-            var chains = simulation.Chains;
-
             transaction.Chain = TransactionState.Suspended;
+
+            double time = Delay(simulation.StandardAttributes);
+            if (time < 0.0)
+                throw new ModelStructureException("Negative time increment.", transaction.CurrentBlock);
+
+            var chains = simulation.Chains;
             chains.CurrentEvents.Remove(transaction);
             if (time == 0.0)
                 chains.PlaceInCurrentEvents(transaction);
             else
-                chains.PlaceInFutureEvents(transaction);
-            ExitBlock();
+                chains.PlaceInFutureEvents(transaction, time);
         }
     }
 }

@@ -8,34 +8,31 @@ namespace GPSS.Entities.General
 {
     internal class Transaction : ICloneable
     {
-        public int Number { get; set; }
+        public virtual int Number { get; set; }
 
-        public int Priority { get; set; }
+        public virtual int Priority { get; set; }
 
-        public int Assembly { get; set; }
+        public virtual int Assembly { get; set; }
 
-        public double TimeIncrement { get; set; }
+        public virtual double MarkTime { get; set; }
 
-        public double MarkTime { get; set; }
+        public virtual bool Trace { get; set; }
 
-        public bool Trace { get; set; }
+        public virtual int CurrentBlock { get; set; }
 
-        public int CurrentBlock { get; set; }
+        public virtual int NextBlock { get; set; }
 
-        public int NextBlock { get; set; }
+        public virtual TransactionState Chain { get; set; }
 
-        public TransactionState Chain { get; set; }
+        public virtual bool Preempted { get; set; }
 
-        public bool Preempted { get; set; }
+        public virtual Dictionary<string, dynamic> Parameters { get; private set; } = new Dictionary<string, dynamic>();
 
-        public Dictionary<string, dynamic> Parameters { get; private set; } = new Dictionary<string, dynamic>();
-
-        public Transaction Clone() => new Transaction
+        public virtual Transaction Clone() => new Transaction
         {
             Number = Number,
             Assembly = Assembly,
             Priority = Priority,
-            TimeIncrement = TimeIncrement,
             MarkTime = MarkTime,
             CurrentBlock = CurrentBlock,
             NextBlock = NextBlock,
@@ -44,5 +41,15 @@ namespace GPSS.Entities.General
         };
 
         object ICloneable.Clone() => Clone();
+
+        public virtual Transaction InnerTransaction { get => null; }
+
+        public Transaction GetOriginal()
+        {
+            Transaction transaction = this;
+            while (transaction.InnerTransaction != null)
+                transaction = transaction.InnerTransaction;
+            return transaction;
+        }
     }
 }                      

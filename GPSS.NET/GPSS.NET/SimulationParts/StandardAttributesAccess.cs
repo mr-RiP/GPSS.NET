@@ -21,13 +21,9 @@ namespace GPSS.SimulationParts
 
         public IBlockAttributes Block(string blockName)
         {
-            Statements general = simulation.Model.Statements;
-            if (general.Labels.ContainsKey(blockName))
-                return general.Blocks[general.Labels[blockName]];
-            else
-                throw new StandardAttributeAccessException(
-                    "Block labeled as \"" + blockName + "\" does not exists within the Model.",
-                    EntityTypes.Block);
+            Statements statements = simulation.Model.Statements;
+            int index = AccessDictionary(statements.Labels, blockName, EntityTypes.Block);
+            return statements.Blocks[index];
         }
 
         public IVariableAttributes<bool> BoolVariable(string variableName)
@@ -133,7 +129,7 @@ namespace GPSS.SimulationParts
 
         public IUserchainAttributes Userchain(string userChainName)
         {
-            return AccessDictionary(simulation.Chains.UserChains,
+            return AccessDictionary(simulation.Model.Groups.Userchains,
                 userChainName, EntityTypes.Userchain);
         }
 
@@ -150,12 +146,19 @@ namespace GPSS.SimulationParts
 
         private T AccessDictionary<T>(Dictionary<string, T> dictionary, string name, EntityTypes entityType)
         {
+            if (name == null)
+                throw new StandardAttributeAccessException(
+                    "Can not access Standard Attributes using null name.",
+                    entityType,
+                    new ArgumentNullException());
+
             if (dictionary.ContainsKey(name))
                 return dictionary[name];
             else
                 throw new StandardAttributeAccessException(
                     entityType.ToString() + " by name \"" + name + "\" does not exists.",
-                    entityType);
+                    entityType,
+                    new ArgumentOutOfRangeException());
         }
 
         private Variable<T> AccessVariable<T>(Dictionary<string, Variable<T>> dictionary, string name, EntityTypes entityType)

@@ -29,21 +29,22 @@ namespace GPSS.Entities.General.Blocks
             TransactionsCount = TransactionsCount,
         };
 
-        public override void Run(Simulation simulation)
+        public override void EnterBlock(Simulation simulation)
         {
-            EnterBlock();
+            base.EnterBlock(simulation);
+
+            var transaction = simulation.ActiveTransaction.Transaction;
+            transaction.Chain = TransactionState.Terminated;
 
             int decrement = TerminationDecrement(simulation.StandardAttributes);
             if (decrement < 0)
                 throw new ModelStructureException("Termination decrement value must be positive or zero.",
-                    GetBlockIndex(simulation));
+                    transaction.CurrentBlock);
 
-            var transaction = simulation.ActiveTransaction.Transaction;
-            transaction.Chain = TransactionState.Terminated;
             simulation.Chains.CurrentEvents.Remove(transaction);
             simulation.System.TerminationCount -= decrement;
 
-            ExitBlock();
+            base.ExitBlock(simulation);
         }
     }
 }

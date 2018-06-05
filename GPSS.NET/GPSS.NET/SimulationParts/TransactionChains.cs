@@ -1,4 +1,5 @@
 ﻿using GPSS.Entities.General;
+using GPSS.Entities.General.Transactions;
 using GPSS.Entities.Groups;
 using GPSS.Enums;
 using System;
@@ -18,12 +19,14 @@ namespace GPSS.SimulationParts
 
         public Dictionary<string, LinkedList<Transaction>> FacilityPendingChains { get; private set; } = new Dictionary<string, LinkedList<Transaction>>();
 
-        public LinkedList<Transaction> FutureEvents { get; private set; } = new LinkedList<Transaction>();
+        public LinkedList<FutureEventTransaction> FutureEvents { get; private set; } = new LinkedList<FutureEventTransaction>();
 
         // Kept in priority order, the Active Transaction is usually returned to the CEC ahead of its peers.
         // When the Active Transaction comes to rest on some Transaction Chain,
         // the highest priority Transaction remaining on the CEC becomes the Active Transaction.
         public LinkedList<Transaction> CurrentEvents { get; private set; } = new LinkedList<Transaction>();
+
+        public double CurrentTimeIncrement { get; private set; } = 0.0;
 
         public Transaction GetActiveTransaction()
         {
@@ -43,25 +46,26 @@ namespace GPSS.SimulationParts
             }
         }
 
-        public void PlaceInFutureEvents(Transaction transaction)
+        public void PlaceInFutureEvents(Transaction transaction, double timeIncrement)
         {
-            if (FutureEvents.Count == 0 || transaction.TimeIncrement >= FutureEvents.Last.Value.TimeIncrement)
-                FutureEvents.AddLast(transaction);
+            var futureEvent = new FutureEventTransaction(transaction, timeIncrement + CurrentTimeIncrement);
+            if (FutureEvents.Count == 0 || futureEvent.TimeIncrement >= FutureEvents.Last.Value.TimeIncrement)
+                FutureEvents.AddLast(futureEvent);
             else
             {
                 var node = FutureEvents.First;
-                while (node.Value.TimeIncrement <= transaction.TimeIncrement)
+                while (node.Value.TimeIncrement <= futureEvent.TimeIncrement)
                     node = node.Next;
-                FutureEvents.AddBefore(node, transaction);
+                FutureEvents.AddBefore(node, futureEvent);
             }
         }
 
         public void UpdateEvents()
         {
-            double minTime = FutureEvents.First.Value.TimeIncrement;
-            while (FutureEvents.First.Value.TimeIncrement == minTime)
+            CurrentTimeIncrement = FutureEvents.First.Value.TimeIncrement;
+            while (FutureEvents.First.Value.TimeIncrement == CurrentTimeIncrement)
             {
-                PlaceInCurrentEvents(FutureEvents.First.Value);
+                PlaceInCurrentEvents(FutureEvents.First.Value.InnerTransaction);
                 FutureEvents.RemoveFirst();
             }       
         }
@@ -70,17 +74,10 @@ namespace GPSS.SimulationParts
         {
             if (CurrentEvents.Count != 0)
             {
-                double increment = CurrentEvents.First.Value.TimeIncrement;
-                foreach (var transaction in CurrentEvents)
-                    transaction.TimeIncrement = 0.0;
                 foreach (var transaction in FutureEvents)
-                    transaction.TimeIncrement -= increment;
+                    transaction.TimeIncrement -= CurrentTimeIncrement;
+                CurrentTimeIncrement = 0.0;
             }
         }
-
-        public double CurrentTimeIncrement()
-        {
-            return CurrentEvents.FirstOrDefault()?.TimeIncrement ?? 0.0;
-        } 
     }
 }

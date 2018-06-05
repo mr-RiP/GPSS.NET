@@ -15,20 +15,16 @@ namespace GPSS.Entities.General
         abstract public Block Clone();
         object ICloneable.Clone() => Clone();
 
-        abstract public void Run(Simulation simulation);
-
-        protected int GetBlockIndex(Simulation simulation)
-        {
-            return simulation.Model.Statements.Blocks.IndexOf(this);
-        }
-
-        protected void EnterBlock()
+        public virtual void EnterBlock(Simulation simulation)
         {
             EntryCount++;
             TransactionsCount++;
+            var transaction = simulation.ActiveTransaction.Transaction;
+            transaction.CurrentBlock = transaction.NextBlock;
+            transaction.NextBlock++;
         }
 
-        protected void ExitBlock()
+        public virtual void ExitBlock(Simulation simulation)
         {
             TransactionsCount--;
         }

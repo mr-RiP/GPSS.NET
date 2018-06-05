@@ -227,5 +227,121 @@ namespace GPSS
         }
 
         #endregion
+
+        #region ENTER Block // TODO
+
+        /// <summary>
+        /// ENTER Block.
+        /// When a Transaction attempts to enter an ENTER Block, it either takes or waits for a specified number of storage capacity units.
+        /// </summary>
+        /// <param name="storageName">Storage entity name. Must neither be null nor return null. Must address to predefined Storage Entity.</param>
+        /// <param name="storageCapacity">Number of storage capacity units used by entering transaction. Null means 1.</param>
+        /// <returns>Model with added ENTER Block.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="storageName"/> must not be null.</exception>
+        public virtual Model Enter(Func<IStandardAttributes, string> storageName, Func<IStandardAttributes, int> storageCapacity = null)
+        {
+            var enter = new Enter(
+                storageName ?? throw new ArgumentNullException(nameof(storageName)),
+                storageCapacity ?? (sna => 1));
+
+            Statements.Blocks.Add(enter);
+            return this;
+        }
+
+        #endregion
+
+        #region LEAVE Block // TODO
+
+        /// <summary>
+        /// LEAVE Block.
+        /// A LEAVE Block increases the accessible storage capacity units at a Storage Entity.
+        /// </summary>
+        /// <param name="storageName">Storage entity name. Must neither be null nor return null. Must address to predefined Storage Entity.</param>
+        /// <param name="storageCapacity">Number of storage capacity units used by entering transaction. Null means 1.</param>
+        /// <returns>Model with added LEAVE Block.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="storageName"/> must not be null.</exception>
+        public virtual Model Leave(Func<IStandardAttributes, string> storageName, Func<IStandardAttributes, int> storageCapacity = null)
+        {
+            var leave = new Leave(
+                storageName ?? throw new ArgumentNullException(nameof(storageName)),
+                storageCapacity ?? (sna => 1));
+
+            Statements.Blocks.Add(leave);
+            return this;
+        }
+
+        #endregion
+
+        #region SAVAIL Block 
+
+        /// <summary>
+        /// SAVAIL Block.
+        /// A SAVAIL Block ensures that a Storage Entity is in the available state.
+        /// </summary>
+        /// <param name="storageName">Storage entity name. Must not be null. Must address to predefined Storage Entity.</param>
+        /// <returns>Model with added SAVAIL Block.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="storageName"/> must not be null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="storageName"/> must address to predefined Storage Entity.</exception>
+        public Model StorageAvailable(string storageName)
+        {
+            if (storageName == null)
+                throw new ArgumentNullException(nameof(storageName));
+            if (!Resources.Storages.ContainsKey(storageName))
+                throw new ArgumentOutOfRangeException(nameof(storageName), "Storage entity with given name does not exists in the model.");
+
+            return StorageAvailable(sna => storageName);
+        }
+
+        /// <summary>
+        /// SAVAIL Block.
+        /// A SAVAIL Block ensures that a Storage Entity is in the available state.
+        /// </summary>
+        /// <param name="storageName">Storage entity name. Must neither be null nor return null. Must address to predefined Storage Entity.</param>
+        /// <returns>Model with added SAVAIL Block.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="storageName"/> must not be null.</exception>
+        public virtual Model StorageAvailable(Func<IStandardAttributes, string> storageName)
+        {
+            var savail = new StorageAvailable(storageName ?? throw new ArgumentNullException(nameof(storageName)));
+            Statements.Blocks.Add(savail);
+            return this;
+        }
+
+        #endregion
+
+        #region SUNAVAIL Block
+
+        /// <summary>
+        /// SUNAVAIL Block.
+        /// A SAVAIL Block ensures that a Storage Entity is in the unavailable state.
+        /// </summary>
+        /// <param name="storageName">Storage entity name. Must not be null. Must address to predefined Storage Entity.</param>
+        /// <returns>Model with added SAVAIL Block.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="storageName"/> must not be null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="storageName"/> must address to predefined Storage Entity.</exception>
+        public Model StorageUnavailable(string storageName)
+        {
+            if (storageName == null)
+                throw new ArgumentNullException(nameof(storageName));
+            if (!Resources.Storages.ContainsKey(storageName))
+                throw new ArgumentOutOfRangeException(nameof(storageName), "Storage entity with given name does not exists in the model.");
+
+            return StorageUnavailable(sna => storageName);
+        }
+
+        /// <summary>
+        /// SUNAVAIL Block.
+        /// A SAVAIL Block ensures that a Storage Entity is in the unavailable state.
+        /// </summary>
+        /// <param name="storageName">Storage entity name. Must neither be null nor return null. Must address to predefined Storage Entity.</param>
+        /// <returns>Model with added SAVAIL Block.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="storageName"/> must not be null.</exception>
+        public virtual Model StorageUnavailable(Func<IStandardAttributes, string> storageName)
+        {
+            var sunavail = new StorageUnavailable(storageName ?? throw new ArgumentNullException(nameof(storageName)));
+            Statements.Blocks.Add(sunavail);
+            return this;
+        }
+
+        #endregion
     }
 }

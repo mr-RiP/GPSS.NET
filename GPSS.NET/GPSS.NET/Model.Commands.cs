@@ -16,7 +16,7 @@ namespace GPSS
         /// </summary>
         /// <param name="name">Variable name.</param>
         /// <param name="expression">Variable expression.</param>
-        /// <returns>Model with added VARIABLE Entity.</returns>
+        /// <returns>Model with added Variable Entity.</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="name"/> and <paramref name="expression"/> must not be null.
         /// </exception>
@@ -45,7 +45,7 @@ namespace GPSS
         /// </summary>
         /// <param name="name">Variable name.</param>
         /// <param name="expression">Variable expression.</param>
-        /// <returns>Model with added BVARIABLE Entity.</returns>
+        /// <returns>Model with added BVariable Entity.</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="name"/> and <paramref name="expression"/> must not be null.
         /// </exception>
@@ -74,7 +74,7 @@ namespace GPSS
         /// </summary>
         /// <param name="name">Variable name.</param>
         /// <param name="expression">Variable expression.</param>
-        /// <returns>Model with added BVARIABLE Entity.</returns>
+        /// <returns>Model with added FVariable Entity.</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="name"/> and <paramref name="expression"/> must not be null.
         /// </exception>
@@ -105,10 +105,10 @@ namespace GPSS
         /// <param name="name">Function name. Must be unique within the Model functions.</param>
         /// <param name="argument">Function argument.</param>
         /// <param name="values">Function argument-result values pairs.</param>
-        /// <returns>Model with added FUNCTION Entity.</returns>
+        /// <returns>Model with added Function Entity.</returns>
         /// <exception cref="ArgumentNullException">All arguments must not be null.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="values"/> must not be empty.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="name"/> must be unique for the Model Functions.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="name"/> must be unique for the Model Function Entities.</exception>
         public Model ContinuousFunction(string name, Func<IStandardAttributes, double> argument,
             IEnumerable<KeyValuePair<double, double>> values)
         {
@@ -137,10 +137,10 @@ namespace GPSS
         /// <param name="name">Function name. Must be unique within the Model functions.</param>
         /// <param name="argument">Function argument.</param>
         /// <param name="values">Function argument-result values pairs.</param>
-        /// <returns>Model with added FUNCTION Entity.</returns>
+        /// <returns>Model with added Function Entity.</returns>
         /// <exception cref="ArgumentNullException">All arguments must not be null.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="values"/> must not be empty.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="name"/> must be unique for the Model Functions.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="name"/> must be unique for the Model Function Entities.</exception>
         public Model DiscreteFunction(string name, Func<IStandardAttributes, double> argument,
             IEnumerable<KeyValuePair<double, double>> values)
         {
@@ -169,10 +169,10 @@ namespace GPSS
         /// <param name="name">Function name. Must be unique within the Model functions.</param>
         /// <param name="argument">Function argument.</param>
         /// <param name="values">Function argument-result calculation function pairs.</param>
-        /// <returns>Model with added FUNCTION Entity.</returns>
+        /// <returns>Model with added Function Entity.</returns>
         /// <exception cref="ArgumentNullException">All arguments must not be null.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="values"/> must not be empty.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="name"/> must be unique for the Model Functions.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="name"/> must be unique for the Model Function Entities.</exception>
         public Model DiscreteAttributeFunction(string name, Func<IStandardAttributes, double> argument,
             IEnumerable<KeyValuePair<double, Func<IStandardAttributes, double>>> values)
         {
@@ -201,10 +201,10 @@ namespace GPSS
         /// <param name="name">Function name. Must be unique within the Model functions.</param>
         /// <param name="argument">Function argument.</param>
         /// <param name="values">Function result values list.</param>
-        /// <returns>Model with added FUNCTION Entity.</returns>
+        /// <returns>Model with added Function Entity.</returns>
         /// <exception cref="ArgumentNullException">All arguments must not be null.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="values"/> must not be empty.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="name"/> must be unique for the Model Functions.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="name"/> must be unique for the Model Function Entities.</exception>
         public Model ListFunction(string name, Func<IStandardAttributes, int> argument, IList<double> values)
         {
             if (name == null)
@@ -233,10 +233,10 @@ namespace GPSS
         /// <param name="name">Function name. Must be unique within the Model functions.</param>
         /// <param name="argument">Function argument.</param>
         /// <param name="values">Function result calculation functions list.</param>
-        /// <returns>Model with added FUNCTION Entity.</returns>
+        /// <returns>Model with added Function Entity.</returns>
         /// <exception cref="ArgumentNullException">All arguments must not be null.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="values"/> must not be empty.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="name"/> must be unique for the Model Functions.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="name"/> must be unique for the Model Function Entities.</exception>
         public Model AttributeListFunction(string name, Func<IStandardAttributes, int> argument,
             IList<Func<IStandardAttributes, double>> values)
         {
@@ -257,17 +257,27 @@ namespace GPSS
             return this;
         }
 
-        public Model Storage(string name, int capacity)
+        /// <summary>
+        /// STORAGE Command.
+        /// A STORAGE Command defines a Storage Entity.
+        /// </summary>
+        /// <param name="name">Name of the Storage entity to be created.</param>
+        /// <param name="totalCapacity">Total storage capacity of the Storage entity.</param>
+        /// <returns>Model with added Storage Entity.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="name"/> can not be null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="totalCapacity"/> must have positive value.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="name"/> should be unique for the Model Storage Entities.</exception>
+        public Model Storage(string name, int totalCapacity)
         {
             if (name == null)
                 throw new ArgumentNullException(nameof(name));
-            if (capacity <= 0)
-                throw new ArgumentOutOfRangeException(nameof(capacity), "Argument value must be positive.");
+            if (totalCapacity <= 0)
+                throw new ArgumentOutOfRangeException(nameof(totalCapacity), "Argument value must be positive.");
 
             if (Resources.Storages.ContainsKey(name))
                 throw new ArgumentOutOfRangeException(nameof(name), "Storage with given name already exists in the Model.");
             else
-                Resources.Storages.Add(name, new Storage(capacity));
+                Resources.Storages.Add(name, new Storage(totalCapacity));
 
             return this;
         }

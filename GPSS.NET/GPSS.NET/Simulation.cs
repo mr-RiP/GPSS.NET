@@ -60,7 +60,7 @@ namespace GPSS
         private void UpdateEvents()
         {
             Chains.UpdateEvents();
-            System.UpdateClock(Chains.CurrentTimeIncrement());
+            System.UpdateClock(Chains.CurrentTimeIncrement);
             Chains.RefreshTimeIncrement();
         }
 
@@ -85,7 +85,8 @@ namespace GPSS
 
         private void GenerateEvents()
         {
-            Model.Statements.Generators.ForEach(g => g.Run(this));
+            foreach (var generator in Model.Statements.Generators.Keys)
+                generator.GenerateTransaction(this);
         }
     }
 }

@@ -45,13 +45,8 @@ namespace GPSS.Entities.General.Blocks
             TransactionsCount = TransactionsCount,
         };
 
-        public override void Run(Simulation simulation)
+        public void GenerateTransaction(Simulation simulation)
         {
-            if (simulation.ActiveTransaction.IsSet())
-                throw new ModelStructureException("Active Transaction must not entry GENERATE blocks.",
-                    GetBlockIndex(simulation));
-
-            EnterBlock();
             try
             {
                 bool firstGeneration = EntryCount == 0;
@@ -60,48 +55,59 @@ namespace GPSS.Entities.General.Blocks
 
                 if (GenerationLimitValue == null || GenerationLimitValue > EntryCount)
                 {
-                    Transaction transaction = GenerateTransaction(simulation, firstGeneration);
-                    EnchainTransaction(simulation, transaction);
+                    Transaction transaction = CreateTransaction(simulation);
+                    PlaceTransaction(simulation, transaction, firstGeneration);
                 }
             }
             catch (StandardAttributeAccessException error)
             {
                 if (error.EntityType == EntityTypes.Transaction)
-                    throw new ModelStructureException("Can't access Active Transaction within GENERATE block.",
-                        GetBlockIndex(simulation), error);
+                    throw new ModelStructureException(
+                        "Can't access Active Transaction within GENERATE block.",
+                        simulation.Model.Statements.Generators[this], error);
                 else
                     throw error;
             }
-            ExitBlock();
         }
 
-        private void EnchainTransaction(Simulation simulation, Transaction transaction)
+        public override void EnterBlock(Simulation simulation)
         {
-            if (transaction.TimeIncrement == 0.0)
-                simulation.Chains.PlaceInCurrentEvents(transaction);
+            if (simulation.ActiveTransaction.Transaction.CurrentBlock < 0)
+                base.EnterBlock(simulation);
             else
-                simulation.Chains.PlaceInFutureEvents(transaction);
+                throw new ModelStructureException(
+                    "Invalid attempt to enter GENERATE Block.", 
+                    simulation.Model.Statements.Generators[this]);
         }
 
-        private Transaction GenerateTransaction(Simulation simulation, bool firstGeneration)
+        private void PlaceTransaction(Simulation simulation, Transaction transaction, bool firstGeneration)
         {
-            int blockIndex = GetBlockIndex(simulation);
             double timeIncrement = GenerationInterval(simulation.StandardAttributes);
-            if (timeIncrement < 0.0)
-                throw new ModelStructureException("Negative time increment.", blockIndex);
-
             if (firstGeneration)
                 timeIncrement += FirstTransactionDelay(simulation.StandardAttributes);
-            int number = simulation.System.GenerationCount++;
 
+            if (timeIncrement < 0.0)
+                throw new ModelStructureException(
+                    "Negative time increment.",
+                    transaction.CurrentBlock);
+
+            if (timeIncrement == 0.0)
+                simulation.Chains.PlaceInCurrentEvents(transaction);
+            else
+                simulation.Chains.PlaceInFutureEvents(transaction, timeIncrement);
+        }
+
+        private Transaction CreateTransaction(Simulation simulation)
+        {
+            int number = simulation.System.GenerationCount++;
+            int blockIndex = simulation.Model.Statements.Generators[this];
             return new Transaction
             {
                 Number = number,
                 Assembly = number,
                 MarkTime = simulation.System.AbsoluteClock,
-                TimeIncrement = timeIncrement,
-                CurrentBlock = blockIndex,
-                NextBlock = blockIndex + 1,
+                CurrentBlock = -1,
+                NextBlock = blockIndex,
                 Chain = TransactionState.Suspended,
                 Priority = Priority(simulation.StandardAttributes),
                 Trace = false,

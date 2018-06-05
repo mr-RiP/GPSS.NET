@@ -1,4 +1,5 @@
 ﻿using GPSS.Entities.General;
+using GPSS.Entities.General.Blocks;
 using GPSS.Extensions;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace GPSS.ModelParts
     {
         public List<Block> Blocks { get; private set; } = new List<Block>();
 
-        public List<Block> Generators { get; private set; } = new List<Block>();
+        public Dictionary<Generate, int> Generators { get; private set; } = new Dictionary<Generate, int>();
 
         public Dictionary<string, int> Labels { get; private set; } = new Dictionary<string, int>();
 
@@ -21,10 +22,9 @@ namespace GPSS.ModelParts
             {
                 Blocks = cloneBlocks,
                 Labels = new Dictionary<string, int>(Labels, Labels.Comparer),
-                Generators = Generators
-                    .Select(g => Blocks.IndexOf(g))
-                    .Select(i => cloneBlocks[i])
-                    .ToList(),
+                Generators = Generators.Values
+                    .Select(v => new KeyValuePair<Generate, int>((Generate)cloneBlocks[v], v))
+                    .ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
             };
         }
 

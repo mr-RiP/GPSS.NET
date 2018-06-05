@@ -37,10 +37,10 @@ namespace GPSS.SimulationParts
                 var chains = simulation.Chains;
                 return chains.CurrentEvents.Any(t => t.CurrentBlock == blockIndex) ||
                     chains.FutureEvents.Any(t => t.CurrentBlock == blockIndex) ||
+                    chains.UserChains.Any(kvp => kvp.Value.Any(t => t.CurrentBlock == blockIndex)) ||
                     chains.StorageDelayChains.Any(kvp => kvp.Value.Any(t => t.CurrentBlock == blockIndex)) ||
                     chains.FacilityDelayChains.Any(kvp => kvp.Value.Any(t => t.CurrentBlock == blockIndex)) ||
-                    chains.FacilityPendingChains.Any(kvp => kvp.Value.Any(t => t.CurrentBlock == blockIndex)) ||
-                    chains.UserChains.Any(kvp => kvp.Value.Any(t => t.CurrentBlock == blockIndex));
+                    chains.FacilityPendingChains.Any(kvp => kvp.Value.Any(t => t.CurrentBlock == blockIndex));
             }
             else
                 throw new StandardAttributeAccessException("Block with given name does not exists.", EntityTypes.Transaction);
@@ -78,7 +78,10 @@ namespace GPSS.SimulationParts
 
         internal void RunNextBlock()
         {
-            simulation.Model.Statements.Blocks[Transaction.NextBlock].Run(simulation);
+            var blocks = simulation.Model.Statements.Blocks;
+            if (Transaction.CurrentBlock >= 0)
+                blocks[Transaction.CurrentBlock].ExitBlock(simulation);
+            blocks[Transaction.NextBlock].EnterBlock(simulation);
         }
 
         public void Clear()

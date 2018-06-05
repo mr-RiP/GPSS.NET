@@ -1,4 +1,5 @@
 ﻿using GPSS.Entities.General;
+using GPSS.Entities.General.Transactions;
 using GPSS.Enums;
 using GPSS.Extensions;
 using GPSS.SimulationParts;
@@ -19,14 +20,6 @@ namespace GPSS.Entities.Resources
 
         }
 
-        private Storage(Storage storage)
-        {
-            Capacity = storage.Capacity;
-            usageHistory = storage.usageHistory;
-            available = storage.available;
-
-        }
-
         public Storage(int capacity)
         {
             Capacity = capacity;
@@ -35,10 +28,10 @@ namespace GPSS.Entities.Resources
         public int Capacity { get; private set; }
 
         private Dictionary<int, double> usageHistory = new Dictionary<int, double>();
-        private double lastUsage = 0.0;
+        private double lastUsage = -1.0;
         private bool available = true;
 
-        public LinkedList<Transaction> DelayChain { get; private set; } = new LinkedList<Transaction>();
+        public LinkedList<StorageDelayTransaction> DelayChain { get; private set; } = new LinkedList<StorageDelayTransaction>();
         public int OccupiedCapacity { get; private set; } = 0;
         public int UseCount { get; private set; } = 0;
 
@@ -89,34 +82,62 @@ namespace GPSS.Entities.Resources
 
         public void MoveChain(TransactionChains chains)
         {
-            while (Available && DelayChain.Any())
-            {
-                var transaction = DelayChain.First.Value;
-                DelayChain.RemoveFirst();
-                transaction.Chain = TransactionState.Suspended;
-                chains.PlaceInCurrentEvents(transaction);
 
-                OccupiedCapacity++;
-                UseCount++;
+            while (Available && DelayChain.Any())
+            {   
+                var node = DelayChain.First;
+                while (node != null && node.Value.StorageCapacity > AvailableCapacity)
+                    node = node.Next;
+
+                if (node != null)
+                {
+                    DelayChain.Remove(node);
+                    OccupiedCapacity += node.Value.StorageCapacity;
+                    UseCount++;
+
+                    var transaction = node.Value.InnerTransaction;
+                    transaction.Chain = TransactionState.Suspended;
+                    chains.PlaceInCurrentEvents(transaction);
+                }
+                else
+                    break;
             }
+        }
+
+        public void Enter(TransactionChains chains, Transaction transaction, int capacity)
+        {
+            if (Available && capacity <= AvailableCapacity)
+                OccupiedCapacity += capacity;
+            else
+            {
+                chains.CurrentEvents.Remove(transaction);
+                transaction.Chain = TransactionState.Passive;
+                DelayChain.AddLast(new StorageDelayTransaction(transaction, capacity));
+            }
+        }
+
+        public void Leave(int capacity)
+        {
+            OccupiedCapacity -= capacity;
         }
 
         public void UpdateUsageHistory(SystemCounters system)
         {
-            if (OccupiedCapacity > 0)
-            {
-                if (usageHistory.ContainsKey(OccupiedCapacity))
-                    usageHistory[OccupiedCapacity] += system.RelativeClock - lastUsage;
-                else
-                    usageHistory.Add(OccupiedCapacity, system.RelativeClock - lastUsage);
-            }
+            if (lastUsage < 0.0)
+                lastUsage = system.RelativeClock;
+
+            if (usageHistory.ContainsKey(OccupiedCapacity))
+                usageHistory[OccupiedCapacity] += system.RelativeClock - lastUsage;
+            else
+                usageHistory.Add(OccupiedCapacity, system.RelativeClock - lastUsage);
+            lastUsage = system.RelativeClock;
         }
 
         public Storage Clone() => new Storage
         {
             Capacity = Capacity,
             OccupiedCapacity = OccupiedCapacity,
-            DelayChain = new LinkedList<Transaction>(DelayChain),
+            DelayChain = new LinkedList<StorageDelayTransaction>(DelayChain.Select(sdt => (StorageDelayTransaction)sdt.Clone())),
             UseCount = UseCount,
 
             usageHistory = new Dictionary<int, double>(usageHistory),

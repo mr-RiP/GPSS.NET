@@ -281,17 +281,5 @@ namespace GPSS
 
             return this;
         }
-
-        /// <summary>
-        /// Labels following Block with given <paramref name="name"/>.
-        /// Block can have many names but every name can address only one Block.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns>Model with added Label.</returns>
-        public Model Label(string name)
-        {
-            
-            return this;
-        }
     }
 }

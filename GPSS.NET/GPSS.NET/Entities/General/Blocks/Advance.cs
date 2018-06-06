@@ -45,7 +45,7 @@ namespace GPSS.Entities.General.Blocks
             if (time == 0.0)
                 chains.PlaceInCurrentEvents(transaction);
             else
-                chains.PlaceInFutureEvents(transaction, time);
+                chains.PlaceInFutureEvents(transaction, time + simulation.System.RelativeClock);
         }
     }
 }

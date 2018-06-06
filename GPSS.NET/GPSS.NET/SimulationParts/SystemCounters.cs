@@ -26,10 +26,10 @@ namespace GPSS.SimulationParts
             RelativeClock = 0.0;
         }
 
-        public void UpdateClock(double timeIncrement)
+        public void UpdateClock(double currentTime)
         {
-            AbsoluteClock += timeIncrement;
-            RelativeClock += timeIncrement;
+            AbsoluteClock += currentTime - RelativeClock;
+            RelativeClock = currentTime;
         }
     }
 }

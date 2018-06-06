@@ -1,5 +1,6 @@
 ﻿using GPSS.Entities.Resources;
 using GPSS.Extensions;
+using GPSS.SimulationParts;
 using System;
 using System.Collections.Generic;
 
@@ -21,5 +22,13 @@ namespace GPSS.ModelParts
         };
 
         object ICloneable.Clone() => Clone();
+
+        public void Calculate(SystemCounters system)
+        {
+            foreach (var storage in Storages.Values)
+                storage.UpdateUsageHistory(system);
+
+            // TODO для Facility
+        }
     }
 }

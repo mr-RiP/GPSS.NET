@@ -25,6 +25,9 @@ namespace GPSS
         internal ActiveTransaction ActiveTransaction { get; private set; }
         internal StandardAttributesAccess StandardAttributes { get; private set; }
 
+        // Флаг останова для команд Halt() и Report()
+        private bool run = true;
+
         private void InitializeAccessors()
         {
             ActiveTransaction = new ActiveTransaction(this);
@@ -44,7 +47,7 @@ namespace GPSS
         public Report Start(int terminationCount)
         {
             ResetSimulation(terminationCount);
-            while (System.TerminationCount > 0)
+            while (System.TerminationCount > 0 && run)
             {
                 if (Chains.CurrentEvents.Any())
                     RunCurrentEvents();
@@ -53,23 +56,30 @@ namespace GPSS
                 else
                     GenerateEvents();
             }
+            CalculateResultStats();
 
             return new Report(this);
         }
-        
+
+        // Вычисление итоговой статистики
+        private void CalculateResultStats()
+        {
+            Model.Resources.Calculate(System);
+        }
+
         private void UpdateEvents()
         {
             Chains.UpdateEvents();
-            System.UpdateClock(Chains.CurrentTimeIncrement);
-            Chains.RefreshTimeIncrement();
+            System.UpdateClock(Chains.CurrentTime);
         }
 
         private void ResetSimulation(int terminationCount)
         {
             Model = initialModel.Clone();
-            Chains = new TransactionChains();
+            Chains = new TransactionChains(Model);
             System = new SystemCounters();
 
+            run = true;
             System.TerminationCount = terminationCount;
         }
 

@@ -6,19 +6,19 @@ namespace GPSS.Entities.General.Transactions
 {
     internal class FutureEventTransaction : TransactionDecorator
     {
-        public FutureEventTransaction(Transaction innerTransaction, double timeIncrement) : base(innerTransaction)
+        public FutureEventTransaction(Transaction innerTransaction, double releaseTime) : base(innerTransaction)
         {
-            if (timeIncrement <= 0.0)
-                throw new ArgumentOutOfRangeException(nameof(timeIncrement));
+            if (releaseTime <= 0.0)
+                throw new ArgumentOutOfRangeException(nameof(releaseTime));
 
-            TimeIncrement = timeIncrement;
+            ReleaseTime = releaseTime;
         }
 
-        public double TimeIncrement { get; set; }
+        public double ReleaseTime { get; set; }
 
         public override Transaction Clone()
         {
-            return new FutureEventTransaction(InnerTransaction.Clone(), TimeIncrement);
+            return new FutureEventTransaction(InnerTransaction.Clone(), ReleaseTime);
         }
     }
 }

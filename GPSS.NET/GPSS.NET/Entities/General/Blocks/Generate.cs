@@ -55,8 +55,34 @@ namespace GPSS.Entities.General.Blocks
 
                 if (GenerationLimitValue == null || GenerationLimitValue > EntryCount)
                 {
-                    Transaction transaction = CreateTransaction(simulation);
-                    PlaceTransaction(simulation, transaction, firstGeneration);
+                    int number = simulation.System.GenerationCount++;
+                    double timeIncrement = GenerationInterval(simulation.StandardAttributes);
+                    if (timeIncrement < 0.0)
+                        throw new ModelStructureException(
+                            "Negative time increment.", 
+                            simulation.Model.Statements.Generators[this]);
+
+                    if (firstGeneration)
+                        timeIncrement += FirstTransactionDelay(simulation.StandardAttributes);
+
+                    var transaction = new Transaction
+                    {
+                        Number = number,
+                        Assembly = number,
+                        MarkTime = simulation.System.AbsoluteClock + timeIncrement,
+                        CurrentBlock = -1,
+                        NextBlock = simulation.Model.Statements.Generators[this],
+                        Chain = TransactionState.Suspended,
+                        Priority = Priority(simulation.StandardAttributes),
+                        Trace = false,
+                        Preempted = false,
+                    };
+
+                    if (timeIncrement == 0.0)
+                        simulation.Chains.PlaceInCurrentEvents(transaction);
+                    else
+                        simulation.Chains.PlaceInFutureEvents(
+                            transaction, simulation.System.RelativeClock + timeIncrement);
                 }
             }
             catch (StandardAttributeAccessException error)
@@ -78,41 +104,6 @@ namespace GPSS.Entities.General.Blocks
                 throw new ModelStructureException(
                     "Invalid attempt to enter GENERATE Block.", 
                     simulation.Model.Statements.Generators[this]);
-        }
-
-        private void PlaceTransaction(Simulation simulation, Transaction transaction, bool firstGeneration)
-        {
-            double timeIncrement = GenerationInterval(simulation.StandardAttributes);
-            if (firstGeneration)
-                timeIncrement += FirstTransactionDelay(simulation.StandardAttributes);
-
-            if (timeIncrement < 0.0)
-                throw new ModelStructureException(
-                    "Negative time increment.",
-                    transaction.CurrentBlock);
-
-            if (timeIncrement == 0.0)
-                simulation.Chains.PlaceInCurrentEvents(transaction);
-            else
-                simulation.Chains.PlaceInFutureEvents(transaction, timeIncrement);
-        }
-
-        private Transaction CreateTransaction(Simulation simulation)
-        {
-            int number = simulation.System.GenerationCount++;
-            int blockIndex = simulation.Model.Statements.Generators[this];
-            return new Transaction
-            {
-                Number = number,
-                Assembly = number,
-                MarkTime = simulation.System.AbsoluteClock,
-                CurrentBlock = -1,
-                NextBlock = blockIndex,
-                Chain = TransactionState.Suspended,
-                Priority = Priority(simulation.StandardAttributes),
-                Trace = false,
-                Preempted = false,
-            };
         }
     }
 }

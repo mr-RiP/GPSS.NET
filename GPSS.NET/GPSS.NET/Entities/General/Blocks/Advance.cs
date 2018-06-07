@@ -34,7 +34,7 @@ namespace GPSS.Entities.General.Blocks
             base.EnterBlock(simulation);
 
             var transaction = simulation.ActiveTransaction.Transaction;
-            transaction.Chain = TransactionState.Suspended;
+            transaction.State = TransactionState.Suspended;
 
             double time = Delay(simulation.StandardAttributes);
             if (time < 0.0)
@@ -44,8 +44,14 @@ namespace GPSS.Entities.General.Blocks
             chains.CurrentEvents.Remove(transaction);
             if (time == 0.0)
                 chains.PlaceInCurrentEvents(transaction);
+            else if (transaction.Preempted)
+            {
+                transaction.NextBlock = transaction.CurrentBlock;
+                chains.PlaceInCurrentEvents(transaction);
+            }
             else
                 chains.PlaceInFutureEvents(transaction, time + simulation.Scheduler.RelativeClock);
+
         }
     }
 }

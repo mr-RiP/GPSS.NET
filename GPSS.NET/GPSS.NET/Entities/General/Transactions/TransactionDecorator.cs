@@ -56,10 +56,10 @@ namespace GPSS.Entities.General.Transactions
             set => innerTransaction.NextBlock = value;
         }
 
-        public override TransactionState Chain
+        public override TransactionState State
         {
-            get => innerTransaction.Chain;
-            set => innerTransaction.Chain = value;
+            get => innerTransaction.State;
+            set => innerTransaction.State = value;
         }
 
         public override bool Preempted

@@ -36,39 +36,35 @@ namespace GPSS.Entities.General.Blocks
 
         public override void EnterBlock(Simulation simulation)
         {
-            base.EnterBlock(simulation);
-
-            string name = StorageName(simulation.StandardAttributes);
-            if (name == null)
+            try
+            {
+                base.EnterBlock(simulation);
+                string name = StorageName(simulation.StandardAttributes);
+                int capacity = StorageCapacity(simulation.StandardAttributes);
+                simulation.Model.Resources.Storages[name]
+                    .Enter(simulation.Scheduler, simulation.ActiveTransaction.Transaction, capacity);
+            }
+            catch (ArgumentNullException error)
+            {
                 throw new ModelStructureException(
                     "Attempt to access Storage Entity by null name.",
                     simulation.ActiveTransaction.Transaction.CurrentBlock,
-                    new ArgumentNullException());
-
-            if (simulation.Model.Resources.Storages.ContainsKey(name))
-            {
-                int capacity = StorageCapacity(simulation.StandardAttributes);
-                if (capacity < 0)
-                    throw new ModelStructureException(
-                        "Attempt to release negative value of storage capacity.",
-                        simulation.ActiveTransaction.Transaction.CurrentBlock);
-
-                var storage = simulation.Model.Resources.Storages[name];
-                if (capacity > storage.OccupiedCapacity)
-                    throw new ModelStructureException(
-                        "Attempt to release more storage capacity than occupied.",
-                        simulation.ActiveTransaction.Transaction.CurrentBlock);
-
-                storage.UpdateUsageHistory(simulation.Scheduler);
-                storage.Leave(capacity);
-
-                if (storage.Available)
-                    storage.MoveDelayChain(simulation.Scheduler);
+                    error);
             }
-            else
+            catch (KeyNotFoundException error)
+            {
                 throw new ModelStructureException(
-                    "Storage entity with given name does not exists in the Model.",
-                    simulation.ActiveTransaction.Transaction.CurrentBlock);
+                    "Storage entity with given name does not exists in thes Model.",
+                    simulation.ActiveTransaction.Transaction.CurrentBlock,
+                    error);
+            }
+            catch (ArgumentOutOfRangeException error)
+            {
+                throw new ModelStructureException(
+                    "Attempt to release more storage capacity than occupied.",
+                    simulation.ActiveTransaction.Transaction.CurrentBlock,
+                    error);
+            }
         }
     }
 }

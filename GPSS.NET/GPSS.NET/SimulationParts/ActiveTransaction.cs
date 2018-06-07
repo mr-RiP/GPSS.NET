@@ -72,14 +72,14 @@ namespace GPSS.SimulationParts
 
         public bool IsSet()
         {
-            return Transaction != null && Transaction.Chain == TransactionState.Active;
+            return Transaction != null && Transaction.State == TransactionState.Active;
         }
 
         public void Reset()
         {
             Transaction = simulation.Scheduler.GetActiveTransaction();
             if (Transaction != null)
-                Transaction.Chain = TransactionState.Active;
+                Transaction.State = TransactionState.Active;
         }
 
         internal void RunNextBlock()

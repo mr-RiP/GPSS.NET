@@ -31,26 +31,26 @@ namespace GPSS.Entities.General.Blocks
 
         public override void EnterBlock(Simulation simulation)
         {
-            base.EnterBlock(simulation);
-
-            string name = StorageName(simulation.StandardAttributes);
-            if (name == null)
+            try
+            {
+                base.EnterBlock(simulation);
+                string name = StorageName(simulation.StandardAttributes);
+                simulation.Model.Resources.Storages[name].SetAvailable(simulation.Scheduler);
+            }
+            catch (ArgumentNullException error)
+            {
                 throw new ModelStructureException(
                     "Attempt to access Storage Entity by null name.",
                     simulation.ActiveTransaction.Transaction.CurrentBlock,
-                    new ArgumentNullException());
-
-            if (simulation.Model.Resources.Storages.ContainsKey(name))
-            {
-                var storage = simulation.Model.Resources.Storages[name];
-                storage.UpdateUsageHistory(simulation.Scheduler);
-                storage.Available = true;
-                storage.MoveDelayChain(simulation.Scheduler);
+                    error);
             }
-            else
+            catch (KeyNotFoundException error)
+            {
                 throw new ModelStructureException(
-                    "Storage entity with given name does not exists in the Model.",
-                    simulation.ActiveTransaction.Transaction.CurrentBlock);
+                    "Storage entity with given name does not exists in thes Model.",
+                    simulation.ActiveTransaction.Transaction.CurrentBlock,
+                    error);
+            }
         }
     }
 }

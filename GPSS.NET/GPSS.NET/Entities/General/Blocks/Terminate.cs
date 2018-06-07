@@ -34,7 +34,7 @@ namespace GPSS.Entities.General.Blocks
             base.EnterBlock(simulation);
 
             var transaction = simulation.ActiveTransaction.Transaction;
-            transaction.Chain = TransactionState.Terminated;
+            transaction.State = TransactionState.Terminated;
 
             int decrement = TerminationDecrement(simulation.StandardAttributes);
             if (decrement < 0)

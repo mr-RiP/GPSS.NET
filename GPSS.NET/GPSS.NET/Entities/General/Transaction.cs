@@ -22,7 +22,7 @@ namespace GPSS.Entities.General
 
         public virtual int NextBlock { get; set; }
 
-        public virtual TransactionState Chain { get; set; }
+        public virtual TransactionState State { get; set; }
 
         public virtual bool Preempted { get; set; }
 
@@ -36,7 +36,7 @@ namespace GPSS.Entities.General
             MarkTime = MarkTime,
             CurrentBlock = CurrentBlock,
             NextBlock = NextBlock,
-            Chain = Chain,
+            State = State,
             Parameters = new Dictionary<string, dynamic>(Parameters),
         };
 
@@ -50,6 +50,17 @@ namespace GPSS.Entities.General
             while (transaction.InnerTransaction != null)
                 transaction = transaction.InnerTransaction;
             return transaction;
+        }
+
+        public void SetParameter<T>(string name, T value)
+        {
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
+
+            if (Parameters.ContainsKey(name))
+                Parameters[name] = value;
+            else
+                Parameters.Add(name, value);
         }
     }
 }                      

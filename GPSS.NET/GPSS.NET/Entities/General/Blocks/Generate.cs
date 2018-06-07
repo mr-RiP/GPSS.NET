@@ -75,7 +75,7 @@ namespace GPSS.Entities.General.Blocks
                         MarkTime = simulation.Scheduler.AbsoluteClock + timeIncrement,
                         CurrentBlock = -1,
                         NextBlock = simulation.Model.Statements.Generators[this],
-                        Chain = TransactionState.Suspended,
+                        State = TransactionState.Suspended,
                         Priority = Priority(simulation.StandardAttributes),
                     };
 

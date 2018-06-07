@@ -3,6 +3,7 @@ using GPSS.Entities.General.Transactions;
 using GPSS.Entities.Groups;
 using GPSS.Entities.Resources;
 using GPSS.Enums;
+using GPSS.StandardAttributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +11,12 @@ using System.Linq;
 namespace GPSS.SimulationParts
 {
     // http://www.minutemansoftware.com/reference/r9.htm#9.1
-    internal class TransactionChains
+    internal class TransactionScheduler : ISystemAttributes
     {
-        public TransactionChains(Model model)
+        public TransactionScheduler(Model model, int terminationCount)
         {
             AddStorageDelayChains(model);
+            TerminationCount = terminationCount;
         }
 
         private void AddStorageDelayChains(Model model)
@@ -38,11 +40,15 @@ namespace GPSS.SimulationParts
         // the highest priority Transaction remaining on the CEC becomes the Active Transaction.
         public LinkedList<Transaction> CurrentEvents { get; private set; } = new LinkedList<Transaction>();
 
-        public double CurrentTime { get; private set; } = 0.0;
+        public double RelativeClock { get; private set; } = 0.0;
+        public double AbsoluteClock { get; private set; } = 0.0;
+
+        public int GenerationCount { get; set; } = 0;
+        public int TerminationCount { get; set; } = 0;
 
         public Transaction GetActiveTransaction()
         {
-            return CurrentEvents.First.Value.GetOriginal();
+            return CurrentEvents.First.Value;
         }
 
         public void PlaceInCurrentEvents(Transaction transaction)
@@ -74,19 +80,27 @@ namespace GPSS.SimulationParts
 
         public void UpdateEvents()
         {
-            CurrentTime = FutureEvents.First.Value.ReleaseTime;
-            while (FutureEvents.First.Value.ReleaseTime == CurrentTime)
+            double releaseTime = FutureEvents.First.Value.ReleaseTime;
+            while (FutureEvents.First.Value.ReleaseTime == releaseTime)
             {
                 PlaceInCurrentEvents(FutureEvents.First.Value.InnerTransaction);
                 FutureEvents.RemoveFirst();
-            }       
+            }
+
+            UpdateClock(releaseTime);
+        }
+
+        private void UpdateClock(double releaseTime)
+        {
+            AbsoluteClock += releaseTime - RelativeClock;
+            RelativeClock = releaseTime;
         }
 
         public void Reset()
         {
             foreach (var futureEvent in FutureEvents)
-                futureEvent.ReleaseTime -= CurrentTime;
-            CurrentTime = 0.0;
+                futureEvent.ReleaseTime -= RelativeClock;
+            RelativeClock = 0.0;
         }
     }
 }

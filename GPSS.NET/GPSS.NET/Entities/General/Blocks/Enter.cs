@@ -60,8 +60,8 @@ namespace GPSS.Entities.General.Blocks
                         "Attempt to occupy more storage capacity than total capacity of given Storage Entity.",
                         simulation.ActiveTransaction.Transaction.CurrentBlock);
 
-                storage.UpdateUsageHistory(simulation.System);
-                storage.Enter(simulation.Chains, simulation.ActiveTransaction.Transaction, capacity);
+                storage.UpdateUsageHistory(simulation.Scheduler);
+                storage.Enter(simulation.Scheduler, simulation.ActiveTransaction.Transaction, capacity);
             }
             else
                 throw new ModelStructureException(

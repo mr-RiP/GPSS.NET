@@ -34,16 +34,22 @@ namespace GPSS.SimulationParts
             if (modelGeneral.Labels.ContainsKey(blockName))
             {
                 int blockIndex = modelGeneral.Labels[blockName];
-                var chains = simulation.Chains;
-                return chains.CurrentEvents.Any(t => t.CurrentBlock == blockIndex) ||
+                var chains = simulation.Scheduler;
+                return modelGeneral.Blocks[blockIndex].TransactionsCount > 0 && FindMatrchInChains(blockIndex);
+            }
+            else
+                throw new StandardAttributeAccessException("Block with given name does not exists.", EntityTypes.Transaction);
+        }
+
+        private bool FindMatrchInChains(int blockIndex)
+        {
+            var chains = simulation.Scheduler;
+            return  chains.CurrentEvents.Any(t => t.CurrentBlock == blockIndex) ||
                     chains.FutureEvents.Any(t => t.CurrentBlock == blockIndex) ||
                     chains.UserChains.Any(kvp => kvp.Value.Any(t => t.CurrentBlock == blockIndex)) ||
                     chains.StorageDelayChains.Any(kvp => kvp.Value.Any(t => t.CurrentBlock == blockIndex)) ||
                     chains.FacilityDelayChains.Any(kvp => kvp.Value.Any(t => t.CurrentBlock == blockIndex)) ||
                     chains.FacilityPendingChains.Any(kvp => kvp.Value.Any(t => t.CurrentBlock == blockIndex));
-            }
-            else
-                throw new StandardAttributeAccessException("Block with given name does not exists.", EntityTypes.Transaction);
         }
 
         public dynamic Parameter(string parameterName)
@@ -71,7 +77,7 @@ namespace GPSS.SimulationParts
 
         public void Reset()
         {
-            Transaction = simulation.Chains.GetActiveTransaction();
+            Transaction = simulation.Scheduler.GetActiveTransaction();
             if (Transaction != null)
                 Transaction.Chain = TransactionState.Active;
         }

@@ -43,9 +43,9 @@ namespace GPSS.Entities.General.Blocks
             if (simulation.Model.Resources.Storages.ContainsKey(name))
             {
                 var storage = simulation.Model.Resources.Storages[name];
-                storage.UpdateUsageHistory(simulation.System);
+                storage.UpdateUsageHistory(simulation.Scheduler);
                 storage.Available = true;
-                storage.MoveChain(simulation.Chains);
+                storage.MoveDelayChain(simulation.Scheduler);
             }
             else
                 throw new ModelStructureException(

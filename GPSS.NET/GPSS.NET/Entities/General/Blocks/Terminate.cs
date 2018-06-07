@@ -41,8 +41,8 @@ namespace GPSS.Entities.General.Blocks
                 throw new ModelStructureException("Termination decrement value must be positive or zero.",
                     transaction.CurrentBlock);
 
-            simulation.Chains.CurrentEvents.Remove(transaction);
-            simulation.System.TerminationCount -= decrement;
+            simulation.Scheduler.CurrentEvents.Remove(transaction);
+            simulation.Scheduler.TerminationCount -= decrement;
 
             base.ExitBlock(simulation);
         }

@@ -32,6 +32,8 @@ namespace GPSS.Entities.General.Blocks
         public Func<IStandardAttributes, int> Priority { get; private set; }
         public int? GenerationLimitValue { get; private set; }
 
+        public int GenerationCount { get; private set; } = 0;
+
         public override string TypeName => "GENERATE";
 
         public override Block Clone() => new Generate
@@ -43,6 +45,7 @@ namespace GPSS.Entities.General.Blocks
             GenerationLimitValue = GenerationLimitValue,
             EntryCount = EntryCount,
             TransactionsCount = TransactionsCount,
+            GenerationCount = GenerationCount,
         };
 
         public void GenerateTransaction(Simulation simulation)
@@ -53,9 +56,9 @@ namespace GPSS.Entities.General.Blocks
                 if (firstGeneration)
                     GenerationLimitValue = GenerationLimit(simulation.StandardAttributes);
 
-                if (GenerationLimitValue == null || GenerationLimitValue > EntryCount)
+                if (GenerationLimitValue == null || GenerationLimitValue > GenerationCount)
                 {
-                    int number = simulation.System.GenerationCount++;
+                    int number = simulation.Scheduler.GenerationCount;
                     double timeIncrement = GenerationInterval(simulation.StandardAttributes);
                     if (timeIncrement < 0.0)
                         throw new ModelStructureException(
@@ -69,20 +72,21 @@ namespace GPSS.Entities.General.Blocks
                     {
                         Number = number,
                         Assembly = number,
-                        MarkTime = simulation.System.AbsoluteClock + timeIncrement,
+                        MarkTime = simulation.Scheduler.AbsoluteClock + timeIncrement,
                         CurrentBlock = -1,
                         NextBlock = simulation.Model.Statements.Generators[this],
                         Chain = TransactionState.Suspended,
                         Priority = Priority(simulation.StandardAttributes),
-                        Trace = false,
-                        Preempted = false,
                     };
 
                     if (timeIncrement == 0.0)
-                        simulation.Chains.PlaceInCurrentEvents(transaction);
+                        simulation.Scheduler.PlaceInCurrentEvents(transaction);
                     else
-                        simulation.Chains.PlaceInFutureEvents(
-                            transaction, simulation.System.RelativeClock + timeIncrement);
+                        simulation.Scheduler.PlaceInFutureEvents(
+                            transaction, simulation.Scheduler.RelativeClock + timeIncrement);
+
+                    GenerationCount++;
+                    simulation.Scheduler.GenerationCount++;
                 }
             }
             catch (StandardAttributeAccessException error)

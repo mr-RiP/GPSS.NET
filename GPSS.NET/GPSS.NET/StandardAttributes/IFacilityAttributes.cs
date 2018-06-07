@@ -39,7 +39,7 @@
         /// <remarks>
         /// GPSS World FR$Entnum SNA.
         /// </remarks>
-        double Utilization { get; }
+        double Utilization();
 
         /// <summary>
         /// Average facility holding time.
@@ -48,7 +48,7 @@
         /// <remarks>
         /// GPSS World FT$Entnum SNA.
         /// </remarks>
-        double AverageHoldingTime { get; }
+        double AverageHoldingTime();
 
         /// <summary>
         /// Facility in available state.

@@ -12,7 +12,7 @@ namespace GPSS.StandardAttributes
         /// <remarks>
         /// GPSS World TG1 SNA.
         /// </remarks>
-        double TerminationCount { get; }
+        int TerminationCount { get; }
 
         /// <summary>
         /// Value of absolute system clock. Simulated time since last CLEAR.

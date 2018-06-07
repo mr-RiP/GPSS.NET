@@ -23,10 +23,10 @@ namespace GPSS.ModelParts
 
         object ICloneable.Clone() => Clone();
 
-        public void Calculate(SystemCounters system)
+        public void Calculate(TransactionScheduler scheduler)
         {
             foreach (var storage in Storages.Values)
-                storage.UpdateUsageHistory(system);
+                storage.UpdateUsageHistory(scheduler);
 
             // TODO для Facility
         }

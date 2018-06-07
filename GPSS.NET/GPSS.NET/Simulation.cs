@@ -18,8 +18,7 @@ namespace GPSS
 
         // Данные моделирования - не существуют до старта симуляции (или хранят данные прошлой симуляции)
         internal Model Model { get; private set; }
-        internal TransactionChains Chains { get; private set; }
-        internal SystemCounters System { get; private set; }
+        internal TransactionScheduler Scheduler { get; private set; }
 
         // Аксессоры
         internal ActiveTransaction ActiveTransaction { get; private set; }
@@ -46,12 +45,12 @@ namespace GPSS
 
         public Report Start(int terminationCount)
         {
-            ResetSimulation(terminationCount);
-            while (System.TerminationCount > 0 && run)
+            InitializeSimulation(terminationCount);
+            while (Scheduler.TerminationCount > 0 && run)
             {
-                if (Chains.CurrentEvents.Any())
+                if (Scheduler.CurrentEvents.Any())
                     RunCurrentEvents();
-                else if (Chains.FutureEvents.Any())
+                else if (Scheduler.FutureEvents.Any())
                     UpdateEvents();
                 else
                     GenerateEvents();
@@ -64,28 +63,25 @@ namespace GPSS
         // Вычисление итоговой статистики
         private void CalculateResultStats()
         {
-            Model.Resources.Calculate(System);
+            Model.Resources.Calculate(Scheduler);
         }
 
         private void UpdateEvents()
         {
-            Chains.UpdateEvents();
-            System.UpdateClock(Chains.CurrentTime);
+            Scheduler.UpdateEvents();
         }
 
-        private void ResetSimulation(int terminationCount)
+        private void InitializeSimulation(int terminationCount)
         {
             Model = initialModel.Clone();
-            Chains = new TransactionChains(Model);
-            System = new SystemCounters();
+            Scheduler = new TransactionScheduler(Model, terminationCount);
 
             run = true;
-            System.TerminationCount = terminationCount;
         }
 
         private void RunCurrentEvents()
         {
-            while (Chains.CurrentEvents.Any())
+            while (Scheduler.CurrentEvents.Any())
             {
                 ActiveTransaction.Reset();
                 while (ActiveTransaction.IsSet())

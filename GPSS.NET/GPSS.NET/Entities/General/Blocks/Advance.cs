@@ -40,12 +40,12 @@ namespace GPSS.Entities.General.Blocks
             if (time < 0.0)
                 throw new ModelStructureException("Negative time increment.", transaction.CurrentBlock);
 
-            var chains = simulation.Chains;
+            var chains = simulation.Scheduler;
             chains.CurrentEvents.Remove(transaction);
             if (time == 0.0)
                 chains.PlaceInCurrentEvents(transaction);
             else
-                chains.PlaceInFutureEvents(transaction, time + simulation.System.RelativeClock);
+                chains.PlaceInFutureEvents(transaction, time + simulation.Scheduler.RelativeClock);
         }
     }
 }

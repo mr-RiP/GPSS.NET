@@ -59,9 +59,11 @@ namespace GPSS.Entities.General.Blocks
                         "Attempt to release more storage capacity than occupied.",
                         simulation.ActiveTransaction.Transaction.CurrentBlock);
 
-                storage.UpdateUsageHistory(simulation.System);
+                storage.UpdateUsageHistory(simulation.Scheduler);
                 storage.Leave(capacity);
-                storage.MoveChain(simulation.Chains);
+
+                if (storage.Available)
+                    storage.MoveDelayChain(simulation.Scheduler);
             }
             else
                 throw new ModelStructureException(

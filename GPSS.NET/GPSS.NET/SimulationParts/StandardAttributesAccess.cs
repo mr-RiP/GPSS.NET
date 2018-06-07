@@ -141,7 +141,7 @@ namespace GPSS.SimulationParts
 
         public ISystemAttributes System()
         {
-            return simulation.System;
+            return simulation.Scheduler;
         }
 
         private T AccessDictionary<T>(Dictionary<string, T> dictionary, string name, EntityTypes entityType)

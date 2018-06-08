@@ -50,6 +50,7 @@ namespace GPSS.ModelParts
                 var facility = new Facility();
                 Facilities.Add(name, facility);
                 simulation.Scheduler.FacilityDelayChains.Add(name, facility.DelayChain);
+                simulation.Scheduler.FacilityPendingChains.Add(name, facility.PendingChain);
                 return facility;
             }
         }

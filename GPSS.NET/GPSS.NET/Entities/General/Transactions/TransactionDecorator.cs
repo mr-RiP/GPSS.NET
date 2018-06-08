@@ -62,10 +62,15 @@ namespace GPSS.Entities.General.Transactions
             set => innerTransaction.State = value;
         }
 
+        public override int PreemptionCount
+        {
+            get => innerTransaction.PreemptionCount;
+            set => innerTransaction.PreemptionCount = value;
+        }
+
         public override bool Preempted
         {
             get => innerTransaction.Preempted;
-            set => innerTransaction.Preempted = value;
         }
 
         public override Dictionary<string, dynamic> Parameters

@@ -82,8 +82,7 @@ namespace GPSS.Entities.General.Blocks
                     if (timeIncrement == 0.0)
                         simulation.Scheduler.PlaceInCurrentEvents(transaction);
                     else
-                        simulation.Scheduler.PlaceInFutureEvents(
-                            transaction, simulation.Scheduler.RelativeClock + timeIncrement);
+                        simulation.Scheduler.PlaceInFutureEvents(transaction, timeIncrement);
 
                     GenerationCount++;
                     simulation.Scheduler.GenerationCount++;

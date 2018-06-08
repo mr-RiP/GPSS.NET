@@ -64,9 +64,9 @@ namespace GPSS.SimulationParts
             }
         }
 
-        public void PlaceInFutureEvents(Transaction transaction, double releaseTime)
+        public void PlaceInFutureEvents(Transaction transaction, double timeIncrement)
         {
-            var futureEvent = new FutureEventTransaction(transaction, releaseTime);
+            var futureEvent = new FutureEventTransaction(transaction, RelativeClock + timeIncrement);
             if (FutureEvents.Count == 0 || futureEvent.ReleaseTime >= FutureEvents.Last.Value.ReleaseTime)
                 FutureEvents.AddLast(futureEvent);
             else

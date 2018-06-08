@@ -182,7 +182,7 @@ namespace GPSS.Entities.Resources
         {
             Capacity = Capacity,
             OccupiedCapacity = OccupiedCapacity,
-            DelayChain = new LinkedList<StorageDelayTransaction>(DelayChain.Select(sdt => (StorageDelayTransaction)sdt.Clone())),
+            DelayChain = DelayChain.Clone(),
             UseCount = UseCount,
             Available = Available,
 

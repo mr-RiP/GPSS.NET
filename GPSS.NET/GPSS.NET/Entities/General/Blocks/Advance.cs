@@ -50,7 +50,7 @@ namespace GPSS.Entities.General.Blocks
                 chains.PlaceInCurrentEvents(transaction);
             }
             else
-                chains.PlaceInFutureEvents(transaction, time + simulation.Scheduler.RelativeClock);
+                chains.PlaceInFutureEvents(transaction, time);
 
         }
     }

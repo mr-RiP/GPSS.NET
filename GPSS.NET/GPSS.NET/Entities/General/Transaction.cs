@@ -24,19 +24,25 @@ namespace GPSS.Entities.General
 
         public virtual TransactionState State { get; set; }
 
-        public virtual bool Preempted { get; set; }
+        public virtual int PreemptionCount { get; set; }
+
+        public virtual bool Preempted { get => PreemptionCount > 0; }
+
+        private int preemptCount = 0;
 
         public virtual Dictionary<string, dynamic> Parameters { get; private set; } = new Dictionary<string, dynamic>();
 
         public virtual Transaction Clone() => new Transaction
         {
             Number = Number,
-            Assembly = Assembly,
             Priority = Priority,
+            Assembly = Assembly,
             MarkTime = MarkTime,
+            Trace = Trace,
             CurrentBlock = CurrentBlock,
             NextBlock = NextBlock,
             State = State,
+            PreemptionCount = PreemptionCount,
             Parameters = new Dictionary<string, dynamic>(Parameters),
         };
 

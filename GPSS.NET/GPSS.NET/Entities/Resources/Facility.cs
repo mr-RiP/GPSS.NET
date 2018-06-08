@@ -1,10 +1,12 @@
 ﻿using GPSS.Entities.General;
+using GPSS.Entities.General.Transactions;
 using GPSS.Enums;
 using GPSS.Extensions;
 using GPSS.SimulationParts;
 using GPSS.StandardAttributes;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace GPSS.Entities.Resources
@@ -17,8 +19,8 @@ namespace GPSS.Entities.Resources
 
         public Transaction Owner { get; private set; } = null;
         public LinkedList<Transaction> DelayChain { get; private set; } = new LinkedList<Transaction>();
-        public LinkedList<Transaction> InterruptChain { get; private set; } = new LinkedList<Transaction>();
         public LinkedList<Transaction> PendingChain { get; private set; } = new LinkedList<Transaction>();
+        public LinkedList<FutureEventTransaction> InterruptChain { get; private set; } = new LinkedList<FutureEventTransaction>();
 
         public bool Available { get; private set; } = true;
         public int CaptureCount { get; private set; } = 0;
@@ -36,19 +38,34 @@ namespace GPSS.Entities.Resources
                 return 0.0;
         }
 
-        public Facility Clone()
+        public Facility Clone() => new Facility
         {
-            throw new NotImplementedException();
-        }
+            Owner = Owner,
+            DelayChain = DelayChain.Clone(),
+            PendingChain = PendingChain.Clone(),
+            InterruptChain = InterruptChain.Clone(),
+            Available = Available,
+            CaptureCount = CaptureCount,
+
+            busyTime = busyTime,
+            lastUsageTime = lastUsageTime,
+        };
         object ICloneable.Clone() => Clone();
 
         // http://www.minutemansoftware.com/reference/r7.htm#RELEASE
         public void Release(TransactionScheduler scheduler, Transaction transaction)
         {
             if (transaction == Owner)
+            {
                 NextOwner(scheduler);
-            else if (Interrupted && InterruptChain.Contains(transaction))
-                InterruptChain.Remove(transaction);
+                UpdateUsageHistory(scheduler);
+            }
+            else if (Interrupted && InterruptChain.Any(fe => fe.InnerTransaction == transaction))
+            {
+                var preemptedTransaction = InterruptChain.First(fe => fe.InnerTransaction == transaction);
+                InterruptChain.Remove(preemptedTransaction);
+                transaction.PreemptionCount--;
+            }
             else
                 throw new ArgumentOutOfRangeException(nameof(transaction));
         }
@@ -56,36 +73,129 @@ namespace GPSS.Entities.Resources
         // http://www.minutemansoftware.com/reference/r7.htm#SEIZE
         public void Seize(TransactionScheduler scheduler, Transaction transaction)
         {
-            if (Available && Idle)
+            if (PreemptedByThis(transaction))
+                Refuse(scheduler, transaction);
+            else if (Available && Idle)
+            {
                 Owner = transaction;
+            }
             else
             {
                 scheduler.CurrentEvents.Remove(transaction);
                 transaction.State = TransactionState.Passive;
-                PlaceInDelayChain(transaction);
+                PlaceInDelayChain(scheduler, transaction);
             }
         }
 
         // http://www.minutemansoftware.com/reference/r7.htm#PREEMPT
         // http://www.minutemansoftware.com/reference/r9.htm#9.4
-        public void Preempt(TransactionScheduler scheduler, Transaction transaction, bool priorityMode, int? newNextBlock, string parameterName, bool removeMode)
+        public void Preempt(TransactionScheduler scheduler, Transaction transaction, bool priorityMode, string parameterName, int? newNextBlock, bool removeMode)
         {
-            if (Available && Idle)
+            if (PreemptedByThis(transaction))
+                Refuse(scheduler, transaction);
+            else if (Available && Idle)
+            {
+                UpdateUsageHistory(scheduler);
                 Owner = transaction;
+            }
+            else if (Available && (priorityMode && transaction.Priority > Owner.Priority || !Interrupted))
+            {
+                UpdateUsageHistory(scheduler);
+                RemoveFromOwnership(scheduler, parameterName, removeMode, newNextBlock);
+                Owner = transaction;
+            }
             else if (priorityMode)
-                PreemptPriorityMode(scheduler, transaction, newNextBlock, parameterName, removeMode);
+                PlaceInDelayChain(scheduler, transaction);
             else
-                PreemptInterruptMode(scheduler, transaction, newNextBlock, parameterName, removeMode);
+                PlaceInPendingChain(scheduler, transaction);
         }
 
-        private void PreemptInterruptMode(TransactionScheduler scheduler, Transaction transaction, int? newNextBlock, string parameterName, bool removeMode)
+        private bool PreemptedByThis(Transaction transaction)
         {
-            throw new NotImplementedException();
+            return transaction.Preempted && Interrupted && InterruptChain.Any(t => t.Number == transaction.Number);
         }
 
-        private void PreemptPriorityMode(TransactionScheduler scheduler, Transaction transaction, int? newNextBlock, string parameterName, bool removeMode)
+        private void Refuse(TransactionScheduler scheduler, Transaction transaction)
         {
-            throw new NotImplementedException();
+            transaction.State = TransactionState.Suspended;
+            transaction.NextBlock = transaction.CurrentBlock;
+
+            scheduler.CurrentEvents.Remove(transaction);
+            scheduler.PlaceInCurrentEvents(transaction);
+        }
+
+        private void RemoveFromOwnership(TransactionScheduler scheduler, string parameterName, bool removeMode, int? newNextBlock)
+        {
+            if (removeMode && newNextBlock == null)
+                throw new ArgumentNullException(nameof(newNextBlock));
+
+            if (newNextBlock.HasValue)
+                Owner.NextBlock = newNextBlock.Value;
+
+            FutureEventTransaction interrupted = null;
+            if (Owner.State == TransactionState.Suspended)
+                interrupted = GetInterruptedFromFutureEvents(scheduler, parameterName);
+            else if (Owner.State == TransactionState.Passive && newNextBlock.HasValue)
+                MoveInterruptedToCurrentEvents(scheduler);
+
+            PlaceInInterruptChain(interrupted, removeMode);
+        }
+
+        private void MoveInterruptedToCurrentEvents(TransactionScheduler scheduler)
+        {
+            bool removed = false;
+            foreach (var chain in scheduler.FacilityDelayChains.Values)
+                removed = chain.Remove(Owner);
+
+            if (!removed)
+                foreach (var chain in scheduler.FacilityPendingChains.Values)
+                    removed = chain.Remove(Owner);
+
+            if (!removed)
+                foreach (var chain in scheduler.UserChains.Values)
+                    removed = chain.Remove(Owner);
+
+            if (!removed)
+            {
+                StorageDelayTransaction transaction = null;
+                var chain = scheduler.StorageDelayChains.Values
+                    .First(c => (transaction = c.FirstOrDefault(t => t.InnerTransaction == Owner)) != null);
+            }
+
+            Owner.State = TransactionState.Suspended;
+            scheduler.PlaceInCurrentEvents(Owner);
+        }
+
+        private void PlaceInInterruptChain(FutureEventTransaction interrupted, bool removeMode)
+        {
+            if (!removeMode)
+            {
+                Owner.PreemptionCount++;
+                InterruptChain.AddLast(interrupted ?? new FutureEventTransaction(Owner, 0.0));
+            }
+        }
+
+        private FutureEventTransaction GetInterruptedFromFutureEvents(TransactionScheduler scheduler, string parameterName)
+        {
+            var ownerFutureEvent = scheduler.FutureEvents.FirstOrDefault(fe => fe.InnerTransaction == Owner);
+            if (ownerFutureEvent != null)
+            {
+                scheduler.FutureEvents.Remove(ownerFutureEvent);
+                scheduler.PlaceInCurrentEvents(Owner);
+                ownerFutureEvent.ReleaseTime -= scheduler.RelativeClock;
+                if (parameterName != null)
+                    Owner.SetParameter(parameterName, ownerFutureEvent.ReleaseTime);
+            }
+
+            return ownerFutureEvent;
+        }
+
+        private void PlaceInPendingChain(TransactionScheduler scheduler, Transaction transaction)
+        {
+            scheduler.CurrentEvents.Remove(transaction);
+            transaction.State = TransactionState.Passive;
+
+            PendingChain.AddLast(transaction);
         }
 
         // http://www.minutemansoftware.com/reference/r7.htm#RETURN
@@ -95,9 +205,14 @@ namespace GPSS.Entities.Resources
         }
 
         // http://www.minutemansoftware.com/reference/r7.htm#FAVAIL
-        public void SetAvailable()
+        public void SetAvailable(TransactionScheduler scheduler)
         {
-            throw new NotImplementedException();
+            Available = true;
+            if (Idle)
+            {
+                NextOwner(scheduler);
+                UpdateUsageHistory(scheduler);
+            }
         }
 
         // http://www.minutemansoftware.com/reference/r7.htm#FUNAVAIL
@@ -118,20 +233,31 @@ namespace GPSS.Entities.Resources
             }
             else if (InterruptChain.Count != 0)
             {
-                Owner = InterruptChain.First.Value;
+                var interrupedTransaction = InterruptChain.First.Value;
                 InterruptChain.RemoveFirst();
+
+                Owner = interrupedTransaction.InnerTransaction;
+                Owner.PreemptionCount--;
+                
+                if (interrupedTransaction.ReleaseTime == 0.0)
+                    scheduler.PlaceInCurrentEvents(Owner);
+                else
+                    scheduler.PlaceInFutureEvents(Owner, interrupedTransaction.ReleaseTime);
             }
             else if (DelayChain.Count != 0)
             {
                 Owner = DelayChain.First.Value;
                 DelayChain.RemoveFirst();
-            }
+            }       
             else
                 Owner = null;
         }
 
-        private void PlaceInDelayChain(Transaction transaction)
+        private void PlaceInDelayChain(TransactionScheduler scheduler, Transaction transaction)
         {
+            scheduler.CurrentEvents.Remove(transaction);
+            transaction.State = TransactionState.Passive;
+
             if (transaction.Priority <= DelayChain.Last.Value.Priority)
                 DelayChain.AddLast(transaction);
             else
@@ -143,13 +269,16 @@ namespace GPSS.Entities.Resources
             }
         }
 
+        // TODO
         public void UpdateUsageHistory(TransactionScheduler scheduler)
         {
             if (lastUsageTime < 0.0)
                 lastUsageTime = scheduler.RelativeClock;
 
-            if (Busy)
+            if (Idle)
                 busyTime += scheduler.RelativeClock - lastUsageTime;
+            else
+                CaptureCount++;
         }
 
         public void Reset()

@@ -41,6 +41,10 @@ namespace GPSS.Entities.General.Blocks
                 throw new ModelStructureException("Termination decrement value must be positive or zero.",
                     transaction.CurrentBlock);
 
+            if (transaction.Preempted)
+                throw new ModelStructureException("Attempt to Terminate transaction preempted from Facility.",
+                    transaction.CurrentBlock);
+
             simulation.Scheduler.CurrentEvents.Remove(transaction);
             simulation.Scheduler.TerminationCount -= decrement;
 

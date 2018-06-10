@@ -31,8 +31,6 @@ namespace GPSS.Entities.General.Blocks
 
         public override void EnterBlock(Simulation simulation)
         {
-            base.EnterBlock(simulation);
-
             var transaction = simulation.ActiveTransaction.Transaction;
             transaction.State = TransactionState.Suspended;
 
@@ -42,16 +40,16 @@ namespace GPSS.Entities.General.Blocks
 
             var chains = simulation.Scheduler;
             chains.CurrentEvents.Remove(transaction);
-            if (time == 0.0)
-                chains.PlaceInCurrentEvents(transaction);
-            else if (transaction.Preempted)
-            {
-                transaction.NextBlock = transaction.CurrentBlock;
-                chains.PlaceInCurrentEvents(transaction);
-            }
-            else
-                chains.PlaceInFutureEvents(transaction, time);
 
+            if (!transaction.Preempted || time == 0.0)
+                base.EnterBlock(simulation);
+            else if (transaction.Preempted)
+                transaction.Delayed = true;
+
+            if (transaction.Preempted || time == 0.0)
+                chains.PlaceInCurrentEvents(transaction);
+            else 
+                chains.PlaceInFutureEvents(transaction, time);
         }
     }
 }

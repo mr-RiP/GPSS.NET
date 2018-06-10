@@ -1,4 +1,5 @@
 ﻿using GPSS.Entities.Resources;
+using GPSS.Enums;
 using GPSS.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -35,15 +36,49 @@ namespace GPSS.Entities.General.Blocks
             TransactionsCount = TransactionsCount,
         };
 
+        public override bool CanEnter(Simulation simulation)
+        {
+            try
+            {
+                string name = StorageName(simulation.StandardAttributes);
+                int capacity = StorageCapacity(simulation.StandardAttributes);
+                if (capacity <= 0)
+                    throw new ModelStructureException(
+                    "Attempt to occupy non-positive number of Storage Capacity Units.",
+                    simulation.ActiveTransaction.Transaction.CurrentBlock);
+
+                var storage = simulation.Model.Resources.Storages[name];
+                return storage.Available && storage.AvailableCapacity >= capacity;
+            }
+            catch (ArgumentNullException error)
+            {
+                throw new ModelStructureException(
+                    "Attempt to access Storage Entity by null name.",
+                    simulation.ActiveTransaction.Transaction.CurrentBlock,
+                    error);
+            }
+        }
+
         public override void EnterBlock(Simulation simulation)
         {
             try
             {
                 base.EnterBlock(simulation);
                 string name = StorageName(simulation.StandardAttributes);
+                var transaction = simulation.ActiveTransaction.Transaction;
                 int capacity = StorageCapacity(simulation.StandardAttributes);
+                if (capacity <= 0)
+                    throw new ModelStructureException(
+                    "Attempt to occupy non-positive number of Storage Capacity Units.",
+                    simulation.ActiveTransaction.Transaction.CurrentBlock);
+
                 simulation.Model.Resources.Storages[name]
-                    .Enter(simulation.Scheduler, simulation.ActiveTransaction.Transaction, capacity);
+                    .Enter(simulation.Scheduler, transaction, capacity);
+
+                if (transaction.State == TransactionState.Active)
+                    base.EnterBlock(simulation);
+                else
+                    transaction.Delayed = true;
             }
             catch (ArgumentNullException error)
             {

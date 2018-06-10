@@ -62,6 +62,12 @@ namespace GPSS.Entities.General.Transactions
             set => innerTransaction.State = value;
         }
 
+        public override bool Delayed
+        {
+            get => innerTransaction.Delayed;
+            set => innerTransaction.Delayed = value;
+        }
+
         public override int PreemptionCount
         {
             get => innerTransaction.PreemptionCount;

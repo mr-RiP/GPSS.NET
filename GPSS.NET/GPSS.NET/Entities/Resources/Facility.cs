@@ -65,8 +65,8 @@ namespace GPSS.Entities.Resources
             if (transaction == Owner)
             {
                 UpdateUsageHistory(scheduler);
-                NextOwner(scheduler);
-                UpdateCaptureCount();
+                Owner = null;
+                MoveChains(scheduler);
             }
             else if (Interrupted && InterruptChain.Any(fe => fe.InnerTransaction == transaction))
             {
@@ -238,8 +238,7 @@ namespace GPSS.Entities.Resources
             if (Idle)
             {
                 UpdateUsageHistory(scheduler);
-                NextOwner(scheduler);
-                UpdateCaptureCount();
+                MoveChains(scheduler);
             }
         }
 
@@ -252,33 +251,35 @@ namespace GPSS.Entities.Resources
         // If the Active Transaction gives up ownership of the Facility,
         // the next owner is taken from the Pending Chain,
         // the Interrupt Chain, and finally the Delay Chain.
-        private void NextOwner(TransactionScheduler scheduler)
+        private void MoveChains(TransactionScheduler scheduler)
         {
             if (PendingChain.Count != 0)
-            {
-                Owner = PendingChain.First.Value;
-                PendingChain.RemoveFirst();
-            }
+                ReturnToCurrentEvents(scheduler, PendingChain);
             else if (InterruptChain.Count != 0)
             {
                 var interrupedTransaction = InterruptChain.First.Value;
                 InterruptChain.RemoveFirst();
 
-                Owner = interrupedTransaction.InnerTransaction;
-                Owner.PreemptionCount--;
-                
+                interrupedTransaction.PreemptionCount--;
+
                 if (interrupedTransaction.ReleaseTime == 0.0)
-                    scheduler.PlaceInCurrentEvents(Owner);
+                    scheduler.PlaceInCurrentEvents(interrupedTransaction.InnerTransaction);
                 else
-                    scheduler.PlaceInFutureEvents(Owner, interrupedTransaction.ReleaseTime);
+                    scheduler.PlaceInFutureEvents(
+                        interrupedTransaction.InnerTransaction,
+                        interrupedTransaction.ReleaseTime);
             }
             else if (DelayChain.Count != 0)
-            {
-                Owner = DelayChain.First.Value;
-                DelayChain.RemoveFirst();
-            }       
-            else
-                Owner = null;
+                ReturnToCurrentEvents(scheduler, DelayChain);
+        }
+
+        private void ReturnToCurrentEvents(TransactionScheduler scheduler, LinkedList<Transaction> chain)
+        {
+            var transaction = chain.First.Value;
+            chain.RemoveFirst();
+
+            transaction.State = TransactionState.Suspended;
+            scheduler.PlaceInCurrentEvents(transaction);
         }
 
         private void PlaceInDelayChain(TransactionScheduler scheduler, Transaction transaction)

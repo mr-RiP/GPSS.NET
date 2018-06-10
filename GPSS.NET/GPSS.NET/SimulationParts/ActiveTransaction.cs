@@ -85,8 +85,6 @@ namespace GPSS.SimulationParts
         internal void RunNextBlock()
         {
             var blocks = simulation.Model.Statements.Blocks;
-            if (Transaction.CurrentBlock >= 0)
-                blocks[Transaction.CurrentBlock].ExitBlock(simulation);
             blocks[Transaction.NextBlock].EnterBlock(simulation);
         }
 

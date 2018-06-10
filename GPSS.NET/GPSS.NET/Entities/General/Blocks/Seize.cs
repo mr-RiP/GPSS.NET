@@ -1,4 +1,5 @@
 ﻿using GPSS.Entities.Resources;
+using GPSS.Enums;
 using GPSS.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -22,16 +23,36 @@ namespace GPSS.Entities.General.Blocks
 
         public override string TypeName => "SEIZE";
 
-        public override void EnterBlock(Simulation simulation)
+        public override bool CanEnter(Simulation simulation)
         {
-            base.EnterBlock(simulation);
             try
             {
                 var facility = simulation.Model.Resources.GetFacility(
                     FacilityName(simulation.StandardAttributes),
                     simulation.Scheduler);
+                return facility.Available && facility.Idle;
+            }
+            catch (ArgumentNullException error)
+            {
+                throw new ModelStructureException(
+                    "Attempt to access Facility Entity by null name.",
+                    simulation.ActiveTransaction.Transaction.CurrentBlock,
+                    error);
+            }
+        }
 
-                facility.Seize(simulation.Scheduler, simulation.ActiveTransaction.Transaction);
+        public override void EnterBlock(Simulation simulation)
+        {
+            try
+            {
+                var facility = simulation.Model.Resources.GetFacility(
+                    FacilityName(simulation.StandardAttributes),
+                    simulation.Scheduler);
+                var transaction = simulation.ActiveTransaction.Transaction;
+
+                facility.Seize(simulation.Scheduler, transaction);
+                if (transaction.State == TransactionState.Active)
+                    base.EnterBlock(simulation);
             }
             catch (ArgumentNullException error)
             {

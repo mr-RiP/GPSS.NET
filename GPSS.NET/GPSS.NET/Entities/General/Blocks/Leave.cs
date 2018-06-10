@@ -36,13 +36,13 @@ namespace GPSS.Entities.General.Blocks
 
         public override void EnterBlock(Simulation simulation)
         {
+            base.EnterBlock(simulation);
             try
             {
-                base.EnterBlock(simulation);
                 string name = StorageName(simulation.StandardAttributes);
                 int capacity = StorageCapacity(simulation.StandardAttributes);
                 simulation.Model.Resources.Storages[name]
-                    .Enter(simulation.Scheduler, simulation.ActiveTransaction.Transaction, capacity);
+                    .Leave(simulation.Scheduler, capacity);
             }
             catch (ArgumentNullException error)
             {
@@ -52,7 +52,7 @@ namespace GPSS.Entities.General.Blocks
                     error);
             }
             catch (KeyNotFoundException error)
-            {
+            {  
                 throw new ModelStructureException(
                     "Storage entity with given name does not exists in thes Model.",
                     simulation.ActiveTransaction.Transaction.CurrentBlock,

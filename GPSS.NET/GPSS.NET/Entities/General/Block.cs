@@ -15,18 +15,22 @@ namespace GPSS.Entities.General
         abstract public Block Clone();
         object ICloneable.Clone() => Clone();
 
+        public virtual int RetryCount { get => 0; }
+
         public virtual void EnterBlock(Simulation simulation)
         {
             EntryCount++;
             TransactionsCount++;
             var transaction = simulation.ActiveTransaction.Transaction;
+            if (transaction.CurrentBlock >= 0)
+                simulation.Model.Statements.Blocks[transaction.CurrentBlock].TransactionsCount--;
             transaction.CurrentBlock = transaction.NextBlock;
             transaction.NextBlock++;
         }
 
-        public virtual void ExitBlock(Simulation simulation)
+        public virtual bool CanEnter(Simulation simulation)
         {
-            TransactionsCount--;
+            return true;
         }
     }
 }

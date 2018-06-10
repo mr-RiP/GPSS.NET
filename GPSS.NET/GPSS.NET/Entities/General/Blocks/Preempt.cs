@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using GPSS.Enums;
 using GPSS.Exceptions;
 using GPSS.ModelParts;
 
@@ -37,7 +38,6 @@ namespace GPSS.Entities.General.Blocks
 
         public override void EnterBlock(Simulation simulation)
         {
-            base.EnterBlock(simulation);
             try
             {   
                 var facility = simulation.Model.Resources.GetFacility(
@@ -50,14 +50,18 @@ namespace GPSS.Entities.General.Blocks
                         "Attempt to preempt Facility entity im Remove Mode without " + 
                         "specifying new Next Block for current owner Transaction.",
                         simulation.ActiveTransaction.Transaction.CurrentBlock);
+                var transaction = simulation.ActiveTransaction.Transaction;
 
                 facility.Preempt(
                     simulation.Scheduler,
-                    simulation.ActiveTransaction.Transaction,
+                    transaction,
                     PriorityMode(simulation.StandardAttributes),
                     ParameterName(simulation.StandardAttributes),
                     blockIndex,
                     removeMode);
+
+                if (transaction.State == TransactionState.Active)
+                    base.EnterBlock(simulation);
             }
             catch (ArgumentNullException error)
             {

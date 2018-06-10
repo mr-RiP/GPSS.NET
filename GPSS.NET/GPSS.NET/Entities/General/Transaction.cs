@@ -26,9 +26,9 @@ namespace GPSS.Entities.General
 
         public virtual int PreemptionCount { get; set; }
 
-        public virtual bool Preempted { get => PreemptionCount > 0; }
+        public virtual bool Delayed { get; set; }
 
-        private int preemptCount = 0;
+        public virtual bool Preempted { get => PreemptionCount > 0; }
 
         public virtual Dictionary<string, dynamic> Parameters { get; private set; } = new Dictionary<string, dynamic>();
 

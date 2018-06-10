@@ -21,7 +21,7 @@ namespace GPSS.Entities.Resources
         private Storage()
         {
 
-        }
+        }   
 
         public Storage(int capacity)
         {
@@ -108,9 +108,6 @@ namespace GPSS.Entities.Resources
                 if (node != null)
                 {
                     DelayChain.Remove(node);
-                    OccupiedCapacity += node.Value.StorageCapacity;
-                    UseCount++;
-
                     var transaction = node.Value.InnerTransaction;
                     transaction.State = TransactionState.Suspended;
                     scheduler.PlaceInCurrentEvents(transaction);

@@ -2,6 +2,7 @@
 using GPSS.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace GPSS.Entities.General.Blocks
@@ -45,10 +46,14 @@ namespace GPSS.Entities.General.Blocks
                 throw new ModelStructureException("Attempt to Terminate transaction preempted from Facility.",
                     transaction.CurrentBlock);
 
+            if (simulation.Model.Resources.Facilities.Values.Any(f => f.Owner == transaction))
+                throw new ModelStructureException("Attempt to Terminate transaction currently owning Facility.",
+                    transaction.CurrentBlock);
+
             simulation.Scheduler.CurrentEvents.Remove(transaction);
             simulation.Scheduler.TerminationCount -= decrement;
 
-            base.ExitBlock(simulation);
+            TransactionsCount--;
         }
     }
 }

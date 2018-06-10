@@ -28,7 +28,14 @@ namespace GPSS.Entities.Resources
         public bool Interrupted => InterruptChain.Count > 0;
         public bool Busy => Owner != null;
         public bool Idle => Owner == null;
-        public double Utilization() => throw new NotImplementedException();
+
+        public double Utilization()
+        {
+            if (busyTime > 0.0)
+                return busyTime / lastUsageTime * 1000.0;
+            else
+                return 0.0;
+        }
 
         public double AverageHoldingTime()
         {
@@ -57,8 +64,9 @@ namespace GPSS.Entities.Resources
         {
             if (transaction == Owner)
             {
-                NextOwner(scheduler);
                 UpdateUsageHistory(scheduler);
+                NextOwner(scheduler);
+                UpdateCaptureCount();
             }
             else if (Interrupted && InterruptChain.Any(fe => fe.InnerTransaction == transaction))
             {
@@ -70,6 +78,12 @@ namespace GPSS.Entities.Resources
                 throw new ArgumentOutOfRangeException(nameof(transaction));
         }
 
+        private void UpdateCaptureCount()
+        {
+            if (Busy)
+                CaptureCount++;
+        }
+
         // http://www.minutemansoftware.com/reference/r7.htm#SEIZE
         public void Seize(TransactionScheduler scheduler, Transaction transaction)
         {
@@ -77,7 +91,9 @@ namespace GPSS.Entities.Resources
                 Refuse(scheduler, transaction);
             else if (Available && Idle)
             {
+                UpdateUsageHistory(scheduler);
                 Owner = transaction;
+                UpdateCaptureCount();
             }
             else
             {
@@ -89,7 +105,13 @@ namespace GPSS.Entities.Resources
 
         // http://www.minutemansoftware.com/reference/r7.htm#PREEMPT
         // http://www.minutemansoftware.com/reference/r9.htm#9.4
-        public void Preempt(TransactionScheduler scheduler, Transaction transaction, bool priorityMode, string parameterName, int? newNextBlock, bool removeMode)
+        public void Preempt(
+            TransactionScheduler scheduler,
+            Transaction transaction,
+            bool priorityMode,
+            string parameterName,
+            int? newNextBlock,
+            bool removeMode)
         {
             if (PreemptedByThis(transaction))
                 Refuse(scheduler, transaction);
@@ -97,12 +119,14 @@ namespace GPSS.Entities.Resources
             {
                 UpdateUsageHistory(scheduler);
                 Owner = transaction;
+                UpdateCaptureCount();
             }
             else if (Available && (priorityMode && transaction.Priority > Owner.Priority || !Interrupted))
             {
                 UpdateUsageHistory(scheduler);
                 RemoveFromOwnership(scheduler, parameterName, removeMode, newNextBlock);
                 Owner = transaction;
+                UpdateCaptureCount();
             }
             else if (priorityMode)
                 PlaceInDelayChain(scheduler, transaction);
@@ -145,15 +169,18 @@ namespace GPSS.Entities.Resources
         {
             bool removed = false;
             foreach (var chain in scheduler.FacilityDelayChains.Values)
-                removed = chain.Remove(Owner);
+                if (removed = chain.Remove(Owner))
+                    break;
 
             if (!removed)
                 foreach (var chain in scheduler.FacilityPendingChains.Values)
-                    removed = chain.Remove(Owner);
+                    if (removed = chain.Remove(Owner))
+                        break;
 
             if (!removed)
                 foreach (var chain in scheduler.UserChains.Values)
-                    removed = chain.Remove(Owner);
+                    if (removed = chain.Remove(Owner))
+                        break;
 
             if (!removed)
             {
@@ -210,8 +237,9 @@ namespace GPSS.Entities.Resources
             Available = true;
             if (Idle)
             {
-                NextOwner(scheduler);
                 UpdateUsageHistory(scheduler);
+                NextOwner(scheduler);
+                UpdateCaptureCount();
             }
         }
 
@@ -272,13 +300,16 @@ namespace GPSS.Entities.Resources
         // TODO
         public void UpdateUsageHistory(TransactionScheduler scheduler)
         {
-            if (lastUsageTime < 0.0)
-                lastUsageTime = scheduler.RelativeClock;
+            if (lastUsageTime < scheduler.RelativeClock)
+            {
+                if (lastUsageTime < 0.0)
+                    lastUsageTime = scheduler.RelativeClock;
 
-            if (Idle)
-                busyTime += scheduler.RelativeClock - lastUsageTime;
-            else
-                CaptureCount++;
+                if (Busy)
+                    busyTime += scheduler.RelativeClock - lastUsageTime;
+
+                lastUsageTime = scheduler.RelativeClock;
+            }
         }
 
         public void Reset()

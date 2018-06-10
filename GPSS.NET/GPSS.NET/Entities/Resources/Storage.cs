@@ -164,18 +164,21 @@ namespace GPSS.Entities.Resources
 
         public void UpdateUsageHistory(TransactionScheduler scheduler)
         {
-            if (lastUsage < 0.0)
-                lastUsage = scheduler.RelativeClock;
-
-            if (OccupiedCapacity > 0)
+            if (lastUsage < scheduler.RelativeClock)
             {
-                if (usageHistory.ContainsKey(OccupiedCapacity))
-                    usageHistory[OccupiedCapacity] += scheduler.RelativeClock - lastUsage;
-                else
-                    usageHistory.Add(OccupiedCapacity, scheduler.RelativeClock - lastUsage);
-            }
+                if (lastUsage < 0.0)
+                    lastUsage = scheduler.RelativeClock;
 
-            lastUsage = scheduler.RelativeClock;
+                if (OccupiedCapacity > 0)
+                {
+                    if (usageHistory.ContainsKey(OccupiedCapacity))
+                        usageHistory[OccupiedCapacity] += scheduler.RelativeClock - lastUsage;
+                    else
+                        usageHistory.Add(OccupiedCapacity, scheduler.RelativeClock - lastUsage);
+                }
+
+                lastUsage = scheduler.RelativeClock;
+            }
         }
 
         public Storage Clone() => new Storage

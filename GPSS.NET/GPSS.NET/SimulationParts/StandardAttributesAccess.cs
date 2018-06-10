@@ -34,8 +34,10 @@ namespace GPSS.SimulationParts
 
         public IFacilityAttributes Facility(string facilityName)
         {
-            return AccessDictionary(simulation.Model.Resources.Facilities,
-                facilityName, EntityTypes.Facility);
+            var facility = AccessDictionary(
+                simulation.Model.Resources.Facilities, facilityName, EntityTypes.Facility);
+            facility.UpdateUsageHistory(simulation.Scheduler);
+            return facility;
         }
 
         public IVariableAttributes<double> FloatVariable(string variableName)
@@ -102,8 +104,11 @@ namespace GPSS.SimulationParts
 
         public IStorageAttributes Storage(string storageName)
         {
-            return AccessDictionary(simulation.Model.Resources.Storages,
-                storageName, EntityTypes.Storage);
+            var storage = AccessDictionary(
+                simulation.Model.Resources.Storages, storageName, EntityTypes.Storage);
+            storage.UpdateUsageHistory(simulation.Scheduler);
+            return storage;
+
         }
 
         public ITableAttributes Table(string tableName)

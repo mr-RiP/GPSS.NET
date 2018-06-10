@@ -41,7 +41,7 @@ namespace GPSS.ModelParts
                 facility.Reset();
         }
 
-        public Facility GetFacility(string name, Simulation simulation)
+        public Facility GetFacility(string name, TransactionScheduler scheduler)
         {
             if (Facilities.ContainsKey(name))
                 return Facilities[name];
@@ -49,8 +49,8 @@ namespace GPSS.ModelParts
             {
                 var facility = new Facility();
                 Facilities.Add(name, facility);
-                simulation.Scheduler.FacilityDelayChains.Add(name, facility.DelayChain);
-                simulation.Scheduler.FacilityPendingChains.Add(name, facility.PendingChain);
+                scheduler.FacilityDelayChains.Add(name, facility.DelayChain);
+                scheduler.FacilityPendingChains.Add(name, facility.PendingChain);
                 return facility;
             }
         }

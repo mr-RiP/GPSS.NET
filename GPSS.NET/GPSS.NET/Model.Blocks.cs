@@ -343,5 +343,111 @@ namespace GPSS
         }
 
         #endregion
+
+        #region SEIZE Block // TODO
+
+        /// <summary>
+        /// SEIZE Block.
+        /// When the Active Transaction attempts to enter a SEIZE Block, it waits for or acquires ownership of a Facility Entity.
+        /// </summary>
+        /// <param name="facilityName">Name of the Facility Entity. Must neither be null nor return null.</param>
+        /// <returns>Model with added SEIZE Block</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="facilityName"/> must not be null.</exception>
+        public virtual Model Seize(Func<IStandardAttributes, string> facilityName)
+        {
+            var seize = new Seize(facilityName ?? throw new ArgumentNullException(nameof(facilityName)));
+            Statements.Blocks.Add(seize);
+
+            return this;
+        }
+
+        #endregion
+
+        #region RELEASE Block // TODO
+
+        /// <summary>
+        /// RELEASE Block.
+        /// A RELEASE Block releases ownership of a Facility, or removes a preempted Transaction from contention for a Facility.
+        /// </summary>
+        /// <param name="facilityName">Name of the Facility Entity. Must neither be null nor return null.</param>
+        /// <returns>Model with added SEIZE Block</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="facilityName"/> must not be null.</exception>
+        public virtual Model Release(Func<IStandardAttributes, string> facilityName)
+        {
+            var release = new Release(facilityName ?? throw new ArgumentNullException(nameof(facilityName)));
+            Statements.Blocks.Add(release);
+
+            return this;
+        }
+
+        #endregion
+
+        #region RETURN // TODO
+
+        /// <summary>
+        /// RETURN Block.
+        /// A RETURN Block releases ownership of a Facility, or removes a preempted Transaction from contention for a Facility.
+        /// </summary>
+        /// <param name="facilityName">Name of the Facility Entity. Must neither be null nor return null.</param>
+        /// <returns>Model with added RETURN Block</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="facilityName"/> must not be null.</exception>
+        public virtual Model Return(Func<IStandardAttributes, string> facilityName)
+        {
+            var returnBlock = new Return(facilityName ?? throw new ArgumentNullException(nameof(facilityName)));
+            Statements.Blocks.Add(returnBlock);
+
+            return this;
+        }
+
+        #endregion
+
+        #region PREEMPT Block // TODO
+
+        /// <summary>
+        /// RELEASE Block.
+        /// A PREEMPT Block displaces a Transaction from ownership of a Facility Entity.
+        /// </summary>
+        /// <param name="facilityName">Name of the Facility Entity. Must neither be null nor return null.</param>
+        /// <param name="priorityMode">
+        /// True if PREEMPT block should operate in Priority Mode, false means Interrupt Mode.
+        /// Null means false.
+        /// </param>
+        /// <param name="newNextBlock">
+        /// New next block for the Facility Entity current owner Transaction.
+        /// Must not return null if <paramref name="removeMode"/> returns true.
+        /// Null means null return.
+        /// </param>
+        /// <param name="parameterName">
+        /// Parameter of the Facility Entity current owner Transaction
+        /// in which the Transaction's residual time should be saved if it's going to be preempted. 
+        /// If returns null - residual time will not be saved.
+        /// Null means null return.
+        /// </param>
+        /// <param name="removeMode">
+        /// Returns true the Facility Entity current owner Transaction should be removed from the Facility's chains
+        /// if its going to be preempted. In than case <paramref name="newNextBlock"/> should not return null.
+        /// Null means false.
+        /// </param>
+        /// <returns>Model with added PREEMPT Block</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="facilityName"/> must not be null.</exception>
+        public virtual Model Preempt(
+            Func<IStandardAttributes, string> facilityName,
+            Func<IStandardAttributes, bool> priorityMode = null,
+            Func<IStandardAttributes, string> newNextBlock = null,
+            Func<IStandardAttributes, string> parameterName = null,
+            Func<IStandardAttributes, bool> removeMode = null)
+        {
+            var preempt = new Preempt(
+                facilityName ?? throw new ArgumentNullException(nameof(facilityName)),
+                priorityMode ?? (sna => false),
+                newNextBlock ?? (sna => null),
+                parameterName ?? (sna => null),
+                removeMode ?? (sna => false));
+
+            Statements.Blocks.Add(preempt);
+            return this;
+        }
+
+        #endregion
     }
 }

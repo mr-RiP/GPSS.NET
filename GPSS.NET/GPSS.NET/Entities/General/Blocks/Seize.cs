@@ -30,6 +30,7 @@ namespace GPSS.Entities.General.Blocks
                 var facility = simulation.Model.Resources.GetFacility(
                     FacilityName(simulation.StandardAttributes),
                     simulation.Scheduler);
+
                 return facility.Available && facility.Idle;
             }
             catch (ArgumentNullException error)

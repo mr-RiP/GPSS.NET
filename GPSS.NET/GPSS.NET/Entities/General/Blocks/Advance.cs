@@ -29,6 +29,16 @@ namespace GPSS.Entities.General.Blocks
             TransactionsCount = TransactionsCount,
         };
 
+        public override bool CanEnter(Simulation simulation)
+        {
+            var transaction = simulation.ActiveTransaction.Transaction;
+            double time = Delay(simulation.StandardAttributes);
+            if (time < 0.0)
+                throw new ModelStructureException("Negative time increment.", transaction.CurrentBlock);
+
+            return time == 0.0 || !transaction.Preempted;
+        }
+
         public override void EnterBlock(Simulation simulation)
         {
             var transaction = simulation.ActiveTransaction.Transaction;
@@ -43,8 +53,6 @@ namespace GPSS.Entities.General.Blocks
 
             if (!transaction.Preempted || time == 0.0)
                 base.EnterBlock(simulation);
-            else if (transaction.Preempted)
-                transaction.Delayed = true;
 
             if (transaction.Preempted || time == 0.0)
                 chains.PlaceInCurrentEvents(transaction);

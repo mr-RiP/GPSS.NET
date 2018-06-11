@@ -2,6 +2,7 @@
 using GPSS.Entities.General.Transactions;
 using GPSS.Enums;
 using GPSS.Extensions;
+using GPSS.ModelParts;
 using GPSS.SimulationParts;
 using GPSS.StandardAttributes;
 using System;
@@ -106,32 +107,33 @@ namespace GPSS.Entities.Resources
         // http://www.minutemansoftware.com/reference/r7.htm#PREEMPT
         // http://www.minutemansoftware.com/reference/r9.htm#9.4
         public void Preempt(
-            TransactionScheduler scheduler,
-            Transaction transaction,
+            Simulation simulation,
             bool priorityMode,
             string parameterName,
             int? newNextBlock,
             bool removeMode)
         {
+            var transaction = simulation.ActiveTransaction.Transaction;
+
             if (PreemptedByThis(transaction))
-                Refuse(scheduler, transaction);
+                Refuse(simulation.Scheduler, transaction);
             else if (Available && Idle)
             {
-                UpdateUsageHistory(scheduler);
+                UpdateUsageHistory(simulation.Scheduler);
                 Owner = transaction;
                 UpdateCaptureCount();
             }
             else if (Available && (priorityMode && transaction.Priority > Owner.Priority || !Interrupted))
             {
-                UpdateUsageHistory(scheduler);
-                RemoveFromOwnership(scheduler, parameterName, removeMode, newNextBlock);
+                UpdateUsageHistory(simulation.Scheduler);
+                RemoveFromOwnership(simulation, parameterName, removeMode, newNextBlock);
                 Owner = transaction;
                 UpdateCaptureCount();
             }
             else if (priorityMode)
-                PlaceInDelayChain(scheduler, transaction);
+                PlaceInDelayChain(simulation.Scheduler, transaction);
             else
-                PlaceInPendingChain(scheduler, transaction);
+                PlaceInPendingChain(simulation.Scheduler, transaction);
         }
 
         private bool PreemptedByThis(Transaction transaction)
@@ -148,40 +150,38 @@ namespace GPSS.Entities.Resources
             scheduler.PlaceInCurrentEvents(transaction);
         }
 
-        private void RemoveFromOwnership(TransactionScheduler scheduler, string parameterName, bool removeMode, int? newNextBlock)
+        private void RemoveFromOwnership(Simulation simulation, string parameterName, bool removeMode, int? newNextBlock)
         {
             if (removeMode && newNextBlock == null)
                 throw new ArgumentNullException(nameof(newNextBlock));
 
             if (newNextBlock.HasValue)
+            {
                 Owner.NextBlock = newNextBlock.Value;
+                RemoveOwnerFromRetryChains(simulation.Model.Statements);
+            }
 
             FutureEventTransaction interrupted = null;
             if (Owner.State == TransactionState.Suspended)
-                interrupted = GetInterruptedFromFutureEvents(scheduler, parameterName);
+                interrupted = GetInterruptedFromFutureEvents(simulation.Scheduler, parameterName);
             else if (Owner.State == TransactionState.Passive && newNextBlock.HasValue)
-                MoveInterruptedToCurrentEvents(scheduler);
+                MoveInterruptedToCurrentEvents(simulation.Scheduler);
 
             PlaceInInterruptChain(interrupted, removeMode);
         }
 
+        private void RemoveOwnerFromRetryChains(Statements statements)
+        {
+            statements.RemoveFromRetryChains(Owner);
+        }
+
         private void MoveInterruptedToCurrentEvents(TransactionScheduler scheduler)
         {
-            bool removed = false;
-            foreach (var chain in scheduler.FacilityDelayChains.Values)
-                if (removed = chain.Remove(Owner))
-                    break;
-
+            bool removed = RemoveOwnerFromChains(scheduler.FacilityDelayChains.Values);
             if (!removed)
-                foreach (var chain in scheduler.FacilityPendingChains.Values)
-                    if (removed = chain.Remove(Owner))
-                        break;
-
+                removed = RemoveOwnerFromChains(scheduler.FacilityPendingChains.Values);
             if (!removed)
-                foreach (var chain in scheduler.UserChains.Values)
-                    if (removed = chain.Remove(Owner))
-                        break;
-
+                removed = RemoveOwnerFromChains(scheduler.UserChains.Values);
             if (!removed)
             {
                 StorageDelayTransaction transaction = null;
@@ -191,6 +191,16 @@ namespace GPSS.Entities.Resources
 
             Owner.State = TransactionState.Suspended;
             scheduler.PlaceInCurrentEvents(Owner);
+        }
+
+        private bool RemoveOwnerFromChains(ICollection<LinkedList<Transaction>> chains)
+        {
+            bool removed = false;
+            foreach (var chain in chains)
+                if (removed = chain.Remove(Owner))
+                    break;
+
+            return removed;
         }
 
         private void PlaceInInterruptChain(FutureEventTransaction interrupted, bool removeMode)

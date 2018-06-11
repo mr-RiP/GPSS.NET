@@ -77,8 +77,6 @@ namespace GPSS.Entities.General.Blocks
 
                 if (transaction.State == TransactionState.Active)
                     base.EnterBlock(simulation);
-                else
-                    transaction.Delayed = true;
             }
             catch (ArgumentNullException error)
             {

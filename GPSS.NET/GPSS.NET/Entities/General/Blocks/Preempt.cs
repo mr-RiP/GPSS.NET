@@ -36,6 +36,29 @@ namespace GPSS.Entities.General.Blocks
 
         public override string TypeName => "PREEMPT";
 
+        public override bool CanEnter(Simulation simulation)
+        {
+            try
+            {
+                var transaction = simulation.ActiveTransaction.Transaction;
+                var facility = simulation.Model.Resources.GetFacility(
+                    FacilityName(simulation.StandardAttributes), simulation.Scheduler);
+                bool priorityMode = PriorityMode(simulation.StandardAttributes);
+
+                return facility.Available && 
+                    (facility.Idle ||
+                    (priorityMode && transaction.Priority > facility.Owner.Priority) ||
+                    (!facility.Interrupted));
+            }
+            catch (ArgumentNullException error)
+            {
+                throw new ModelStructureException(
+                    "Attempt to access Facility Entity by null name.",
+                    simulation.ActiveTransaction.Transaction.CurrentBlock,
+                    error);
+            }
+        }
+
         public override void EnterBlock(Simulation simulation)
         {
             try
@@ -50,17 +73,15 @@ namespace GPSS.Entities.General.Blocks
                         "Attempt to preempt Facility entity im Remove Mode without " + 
                         "specifying new Next Block for current owner Transaction.",
                         simulation.ActiveTransaction.Transaction.CurrentBlock);
-                var transaction = simulation.ActiveTransaction.Transaction;
 
                 facility.Preempt(
-                    simulation.Scheduler,
-                    transaction,
+                    simulation,
                     PriorityMode(simulation.StandardAttributes),
                     ParameterName(simulation.StandardAttributes),
                     blockIndex,
                     removeMode);
 
-                if (transaction.State == TransactionState.Active)
+                if (simulation.ActiveTransaction.Transaction.State == TransactionState.Active)
                     base.EnterBlock(simulation);
             }
             catch (ArgumentNullException error)

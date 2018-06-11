@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace GPSS.Extensions
@@ -13,6 +14,13 @@ namespace GPSS.Extensions
                 ret.Add(entry.Key, (TValue)entry.Value.Clone());
 
             return ret;
+        }
+
+        public static Dictionary<TKey, int> CloneMap<TKey, TKeyParent>(this Dictionary<TKey, int> map, List<TKeyParent> list) where TKey : TKeyParent
+        {
+            return map.Values
+                .Select(v => new KeyValuePair<TKey, int>((TKey)list[v], v))
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
     }
 }

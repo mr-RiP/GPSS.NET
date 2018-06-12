@@ -5,13 +5,8 @@ namespace GPSS
 {
     public partial class Model : ICloneable
     {
-        private Model()
+        public Model()
         {            
-        }
-
-        public static Model CreateModel()
-        {
-            return new Model();
         }
 
         public Simulation CreateSimulation()

@@ -170,9 +170,10 @@ namespace GPSS.Entities.Resources
             PlaceInInterruptChain(interrupted, removeMode);
         }
 
+        // TODO 
         private void RemoveOwnerFromRetryChains(Statements statements)
         {
-            statements.RemoveFromRetryChains(Owner);
+            // statements.RemoveFromRetryChains(Owner); - НЕ ПРАВИЛЬНО, RETRY CHAIN привязан к сущности и условию
         }
 
         private void MoveInterruptedToCurrentEvents(TransactionScheduler scheduler)

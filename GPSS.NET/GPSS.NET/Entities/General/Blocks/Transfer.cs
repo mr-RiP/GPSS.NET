@@ -1,5 +1,4 @@
-﻿using GPSS.Entities.General.RetryChain;
-using GPSS.Enums;
+﻿using GPSS.Enums;
 using GPSS.Exceptions;
 using GPSS.Extensions;
 using GPSS.ModelParts;
@@ -11,7 +10,7 @@ using System.Text;
 
 namespace GPSS.Entities.General.Blocks
 {
-    internal class Transfer : Block, IRetryChainContainer
+    internal class Transfer : Block
     {
         private Transfer()
         {
@@ -36,9 +35,6 @@ namespace GPSS.Entities.General.Blocks
         public Func<IStandardAttributes, string> SecondaryDestination { get; private set; }
         public Func<IStandardAttributes, int> Increment { get; private set; }
 
-        public Dictionary<Transaction, TransferTestData> RetryChain { get; private set; } = new Dictionary<Transaction, TransferTestData>();
-        public override int RetryCount => RetryChain.Count;
-
         public override string TypeName => "TRANSFER";
 
         public override void EnterBlock(Simulation simulation)
@@ -46,23 +42,9 @@ namespace GPSS.Entities.General.Blocks
             var transaction = simulation.ActiveTransaction.Transaction;
             try
             {
-                if (Contains(transaction))
-                {
-                    if (Resolve(simulation, transaction, RetryChain[transaction]))
-                        Remove(transaction);
-                    else
-                        Reset(simulation.Scheduler, transaction);
-                }
-                else
-                {
+                if (transaction.NextBlock != transaction.CurrentBlock)
                     base.EnterBlock(simulation);
-                    var data = CalculateTestData(simulation);
-                    if (!Resolve(simulation, transaction, data))
-                    {
-                        Add(transaction, data);
-                        Reset(simulation.Scheduler, transaction);
-                    }
-                }
+                Resolve(simulation, transaction, Mode(simulation.StandardAttributes));                   
             }
             catch (ArgumentNullException error)
             {
@@ -80,22 +62,6 @@ namespace GPSS.Entities.General.Blocks
             }
         }
 
-        private TransferTestData CalculateTestData(Simulation simulation)
-        {
-            return new TransferTestData {
-                Mode = Mode(simulation.StandardAttributes),
-                PrimaryDestination = PrimaryDestination(simulation.StandardAttributes),
-                SecondaryDestination = SecondaryDestination(simulation.StandardAttributes),
-                Increment = Increment(simulation.StandardAttributes),
-            };
-        }
-
-        private void Add(Transaction transaction, TransferTestData data)
-        {
-            transaction.NextBlock = transaction.CurrentBlock;
-            RetryChain.Add(transaction, data);
-        }
-
         private void Reset(TransactionScheduler scheduler, Transaction transaction)
         {
             transaction.State = TransactionState.Suspended;
@@ -103,120 +69,122 @@ namespace GPSS.Entities.General.Blocks
             scheduler.PlaceInCurrentEvents(transaction);
         }
 
-        private bool Resolve(Simulation simulation, Transaction transaction, TransferTestData testData)
+        private bool Resolve(Simulation simulation, Transaction transaction, TransferMode mode)
         {
-            switch (testData.Mode)
+            switch (mode)
             {
                 case TransferMode.Unconditional:
-                    return TransferUnconditional(simulation, transaction, testData);
+                    return TransferUnconditional(simulation, transaction);
                 case TransferMode.Fractional:
-                    return TransferFractional(simulation, transaction, testData);
+                    return TransferFractional(simulation, transaction);
                 case TransferMode.Both:
-                    return TranferBoth(simulation, transaction, testData);
+                    return TranferBoth(simulation, transaction);
                 case TransferMode.All:
-                    return TransferAll(simulation, transaction, testData);
+                    return TransferAll(simulation, transaction);
                 case TransferMode.Pick:
-                    return TransferPick(simulation, transaction, testData);
+                    return TransferPick(simulation, transaction);
                 case TransferMode.Function:
-                    return TransferFunction(simulation, transaction, testData);
+                    return TransferFunction(simulation, transaction);
                 case TransferMode.Parameter:
-                    return TransferParameter(simulation, transaction, testData);
+                    return TransferParameter(simulation, transaction);
                 case TransferMode.Subroutine:
-                    return TransferSubroutine(simulation, transaction, testData);
+                    return TransferSubroutine(simulation, transaction);
                 case TransferMode.Simultaneous:
-                    return TransferSimultaneous(simulation, transaction, testData);
+                    return TransferSimultaneous(simulation, transaction);
                 default:
                     throw new NotImplementedException();
 
             }
         }
 
-        private bool TransferSimultaneous(Simulation simulation, Transaction transaction, TransferTestData testData)
+        private bool TransferSimultaneous(Simulation simulation, Transaction transaction)
         {
             if (transaction.Delayed)
             {
                 transaction.Delayed = false;
-                transaction.NextBlock = simulation.Model.Statements.Labels[testData.SecondaryDestination];
+                transaction.NextBlock = simulation.Model.Statements.Labels[SecondaryDestination(simulation.StandardAttributes)];
             }
             else
-                transaction.NextBlock = simulation.Model.Statements.Labels[testData.PrimaryDestination];
+                transaction.NextBlock = simulation.Model.Statements.Labels[PrimaryDestination(simulation.StandardAttributes)];
 
             return true;
         }
 
         // Работает иначе, чем в GPSS
-        private bool TransferParameter(Simulation simulation, Transaction transaction, TransferTestData testData)
+        private bool TransferParameter(Simulation simulation, Transaction transaction)
         {
-            string nameBase = transaction.Parameters[testData.PrimaryDestination];
-            string destination = string.Concat(nameBase, testData.SecondaryDestination);
+            string nameBase = transaction.Parameters[PrimaryDestination(simulation.StandardAttributes)];
+            string destination = string.Concat(nameBase, SecondaryDestination(simulation.StandardAttributes));
             transaction.NextBlock = simulation.Model.Statements.Labels[destination];
 
             return true;
         }
 
         // Работает иначе, чем в GPSS
-        private bool TransferSubroutine(Simulation simulation, Transaction transaction, TransferTestData testData)
+        private bool TransferSubroutine(Simulation simulation, Transaction transaction)
         {
             var statements = simulation.Model.Statements;
-            int index = statements.Transfers[this];
+            int index = statements.Blocks.IndexOf(this);
             string label = statements.Labels.FirstOrDefault(kvp => kvp.Value == index).Key;
             if (label == null)
                 throw new ModelStructureException(
                     "Attempt to Transfer Transaction in Parameter Mode via unnamed Transfer Block.",
                     transaction.CurrentBlock);
 
-            transaction.SetParameter(testData.SecondaryDestination, label);
-            transaction.NextBlock = statements.Labels[testData.PrimaryDestination];
+            transaction.SetParameter(SecondaryDestination(simulation.StandardAttributes), label);
+            transaction.NextBlock = statements.Labels[PrimaryDestination(simulation.StandardAttributes)];
             return true;
         }
 
         // Работает иначе, чем в GPSS
-        private bool TransferFunction(Simulation simulation, Transaction transaction, TransferTestData testData)
+        private bool TransferFunction(Simulation simulation, Transaction transaction)
         {
-            var function = simulation.Model.Calculations.Functions[testData.PrimaryDestination];
+            var function = simulation.Model.Calculations.Functions[PrimaryDestination(simulation.StandardAttributes)];
             function.Calculate(simulation.StandardAttributes);
 
             int value = (int)Math.Round(function.Result);
-            string destination = string.Concat(testData.SecondaryDestination, value.ToString());
+            string destination = string.Concat(SecondaryDestination(simulation.StandardAttributes), value.ToString());
 
             transaction.NextBlock = simulation.Model.Statements.Labels[destination];
             return true;
         }
 
-        private bool TransferPick(Simulation simulation, Transaction transaction, TransferTestData testData)
+        private bool TransferPick(Simulation simulation, Transaction transaction)
         {
             double roll = simulation.Model.Calculations.DefaultRandomGenerator.StandardUniform();
             if (roll < 0.5)
-                transaction.NextBlock = simulation.Model.Statements.Labels[testData.PrimaryDestination];
+                transaction.NextBlock = simulation.Model.Statements.Labels[PrimaryDestination(simulation.StandardAttributes)];
             else
-                transaction.NextBlock = simulation.Model.Statements.Labels[testData.SecondaryDestination];
+                transaction.NextBlock = simulation.Model.Statements.Labels[SecondaryDestination(simulation.StandardAttributes)];
 
             return true;
         }
 
-        private bool TransferAll(Simulation simulation, Transaction transaction, TransferTestData testData)
+        private bool TransferAll(Simulation simulation, Transaction transaction)
         {
             var statements = simulation.Model.Statements;
-            int primaryBlockIndex = statements.Labels[testData.PrimaryDestination];
-            int secondaryBlockIndex = statements.Labels[testData.SecondaryDestination];
+            int primaryBlockIndex = statements.Labels[PrimaryDestination(simulation.StandardAttributes)];
+            int secondaryBlockIndex = statements.Labels[SecondaryDestination(simulation.StandardAttributes)];
 
             if (primaryBlockIndex >= secondaryBlockIndex)
                 throw new ModelStructureException(
                     "Attempt to perform tests for TRANSFER Block All Mode with " +
                     "Primary Destination Block index higher or equal to Secondary Destination Block.",
                     transaction.CurrentBlock);
-            if (testData.Increment < 1)
+
+            int increment = Increment(simulation.StandardAttributes);
+            if (increment < 1)
                 throw new ModelStructureException(
                     "Attempt to perform tests for TRANSFER Block All Mode with " +
                     "non-positive Increment value.",
                     transaction.CurrentBlock);
-            if ((secondaryBlockIndex - primaryBlockIndex) % testData.Increment != 0)
+            if ((secondaryBlockIndex - primaryBlockIndex) % increment != 0)
                 throw new ModelStructureException(
                     "Attempt to perform tests for TRANSFER Block All Mode with " +
                     "invalid Increment value: loop not coming into Secondary Destination Block.",
                     transaction.CurrentBlock);
             
-            for (int index = primaryBlockIndex; index <= secondaryBlockIndex; index += testData.Increment)
+            for (int index = primaryBlockIndex; index <= secondaryBlockIndex; index += increment)
                 if (statements.Blocks[index].CanEnter(simulation))
                 {
                     transaction.NextBlock = index;
@@ -227,11 +195,11 @@ namespace GPSS.Entities.General.Blocks
             return false;
         }
 
-        private bool TranferBoth(Simulation simulation, Transaction transaction, TransferTestData testData)
+        private bool TranferBoth(Simulation simulation, Transaction transaction)
         {
             var statements = simulation.Model.Statements;
-            int primaryBlockIndex = statements.Labels[testData.PrimaryDestination];
-            int secondaryBlockIndex = statements.Labels[testData.SecondaryDestination];
+            int primaryBlockIndex = statements.Labels[PrimaryDestination(simulation.StandardAttributes)];
+            int secondaryBlockIndex = statements.Labels[SecondaryDestination(simulation.StandardAttributes)];
 
             if (statements.Blocks[primaryBlockIndex].CanEnter(simulation))
                 transaction.NextBlock = primaryBlockIndex;
@@ -246,23 +214,23 @@ namespace GPSS.Entities.General.Blocks
             return true;
         }
 
-        private bool TransferFractional(Simulation simulation, Transaction transaction, TransferTestData testData)
+        private bool TransferFractional(Simulation simulation, Transaction transaction)
         {
             double fraction = Fraction(simulation.StandardAttributes);
             double roll = simulation.Model.Calculations.DefaultRandomGenerator.StandardUniform();
             if (roll <= fraction)
-                transaction.NextBlock = simulation.Model.Statements.Labels[testData.SecondaryDestination];
-            else if (testData.PrimaryDestination == null)
+                transaction.NextBlock = simulation.Model.Statements.Labels[SecondaryDestination(simulation.StandardAttributes)];
+            else if (PrimaryDestination(simulation.StandardAttributes) == null)
                 transaction.NextBlock = transaction.CurrentBlock + 1;
             else
-                transaction.NextBlock = simulation.Model.Statements.Labels[testData.PrimaryDestination];
+                transaction.NextBlock = simulation.Model.Statements.Labels[PrimaryDestination(simulation.StandardAttributes)];
 
             return true;
         }
 
-        private bool TransferUnconditional(Simulation simulation, Transaction transaction, TransferTestData testData)
+        private bool TransferUnconditional(Simulation simulation, Transaction transaction)
         {
-            transaction.NextBlock = simulation.Model.Statements.Labels[testData.PrimaryDestination];
+            transaction.NextBlock = simulation.Model.Statements.Labels[PrimaryDestination(simulation.StandardAttributes)];
             return true;
         }
 
@@ -274,20 +242,8 @@ namespace GPSS.Entities.General.Blocks
             SecondaryDestination = SecondaryDestination,
             Increment = Increment,
 
-            RetryChain = RetryChain.Clone(),
-
             EntryCount = EntryCount,
             TransactionsCount = TransactionsCount,
         };
-
-        public bool Contains(Transaction transaction)
-        {
-            return RetryChain.ContainsKey(transaction);
-        }
-
-        public bool Remove(Transaction transaction)
-        {
-            return RetryChain.Remove(transaction);
-        }
     }
 }

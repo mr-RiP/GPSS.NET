@@ -22,6 +22,7 @@ namespace GPSS.Entities.Resources
         public LinkedList<Transaction> DelayChain { get; private set; } = new LinkedList<Transaction>();
         public LinkedList<Transaction> PendingChain { get; private set; } = new LinkedList<Transaction>();
         public LinkedList<FutureEventTransaction> InterruptChain { get; private set; } = new LinkedList<FutureEventTransaction>();
+        public LinkedList<RetryChainTransaction> RetryChain { get; private set; } = new LinkedList<RetryChainTransaction>();
 
         public bool Available { get; private set; } = true;
         public int CaptureCount { get; private set; } = 0;
@@ -158,7 +159,7 @@ namespace GPSS.Entities.Resources
             if (newNextBlock.HasValue)
             {
                 Owner.NextBlock = newNextBlock.Value;
-                RemoveOwnerFromRetryChains(simulation.Model.Statements);
+                RemoveOwnerFromRetryChains(simulation.Scheduler);
             }
 
             FutureEventTransaction interrupted = null;
@@ -171,9 +172,9 @@ namespace GPSS.Entities.Resources
         }
 
         // TODO 
-        private void RemoveOwnerFromRetryChains(Statements statements)
+        private void RemoveOwnerFromRetryChains(TransactionScheduler scheduler)
         {
-            // statements.RemoveFromRetryChains(Owner); - НЕ ПРАВИЛЬНО, RETRY CHAIN привязан к сущности и условию
+            scheduler.RemoveFromRetryChains(Owner);
         }
 
         private void MoveInterruptedToCurrentEvents(TransactionScheduler scheduler)

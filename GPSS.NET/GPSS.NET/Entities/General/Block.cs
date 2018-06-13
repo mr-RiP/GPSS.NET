@@ -1,4 +1,5 @@
-﻿using GPSS.Extensions;
+﻿using GPSS.Entities.General.Transactions;
+using GPSS.Extensions;
 using GPSS.StandardAttributes;
 using System;
 
@@ -16,6 +17,14 @@ namespace GPSS.Entities.General
         object ICloneable.Clone() => Clone();
 
         public virtual int RetryCount { get => 0; }
+        public virtual bool RemoveRetry(Simulation simulation, RetryChainTransaction retry)
+        {
+            return false;
+        }
+
+        public virtual void AddRetry(Simulation simulation, RetryChainTransaction retry)
+        {
+        }
 
         public virtual void EnterBlock(Simulation simulation)
         {

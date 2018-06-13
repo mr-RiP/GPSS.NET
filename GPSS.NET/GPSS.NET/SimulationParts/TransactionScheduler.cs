@@ -15,14 +15,17 @@ namespace GPSS.SimulationParts
     {
         public TransactionScheduler(Model model, int terminationCount)
         {
-            AddStorageDelayChains(model);
+            AddStorageChains(model);
             TerminationCount = terminationCount;
         }
 
-        private void AddStorageDelayChains(Model model)
+        private void AddStorageChains(Model model)
         {
             foreach (var kvpStorage in model.Resources.Storages)
+            {
                 StorageDelayChains.Add(kvpStorage.Key, kvpStorage.Value.DelayChain);
+                RetryChains.Add(kvpStorage.Value, kvpStorage.Value.RetryChain);
+            }
         }
 
         public Dictionary<string, LinkedList<Transaction>> UserChains { get; private set; } = new Dictionary<string, LinkedList<Transaction>>();
@@ -40,6 +43,8 @@ namespace GPSS.SimulationParts
         // the highest priority Transaction remaining on the CEC becomes the Active Transaction.
         public LinkedList<Transaction> CurrentEvents { get; private set; } = new LinkedList<Transaction>();
 
+        public Dictionary<object, LinkedList<RetryChainTransaction>> RetryChains { get; private set; } = new Dictionary<object, LinkedList<RetryChainTransaction>>();
+
         public double RelativeClock { get; private set; } = 0.0;
         public double AbsoluteClock { get; private set; } = 0.0;
 
@@ -49,6 +54,17 @@ namespace GPSS.SimulationParts
         public Transaction GetActiveTransaction()
         {
             return CurrentEvents.First.Value;
+        }
+
+        public void RemoveFromRetryChains(Transaction transaction)
+        {
+            RetryChainTransaction retry = null;
+            foreach (var chain in RetryChains.Values)
+            {
+                retry = chain.FirstOrDefault(t => t.InnerTransaction == transaction);
+                if (retry != null)
+                    chain.Remove(retry);
+            }
         }
 
         public void PlaceInCurrentEvents(Transaction transaction)

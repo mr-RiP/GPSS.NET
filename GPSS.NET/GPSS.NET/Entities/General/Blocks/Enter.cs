@@ -1,4 +1,5 @@
-﻿using GPSS.Entities.Resources;
+﻿using GPSS.Entities.General.Transactions;
+using GPSS.Entities.Resources;
 using GPSS.Enums;
 using GPSS.Exceptions;
 using System;
@@ -104,6 +105,12 @@ namespace GPSS.Entities.General.Blocks
                     simulation.ActiveTransaction.Transaction.CurrentBlock,
                     error);
             }
+        }
+
+        public override void AddRetry(Simulation simulation, RetryChainTransaction retry)
+        {
+            var name = StorageName(simulation.StandardAttributes);
+            simulation.Model.Resources.Storages[name].RetryChain.AddLast(retry);
         }
     }
 }

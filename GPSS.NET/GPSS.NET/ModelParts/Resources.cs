@@ -51,6 +51,7 @@ namespace GPSS.ModelParts
                 Facilities.Add(name, facility);
                 scheduler.FacilityDelayChains.Add(name, facility.DelayChain);
                 scheduler.FacilityPendingChains.Add(name, facility.PendingChain);
+                scheduler.RetryChains.Add(facility, facility.RetryChain);
                 return facility;
             }
         }

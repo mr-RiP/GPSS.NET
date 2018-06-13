@@ -1,4 +1,5 @@
-﻿using GPSS.Entities.Resources;
+﻿using GPSS.Entities.General.Transactions;
+using GPSS.Entities.Resources;
 using GPSS.Enums;
 using GPSS.Exceptions;
 using System;
@@ -75,5 +76,11 @@ namespace GPSS.Entities.General.Blocks
             EntryCount = EntryCount,
             TransactionsCount = TransactionsCount,
         };
+
+        public override void AddRetry(Simulation simulation, RetryChainTransaction retry)
+        {
+            var name = FacilityName(simulation.StandardAttributes);
+            simulation.Model.Resources.Facilities[name].RetryChain.AddLast(retry);
+        }
     }
 }

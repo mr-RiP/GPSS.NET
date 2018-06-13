@@ -33,6 +33,7 @@ namespace GPSS.Entities.Resources
 
         public int Capacity { get; private set; }
         public LinkedList<StorageDelayTransaction> DelayChain { get; private set; } = new LinkedList<StorageDelayTransaction>();
+        public LinkedList<RetryChainTransaction> RetryChain { get; private set; } = new LinkedList<RetryChainTransaction>();
         public int OccupiedCapacity { get; private set; } = 0;
         public int UseCount { get; private set; } = 0;
         public bool Available { get; private set; } = true;

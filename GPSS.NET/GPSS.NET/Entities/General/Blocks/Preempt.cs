@@ -45,10 +45,15 @@ namespace GPSS.Entities.General.Blocks
                     FacilityName(simulation.StandardAttributes), simulation.Scheduler);
                 bool priorityMode = PriorityMode(simulation.StandardAttributes);
 
-                return facility.Available && 
+                bool allow = facility.Available && 
                     (facility.Idle ||
                     (priorityMode && transaction.Priority > facility.Owner.Priority) ||
                     (!facility.Interrupted));
+
+                if (!allow)
+                    transaction.Delayed = true;
+
+                return allow;
             }
             catch (ArgumentNullException error)
             {

@@ -31,7 +31,12 @@ namespace GPSS.Entities.General.Blocks
                     FacilityName(simulation.StandardAttributes),
                     simulation.Scheduler);
 
-                return facility.Available && facility.Idle;
+                bool allow = facility.Available && facility.Idle;
+                if (!allow)
+                    simulation.ActiveTransaction.Transaction.Delayed = true;
+
+                return allow;
+
             }
             catch (ArgumentNullException error)
             {

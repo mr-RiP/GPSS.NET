@@ -48,7 +48,12 @@ namespace GPSS.Entities.General.Blocks
                     simulation.ActiveTransaction.Transaction.CurrentBlock);
 
                 var storage = simulation.Model.Resources.Storages[name];
-                return storage.Available && storage.AvailableCapacity >= capacity;
+
+                bool allow = storage.Available && storage.AvailableCapacity >= capacity;
+                if (!allow)
+                    simulation.ActiveTransaction.Transaction.Delayed = true;
+
+                return allow;
             }
             catch (ArgumentNullException error)
             {

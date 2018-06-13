@@ -36,7 +36,11 @@ namespace GPSS.Entities.General.Blocks
             if (time < 0.0)
                 throw new ModelStructureException("Negative time increment.", transaction.CurrentBlock);
 
-            return time == 0.0 || !transaction.Preempted;
+            bool allow = time == 0.0 || !transaction.Preempted;
+            if (!allow)
+                transaction.Delayed = true;
+
+            return allow;
         }
 
         public override void EnterBlock(Simulation simulation)

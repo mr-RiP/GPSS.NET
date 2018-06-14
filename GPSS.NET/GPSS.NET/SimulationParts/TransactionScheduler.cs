@@ -19,6 +19,12 @@ namespace GPSS.SimulationParts
             TerminationCount = terminationCount;
         }
 
+        private void AddSavevalueChains(Model model)
+        {
+            foreach (var savevalue in model.Calculations.Savevalues.Values)
+                RetryChains.Add(savevalue, savevalue.RetryChain);
+        }
+
         private void AddStorageChains(Model model)
         {
             foreach (var kvpStorage in model.Resources.Storages)

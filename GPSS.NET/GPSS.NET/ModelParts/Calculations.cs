@@ -1,5 +1,6 @@
 ﻿using GPSS.Entities.Calculations;
 using GPSS.Extensions;
+using GPSS.SimulationParts;
 using System;
 using System.Collections.Generic;
 
@@ -38,5 +39,17 @@ namespace GPSS.ModelParts
         };
 
         object ICloneable.Clone() => Clone();
+
+        public Savevalue GetSavevalue(string name, TransactionScheduler scheduler)
+        {
+            if (Savevalues.ContainsKey(name))
+                return Savevalues[name];
+            else
+            {
+                var sv = new Savevalue();
+                scheduler.RetryChains.Add(sv, sv.RetryChain);
+                return sv;
+            }
+        }
     }
 }

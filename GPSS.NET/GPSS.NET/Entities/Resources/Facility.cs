@@ -83,16 +83,7 @@ namespace GPSS.Entities.Resources
 
         private void TestRetryChain(TransactionScheduler scheduler)
         {
-            var node = RetryChain.First;
-            while (node != null)
-            {
-                var retry = node.Value;
-                if (retry.Test())
-                {
-                    retry.ReturnToCurrentEvents(scheduler);
-                    node = RetryChain.First;
-                }
-            }
+            RetryChainContainerExtensions.TestRetryChain(this, scheduler);
         }
 
         private void UpdateCaptureCount()

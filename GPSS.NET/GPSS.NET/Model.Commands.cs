@@ -266,7 +266,7 @@ namespace GPSS
         /// <returns>Model with added Storage Entity.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="name"/> can not be null.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="totalCapacity"/> must have positive value.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="name"/> should be unique for the Model Storage Entities.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="name"/> must be unique for the Model Storage Entities.</exception>
         public Model Storage(string name, int totalCapacity)
         {
             if (name == null)
@@ -279,6 +279,27 @@ namespace GPSS
             else
                 Resources.Storages.Add(name, new Storage(totalCapacity));
 
+            return this;
+        }
+
+        /// <summary>
+        /// INITIAL Command for Savevalue Entities.
+        /// An INITIAL Command initializes a Savevalue Entity.
+        /// </summary>
+        /// <param name="name">Name of the new Savevalue Entity. Must be unique for the Model Savevalues Entites.</param>
+        /// <param name="value">Value of the new Savevalue Entity.</param>
+        /// <returns>Model with added Savevalue Entity.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="name"/> can not be null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="name"/> must be unique for the Model Savevalue Entities.</exception>
+        public Model InitializeSavevalue(string name, dynamic value)
+        {
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
+            if (Calculations.Savevalues.ContainsKey(name))
+                throw new ArgumentOutOfRangeException(nameof(name),
+                    "Savevalue entity with given name already exists in the Model.");
+
+            Calculations.Savevalues.Add(name, new Savevalue { Value = value });
             return this;
         }
     }

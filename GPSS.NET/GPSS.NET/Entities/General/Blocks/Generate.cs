@@ -72,7 +72,7 @@ namespace GPSS.Entities.General.Blocks
                     {
                         Number = number,
                         Assembly = number,
-                        MarkTime = simulation.Scheduler.AbsoluteClock + timeIncrement,
+                        MarkTime = simulation.Scheduler.AbsoluteTime + timeIncrement,
                         CurrentBlock = -1,
                         NextBlock = simulation.Model.Statements.Generators[this],
                         State = TransactionState.Suspended,

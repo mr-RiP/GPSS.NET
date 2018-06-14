@@ -69,7 +69,6 @@ namespace GPSS.Entities.General.Blocks
         {
             try
             {
-                base.EnterBlock(simulation);
                 string name = StorageName(simulation.StandardAttributes);
                 var transaction = simulation.ActiveTransaction.Transaction;
                 int capacity = StorageCapacity(simulation.StandardAttributes);

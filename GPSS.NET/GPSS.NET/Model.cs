@@ -6,19 +6,20 @@ namespace GPSS
     public partial class Model : ICloneable
     {
         public Model()
-        {            
+        {
+            Clear();
         }
 
         public Simulation CreateSimulation()
         {
             return new Simulation(this);
-        }
+        }   
 
-        internal Statements Statements { get; private set; } = new Statements();
-        internal Calculations Calculations { get; private set; } = new Calculations();
-        internal Groups Groups { get; private set; } = new Groups();
-        internal Resources Resources { get; private set; } = new Resources();
-        internal Statistics Statistics { get; private set; } = new Statistics();
+        internal Statements Statements { get; private set; }
+        internal Calculations Calculations { get; private set; }
+        internal Groups Groups { get; private set; }
+        internal Resources Resources { get; private set; }
+        internal Statistics Statistics { get; private set; }
 
         public Model Clone() => new Model()
         {
@@ -48,6 +49,15 @@ namespace GPSS
 
             Statements.Labels.Add(name, Statements.Blocks.Count);
             return this;
+        }
+
+        public void Clear()
+        {
+            Statements = new Statements();
+            Calculations = new Calculations();
+            Groups = new Groups();
+            Resources = new Resources();
+            Statistics = new Statistics();
         }
     }
 }

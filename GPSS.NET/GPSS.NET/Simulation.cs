@@ -1,4 +1,6 @@
-﻿using GPSS.SimulationParts;
+﻿using GPSS.Exceptions;
+using GPSS.ModelParts;
+using GPSS.SimulationParts;
 using System;
 using System.Linq;
 
@@ -11,6 +13,7 @@ namespace GPSS
             ValidateModel(model);
             CloneInitialModel(model);
             InitializeAccessors();
+            SetupSimulation();
         }
 
         // Клон изначальной модели, используется как прототип при дальнейшем моделировании
@@ -33,9 +36,27 @@ namespace GPSS
             StandardAttributes = new StandardAttributesAccess(this);
         }
 
+        private void SetupSimulation()
+        {
+            Model = initialModel.Clone();
+            Scheduler = new TransactionScheduler(Model, 0);
+        }
+
         private static void ValidateModel(Model model)
         {
-            throw new NotImplementedException();
+            ValidateLabels(model.Statements);
+        }
+
+        private static void ValidateLabels(Statements statements)
+        {
+            var badLabel = statements.Labels
+                .Any(kvp => kvp.Value >= statements.Blocks.Count);
+
+            if (badLabel)
+                throw new ModelStructureException(
+                    "Label naming non-existing Block found.",
+                    statements.Blocks.Count);
+
         }
 
         private void CloneInitialModel(Model model)
@@ -45,7 +66,43 @@ namespace GPSS
 
         public Report Start(int terminationCount)
         {
-            InitializeSimulation(terminationCount);
+            InitializeStart(terminationCount);
+            RunSimulation();
+            CalculateResults();
+
+            return new Report(this);
+        }
+
+        private void InitializeStart(int terminationCount)
+        {
+            Scheduler.TerminationCount = terminationCount;
+            Scheduler.BeginTime = Scheduler.AbsoluteTime;
+            run = true;            
+        }
+
+        public void Halt()
+        {
+            run = false;
+        }
+
+        public Report Continue()    
+        {
+            run = true; 
+
+            RunSimulation();
+            CalculateResults();
+
+            return new Report(this);
+        }
+
+        public void Clear()
+        {
+            run = false;
+            SetupSimulation();
+        }
+
+        private void RunSimulation()
+        {
             while (Scheduler.TerminationCount > 0 && run)
             {
                 if (Scheduler.CurrentEvents.Any())
@@ -55,13 +112,10 @@ namespace GPSS
                 else
                     GenerateEvents();
             }
-            CalculateResultStats();
-
-            return new Report(this);
         }
 
         // Вычисление итоговой статистики
-        private void CalculateResultStats()
+        private void CalculateResults()
         {
             Model.Resources.Calculate(Scheduler);
         }
@@ -69,14 +123,6 @@ namespace GPSS
         private void UpdateEvents()
         {
             Scheduler.UpdateEvents();
-        }
-
-        private void InitializeSimulation(int terminationCount)
-        {
-            Model = initialModel.Clone();
-            Scheduler = new TransactionScheduler(Model, terminationCount);
-
-            run = true;
         }
 
         private void RunCurrentEvents()

@@ -225,9 +225,9 @@ namespace GPSS.Entities.Resources
             {
                 scheduler.FutureEvents.Remove(ownerFutureEvent);
                 scheduler.PlaceInCurrentEvents(Owner);
-                ownerFutureEvent.ReleaseTime -= scheduler.RelativeClock;
+                ownerFutureEvent.DepartureTime -= scheduler.RelativeTime;
                 if (parameterName != null)
-                    Owner.SetParameter(parameterName, ownerFutureEvent.ReleaseTime);
+                    Owner.SetParameter(parameterName, ownerFutureEvent.DepartureTime);
             }
 
             return ownerFutureEvent;
@@ -279,12 +279,12 @@ namespace GPSS.Entities.Resources
 
                 interrupedTransaction.PreemptionCount--;
 
-                if (interrupedTransaction.ReleaseTime == 0.0)
+                if (interrupedTransaction.DepartureTime == 0.0)
                     scheduler.PlaceInCurrentEvents(interrupedTransaction.InnerTransaction);
                 else
                     scheduler.PlaceInFutureEvents(
                         interrupedTransaction.InnerTransaction,
-                        interrupedTransaction.ReleaseTime);
+                        interrupedTransaction.DepartureTime);
             }
             else if (DelayChain.Count != 0)
                 ReturnToCurrentEvents(scheduler, DelayChain);
@@ -317,15 +317,15 @@ namespace GPSS.Entities.Resources
 
         public void UpdateUsageHistory(TransactionScheduler scheduler)
         {
-            if (lastUsageTime < scheduler.RelativeClock)
+            if (lastUsageTime < scheduler.RelativeTime)
             {
                 if (lastUsageTime < 0.0)
-                    lastUsageTime = scheduler.RelativeClock;
+                    lastUsageTime = scheduler.RelativeTime;
 
                 if (Busy)
-                    busyTime += scheduler.RelativeClock - lastUsageTime;
+                    busyTime += scheduler.RelativeTime - lastUsageTime;
 
-                lastUsageTime = scheduler.RelativeClock;
+                lastUsageTime = scheduler.RelativeTime;
             }
         }
 

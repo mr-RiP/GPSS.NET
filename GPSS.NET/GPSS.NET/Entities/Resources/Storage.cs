@@ -35,7 +35,7 @@ namespace GPSS.Entities.Resources
         public LinkedList<StorageDelayTransaction> DelayChain { get; private set; } = new LinkedList<StorageDelayTransaction>();
         public LinkedList<RetryChainTransaction> RetryChain { get; private set; } = new LinkedList<RetryChainTransaction>();
         public int OccupiedCapacity { get; private set; } = 0;
-        public int UseCount { get; private set; } = 0;
+        public int EntryCount { get; private set; } = 0;
         public bool Available { get; private set; } = true;
 
         public int AvailableCapacity { get => Capacity - OccupiedCapacity; }
@@ -128,6 +128,7 @@ namespace GPSS.Entities.Resources
             {
                 UpdateUsageHistory(scheduler);
                 OccupiedCapacity += capacity;
+                EntryCount += capacity;
             }
             else
             {
@@ -172,20 +173,20 @@ namespace GPSS.Entities.Resources
 
         public void UpdateUsageHistory(TransactionScheduler scheduler)
         {
-            if (lastUsage < scheduler.RelativeClock)
+            if (lastUsage < scheduler.RelativeTime)
             {
                 if (lastUsage < 0.0)
-                    lastUsage = scheduler.RelativeClock;
+                    lastUsage = scheduler.RelativeTime;
 
                 if (OccupiedCapacity > 0)
                 {
                     if (usageHistory.ContainsKey(OccupiedCapacity))
-                        usageHistory[OccupiedCapacity] += scheduler.RelativeClock - lastUsage;
+                        usageHistory[OccupiedCapacity] += scheduler.RelativeTime - lastUsage;
                     else
-                        usageHistory.Add(OccupiedCapacity, scheduler.RelativeClock - lastUsage);
+                        usageHistory.Add(OccupiedCapacity, scheduler.RelativeTime - lastUsage);
                 }
 
-                lastUsage = scheduler.RelativeClock;
+                lastUsage = scheduler.RelativeTime;
             }
         }
 
@@ -194,7 +195,7 @@ namespace GPSS.Entities.Resources
             Capacity = Capacity,
             OccupiedCapacity = OccupiedCapacity,
             DelayChain = DelayChain.Clone(),
-            UseCount = UseCount,
+            EntryCount = EntryCount,
             Available = Available,
 
             usageHistory = new Dictionary<int, double>(usageHistory),
@@ -205,7 +206,7 @@ namespace GPSS.Entities.Resources
 
         public void Reset()
         {
-            UseCount = 0;
+            EntryCount = 0;
 
             usageHistory.Clear();
             lastUsage = 0.0;

@@ -51,8 +51,9 @@ namespace GPSS.SimulationParts
 
         public Dictionary<object, LinkedList<RetryChainTransaction>> RetryChains { get; private set; } = new Dictionary<object, LinkedList<RetryChainTransaction>>();
 
-        public double RelativeClock { get; private set; } = 0.0;
-        public double AbsoluteClock { get; private set; } = 0.0;
+        public double RelativeTime { get; private set; } = 0.0;
+        public double AbsoluteTime { get; private set; } = 0.0;
+        public double BeginTime { get; set; } = 0.0;
 
         public int GenerationCount { get; set; } = 0;
         public int TerminationCount { get; set; } = 0;
@@ -88,13 +89,13 @@ namespace GPSS.SimulationParts
 
         public void PlaceInFutureEvents(Transaction transaction, double timeIncrement)
         {
-            var futureEvent = new FutureEventTransaction(transaction, RelativeClock + timeIncrement);
-            if (FutureEvents.Count == 0 || futureEvent.ReleaseTime >= FutureEvents.Last.Value.ReleaseTime)
+            var futureEvent = new FutureEventTransaction(transaction, RelativeTime + timeIncrement);
+            if (FutureEvents.Count == 0 || futureEvent.DepartureTime >= FutureEvents.Last.Value.DepartureTime)
                 FutureEvents.AddLast(futureEvent);
             else
             {
                 var node = FutureEvents.First;
-                while (node.Value.ReleaseTime <= futureEvent.ReleaseTime)
+                while (node.Value.DepartureTime <= futureEvent.DepartureTime)
                     node = node.Next;
                 FutureEvents.AddBefore(node, futureEvent);
             }
@@ -102,8 +103,8 @@ namespace GPSS.SimulationParts
 
         public void UpdateEvents()
         {
-            double releaseTime = FutureEvents.First.Value.ReleaseTime;
-            while (FutureEvents.First.Value.ReleaseTime == releaseTime)
+            double releaseTime = FutureEvents.First.Value.DepartureTime;
+            while (FutureEvents.First.Value.DepartureTime == releaseTime)
             {
                 PlaceInCurrentEvents(FutureEvents.First.Value.InnerTransaction);
                 FutureEvents.RemoveFirst();
@@ -114,15 +115,15 @@ namespace GPSS.SimulationParts
 
         private void UpdateClock(double releaseTime)
         {
-            AbsoluteClock += releaseTime - RelativeClock;
-            RelativeClock = releaseTime;
+            AbsoluteTime += releaseTime - RelativeTime;
+            RelativeTime = releaseTime;
         }
 
         public void Reset()
         {
             foreach (var futureEvent in FutureEvents)
-                futureEvent.ReleaseTime -= RelativeClock;
-            RelativeClock = 0.0;
+                futureEvent.DepartureTime -= RelativeTime;
+            RelativeTime = 0.0;
         }
     }
 }

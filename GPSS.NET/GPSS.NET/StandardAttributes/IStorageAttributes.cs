@@ -33,13 +33,13 @@
         double AverageCapacity();
 
         /// <summary>
-        /// Storage use count.
+        /// Storage entry count.
         /// Total number of storage units that have been acquired from the Storage Entity.
         /// </summary>
         /// <remarks>
         /// GPSS World SC$Entnum SNA.
         /// </remarks>
-        int UseCount { get; }
+        int EntryCount { get; }
 
         /// <summary>
         /// Storage empty.

@@ -20,7 +20,7 @@ namespace GPSS.StandardAttributes
         /// <remarks>
         /// GPSS World AC1 SNA.
         /// </remarks>
-        double AbsoluteClock { get; }
+        double AbsoluteTime { get; }
 
         /// <summary>
         /// Value of relative system clock. Simulated time since last RESET.
@@ -28,6 +28,6 @@ namespace GPSS.StandardAttributes
         /// <remarks>
         /// GPSS World C1 SNA.
         /// </remarks>
-        double RelativeClock { get; }
+        double RelativeTime { get; }
     }
 }

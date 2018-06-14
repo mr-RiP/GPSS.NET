@@ -18,11 +18,6 @@ namespace GPSS.Entities.Calculations
             Value = Value,
         };
 
-        public void TestRetryChain(TransactionScheduler scheduler)
-        {
-
-        }
-
         object ICloneable.Clone() => Clone();
     }
 }

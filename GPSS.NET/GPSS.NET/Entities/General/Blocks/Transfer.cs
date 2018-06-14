@@ -16,11 +16,13 @@ namespace GPSS.Entities.General.Blocks
 
         public Transfer(
             Func<IStandardAttributes, TransferMode> mode,
+            Func<IStandardAttributes, double> fraction,
             Func<IStandardAttributes, string> primaryDestination,
             Func<IStandardAttributes, string> secondaryDestination,
             Func<IStandardAttributes, int> increment)
         {
             Mode = mode;
+            Fraction = fraction;
             PrimaryDestination = primaryDestination;
             SecondaryDestination = secondaryDestination;
             Increment = increment;

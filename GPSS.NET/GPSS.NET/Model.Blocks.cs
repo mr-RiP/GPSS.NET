@@ -1,4 +1,5 @@
 ﻿using GPSS.Entities.General.Blocks;
+using GPSS.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -234,7 +235,7 @@ namespace GPSS
         /// ENTER Block.
         /// When a Transaction attempts to enter an ENTER Block, it either takes or waits for a specified number of storage capacity units.
         /// </summary>
-        /// <param name="storageName">Storage entity name. Must neither be null nor return null. Must address to predefined Storage Entity.</param>
+        /// <param name="storageName">Storage entity name. Must neither be nor return null. Must address to predefined Storage Entity.</param>
         /// <param name="storageCapacity">Number of storage capacity units used by entering transaction. Null means 1.</param>
         /// <returns>Model with added ENTER Block.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="storageName"/> must not be null.</exception>
@@ -256,7 +257,7 @@ namespace GPSS
         /// LEAVE Block.
         /// A LEAVE Block increases the accessible storage capacity units at a Storage Entity.
         /// </summary>
-        /// <param name="storageName">Storage entity name. Must neither be null nor return null. Must address to predefined Storage Entity.</param>
+        /// <param name="storageName">Storage entity name. Must neither be nor return null. Must address to predefined Storage Entity.</param>
         /// <param name="storageCapacity">Number of storage capacity units used by entering transaction. Null means 1.</param>
         /// <returns>Model with added LEAVE Block.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="storageName"/> must not be null.</exception>
@@ -296,7 +297,7 @@ namespace GPSS
         /// SAVAIL Block.
         /// A SAVAIL Block ensures that a Storage Entity is in the available state.
         /// </summary>
-        /// <param name="storageName">Storage entity name. Must neither be null nor return null. Must address to predefined Storage Entity.</param>
+        /// <param name="storageName">Storage entity name. Must neither be nor return null. Must address to predefined Storage Entity.</param>
         /// <returns>Model with added SAVAIL Block.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="storageName"/> must not be null.</exception>
         public virtual Model StorageAvailable(Func<IStandardAttributes, string> storageName)
@@ -332,7 +333,7 @@ namespace GPSS
         /// SUNAVAIL Block.
         /// A SAVAIL Block ensures that a Storage Entity is in the unavailable state.
         /// </summary>
-        /// <param name="storageName">Storage entity name. Must neither be null nor return null. Must address to predefined Storage Entity.</param>
+        /// <param name="storageName">Storage entity name. Must neither be nor return null. Must address to predefined Storage Entity.</param>
         /// <returns>Model with added SAVAIL Block.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="storageName"/> must not be null.</exception>
         public virtual Model StorageUnavailable(Func<IStandardAttributes, string> storageName)
@@ -350,7 +351,7 @@ namespace GPSS
         /// SEIZE Block.
         /// When the Active Transaction attempts to enter a SEIZE Block, it waits for or acquires ownership of a Facility Entity.
         /// </summary>
-        /// <param name="facilityName">Name of the Facility Entity. Must neither be null nor return null.</param>
+        /// <param name="facilityName">Name of the Facility Entity. Must neither be nor return null.</param>
         /// <returns>Model with added SEIZE Block</returns>
         /// <exception cref="ArgumentNullException"><paramref name="facilityName"/> must not be null.</exception>
         public virtual Model Seize(Func<IStandardAttributes, string> facilityName)
@@ -369,7 +370,7 @@ namespace GPSS
         /// RELEASE Block.
         /// A RELEASE Block releases ownership of a Facility, or removes a preempted Transaction from contention for a Facility.
         /// </summary>
-        /// <param name="facilityName">Name of the Facility Entity. Must neither be null nor return null.</param>
+        /// <param name="facilityName">Name of the Facility Entity. Must neither be nor return null.</param>
         /// <returns>Model with added SEIZE Block</returns>
         /// <exception cref="ArgumentNullException"><paramref name="facilityName"/> must not be null.</exception>
         public virtual Model Release(Func<IStandardAttributes, string> facilityName)
@@ -388,7 +389,7 @@ namespace GPSS
         /// RETURN Block.
         /// A RETURN Block releases ownership of a Facility, or removes a preempted Transaction from contention for a Facility.
         /// </summary>
-        /// <param name="facilityName">Name of the Facility Entity. Must neither be null nor return null.</param>
+        /// <param name="facilityName">Name of the Facility Entity. Must neither be nor return null.</param>
         /// <returns>Model with added RETURN Block</returns>
         /// <exception cref="ArgumentNullException"><paramref name="facilityName"/> must not be null.</exception>
         public virtual Model Return(Func<IStandardAttributes, string> facilityName)
@@ -407,7 +408,7 @@ namespace GPSS
         /// RELEASE Block.
         /// A PREEMPT Block displaces a Transaction from ownership of a Facility Entity.
         /// </summary>
-        /// <param name="facilityName">Name of the Facility Entity. Must neither be null nor return null.</param>
+        /// <param name="facilityName">Name of the Facility Entity. Must neither be nor return null.</param>
         /// <param name="priorityMode">
         /// True if PREEMPT block should operate in Priority Mode, false means Interrupt Mode.
         /// Null means false.
@@ -447,6 +448,121 @@ namespace GPSS
             Statements.Blocks.Add(preempt);
             return this;
         }
+
+        #endregion
+
+        #region SAVEVALUE Block
+
+        /// <summary>
+        /// SAVEVALUE Block.
+        /// A SAVEVALUE Block changes the value of a Savevalue Entity.
+        /// </summary>
+        /// <param name="name">Name of the Savevalue Entity. Must neither be nor return null.</param>
+        /// <param name="value">Value to be saved within Savevalue Entity. Must not be null.</param>
+        /// <returns>Model with added SAVEVALUE Block</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Neither <paramref name="name"/> nor <paramref name="value"/> must not be null.
+        /// </exception>
+        public Model SaveValue(string name, Func<IStandardAttributes, dynamic> value)
+        {
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
+
+            return SaveValue((sna => name), value);
+        }
+
+        /// <summary>
+        /// SAVEVALUE Block.
+        /// A SAVEVALUE Block changes the value of a Savevalue Entity.
+        /// </summary>
+        /// <param name="name">Name of the Savevalue Entity. Must neither be nor return null.</param>
+        /// <param name="value">Value to be saved within Savevalue Entity. Must not be null.</param>
+        /// <returns>Model with added SAVEVALUE Block</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Neither <paramref name="name"/> nor <paramref name="value"/> must not be null.
+        /// </exception>
+        public virtual Model SaveValue(Func<IStandardAttributes, string> name, Func<IStandardAttributes, dynamic> value)
+        {
+            var saveValue = new SaveValue(
+                name ?? throw new ArgumentNullException(nameof(name)),
+                value ?? throw new ArgumentNullException(nameof(value)));
+
+            Statements.Blocks.Add(saveValue);
+            return this;
+        }
+
+        #endregion
+
+        #region GATE Block // TODO
+
+        /// <summary>
+        /// GATE Block.
+        /// A GATE Block alters Transaction flow based on the state of an entity.
+        /// A GATE Block operates in either "Refuse Mode" 
+        /// (if <paramref name="alternatePathBlockName"/> either is or returns null)
+        /// or "Alternate Exit Mode" otherwise.
+        /// </summary>
+        /// <param name="condition">Test condition for the given entity. Must not be null.</param>
+        /// <param name="entityName">Name of the given entity. Must neither be nor return null.</param>
+        /// <param name="alternatePathBlockName">
+        /// Name of the alternate path block,
+        /// which transcation will be moved to if condition test fails.
+        /// Null value or null return means "Refuse Mode" which means transaction should be blocked 
+        /// if condition test has been failed.</param>
+        /// <returns>Model with added GATE Block</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Neither <paramref name="condition"/> nor
+        /// <paramref name="entityName"/> must not be null.
+        /// </exception>    
+        public virtual Model Gate(
+            Func<IStandardAttributes, GateCondition> condition,
+            Func<IStandardAttributes, string> entityName,
+            Func<IStandardAttributes, string> alternatePathBlockName = null)
+        {
+            var gate = new Gate(
+                condition ?? throw new ArgumentNullException(nameof(condition)),
+                entityName ?? throw new ArgumentNullException(nameof(entityName)),
+                alternatePathBlockName ?? (sna => null));
+
+            Statements.Blocks.Add(gate);
+            return this;
+        }
+
+        #endregion
+
+        #region TRANSFER Block // TODO
+
+        /// <summary>
+        /// TRANSFER Block.
+        /// A TRANSFER Block causes the Active Transaction to jump to a new Block location.
+        /// ATTENTION! Different modes of TRANSFER Block have different requirments, restrictions and behavior.
+        /// See <see cref="TransferMode"/> for specifics.
+        /// </summary>
+        /// <param name="mode">TRANSFER Block Mode. See <see cref="TransferMode"/> for specifics. Must not be null.</param>
+        /// <param name="fraction">Fraction value for TRANSFER Block "Fractional Mode".</param>
+        /// <param name="primaryDestination">See <see cref="TransferMode"/> for specifics.</param>
+        /// <param name="secondaryDestination">See <see cref="TransferMode"/> for specifics.</param>
+        /// <param name="increment">Increment value for TRANSFER Block "All Mode".</param>
+        /// <returns></returns>
+        public virtual Model Transfer(
+            Func<IStandardAttributes, TransferMode> mode,
+            Func<IStandardAttributes, double> fraction,
+            Func<IStandardAttributes, string> primaryDestination,
+            Func<IStandardAttributes, string> secondaryDestination,
+            Func<IStandardAttributes, int> increment)
+        {
+            var transfer = new Transfer(
+                mode ?? throw new ArgumentNullException(nameof(mode)),
+                fraction ?? (sna => 1.0),
+                primaryDestination ?? (sna => null),
+                secondaryDestination ?? (sna => null),
+                increment ?? (sna => 1));
+    
+
+            Statements.Blocks.Add(transfer);
+            return this;
+        }
+
 
         #endregion
     }

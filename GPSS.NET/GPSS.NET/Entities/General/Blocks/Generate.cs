@@ -90,7 +90,7 @@ namespace GPSS.Entities.General.Blocks
             }
             catch (StandardAttributeAccessException error)
             {
-                if (error.EntityType == EntityTypes.Transaction)
+                if (error.EntityType == EntityType.Transaction)
                     throw new ModelStructureException(
                         "Can't access Active Transaction within GENERATE block.",
                         simulation.Model.Statements.Generators[this], error);

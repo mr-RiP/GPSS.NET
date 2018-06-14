@@ -29,7 +29,7 @@ namespace GPSS.Entities.Calculations
             {
                 throw new StandardAttributeAccessException(
                     "Function argument value could not been calculated.",
-                    EntityTypes.Function,
+                    EntityType.Function,
                     error);
             }
         }
@@ -52,7 +52,7 @@ namespace GPSS.Entities.Calculations
             {
                 throw new StandardAttributeAccessException(
                     "Function could not access list value with at given argument index.",
-                    EntityTypes.Function,
+                    EntityType.Function,
                     error);
             }
         }
@@ -67,7 +67,7 @@ namespace GPSS.Entities.Calculations
             {
                 throw new StandardAttributeAccessException(
                     "Function Result could not been calculated.",
-                    EntityTypes.Function,
+                    EntityType.Function,
                     error);
             }
         }

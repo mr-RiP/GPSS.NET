@@ -16,7 +16,7 @@ namespace GPSS.Entities.Resources
     // Касательно RETRY Chain в референсе написана хуйня
     // На практике при невозможности обработки - все идет в Delay Chain
     // https://i.imgur.com/xzR03MR.png
-    internal class Storage : ICloneable, IStorageAttributes, IResetable
+    internal class Storage : ICloneable, IStorageAttributes, IResetable, IRetryChainContainer
     {
         private Storage()
         {

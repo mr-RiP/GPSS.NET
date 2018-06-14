@@ -7,16 +7,16 @@ namespace GPSS.Exceptions
 {
     public class StandardAttributeAccessException : ArgumentException
     {
-        public StandardAttributeAccessException(string message, EntityTypes entityType) : base(message)
+        public StandardAttributeAccessException(string message, EntityType entityType) : base(message)
         {
             EntityType = entityType;
         }
 
-        public StandardAttributeAccessException(string message, EntityTypes entityType, Exception innerException) : base(message, innerException)
+        public StandardAttributeAccessException(string message, EntityType entityType, Exception innerException) : base(message, innerException)
         {
             EntityType = entityType;
         }
 
-        public EntityTypes EntityType { get; private set; }
+        public EntityType EntityType { get; private set; }
     }
 }

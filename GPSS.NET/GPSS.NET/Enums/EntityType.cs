@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GPSS.Enums
 {
-    public enum EntityTypes
+    public enum EntityType
     {
         // General
         Block,

@@ -22,20 +22,20 @@ namespace GPSS.SimulationParts
         public IBlockAttributes Block(string blockName)
         {
             Statements statements = simulation.Model.Statements;
-            int index = AccessDictionary(statements.Labels, blockName, EntityTypes.Block);
+            int index = AccessDictionary(statements.Labels, blockName, EntityType.Block);
             return statements.Blocks[index];
         }
 
         public IVariableAttributes<bool> BoolVariable(string variableName)
         {
             return AccessVariable(simulation.Model.Calculations.BoolVariables,
-                variableName, EntityTypes.BoolVariable);
+                variableName, EntityType.BoolVariable);
         }
 
         public IFacilityAttributes Facility(string facilityName)
         {
             var facility = AccessDictionary(
-                simulation.Model.Resources.Facilities, facilityName, EntityTypes.Facility);
+                simulation.Model.Resources.Facilities, facilityName, EntityType.Facility);
             facility.UpdateUsageHistory(simulation.Scheduler);
             return facility;
         }
@@ -43,39 +43,39 @@ namespace GPSS.SimulationParts
         public IVariableAttributes<double> FloatVariable(string variableName)
         {
             return AccessVariable(simulation.Model.Calculations.FloatVariables,
-                variableName, EntityTypes.FloatVariable);
+                variableName, EntityType.FloatVariable);
         }
 
         public IFunctionAttributes Function(string functionName)
         {
             var function = AccessDictionary(simulation.Model.Calculations.Functions,
-                functionName, EntityTypes.Function);
-            Calculate(function, functionName, EntityTypes.Function);
+                functionName, EntityType.Function);
+            Calculate(function, functionName, EntityType.Function);
             return function;
         }
 
         public ILogicswitchAttributes Logicswitch(string logicSwitchName)
         {
             return AccessDictionary(simulation.Model.Resources.Logicswitches,
-                logicSwitchName, EntityTypes.Logicswitch);
+                logicSwitchName, EntityType.Logicswitch);
         }
 
         public IMatrixAttributes Matrix(string matrixName)
         {
             return AccessDictionary(simulation.Model.Calculations.Matrices,
-                matrixName, EntityTypes.Matrix);
+                matrixName, EntityType.Matrix);
         }
 
         public INumericGroupAttributes NumericGroup(string numericGroupName)
         {
             return AccessDictionary(simulation.Model.Groups.NumericGroups,
-                numericGroupName, EntityTypes.NumericGroup);
+                numericGroupName, EntityType.NumericGroup);
         }
 
         public IQueueAttributes Queue(string queueName)
         {
             return AccessDictionary(simulation.Model.Statistics.Queues,
-                queueName, EntityTypes.Queue);
+                queueName, EntityType.Queue);
         }
 
         public IRandomNumberGeneratorAttributes RandomNumberGenerator()
@@ -99,13 +99,13 @@ namespace GPSS.SimulationParts
         public ISavevalueAttributes Savevalue(string saveValueName)
         {
             return AccessDictionary(simulation.Model.Calculations.Savevalues,
-                saveValueName, EntityTypes.Savevalue);
+                saveValueName, EntityType.Savevalue);
         }
 
         public IStorageAttributes Storage(string storageName)
         {
             var storage = AccessDictionary(
-                simulation.Model.Resources.Storages, storageName, EntityTypes.Storage);
+                simulation.Model.Resources.Storages, storageName, EntityType.Storage);
             storage.UpdateUsageHistory(simulation.Scheduler);
             return storage;
 
@@ -114,7 +114,7 @@ namespace GPSS.SimulationParts
         public ITableAttributes Table(string tableName)
         {
             return AccessDictionary(simulation.Model.Statistics.Tables,
-                tableName, EntityTypes.Table);
+                tableName, EntityType.Table);
         }
 
         public ITransactionAttributes Transaction()
@@ -123,25 +123,25 @@ namespace GPSS.SimulationParts
                 return simulation.ActiveTransaction;
             else
                 throw new StandardAttributeAccessException("Active transaction does not set.",
-                    EntityTypes.Transaction);
+                    EntityType.Transaction);
         }
 
         public ITransactionGroupAttributes TransactionGroup(string transactionGroupName)
         {
             return AccessDictionary(simulation.Model.Groups.TransactionGroups,
-                transactionGroupName, EntityTypes.TransactionGroup);
+                transactionGroupName, EntityType.TransactionGroup);
         }
 
         public IUserchainAttributes Userchain(string userChainName)
         {
             return AccessDictionary(simulation.Model.Groups.Userchains,
-                userChainName, EntityTypes.Userchain);
+                userChainName, EntityType.Userchain);
         }
 
         public IVariableAttributes<int> Variable(string variableName)
         {
             return AccessVariable(simulation.Model.Calculations.Variables,
-                variableName, EntityTypes.Variable);
+                variableName, EntityType.Variable);
         }
 
         public ISystemAttributes System()
@@ -149,7 +149,7 @@ namespace GPSS.SimulationParts
             return simulation.Scheduler;
         }
 
-        private T AccessDictionary<T>(Dictionary<string, T> dictionary, string name, EntityTypes entityType)
+        private T AccessDictionary<T>(Dictionary<string, T> dictionary, string name, EntityType entityType)
         {
             if (name == null)
                 throw new StandardAttributeAccessException(
@@ -166,14 +166,14 @@ namespace GPSS.SimulationParts
                     new ArgumentOutOfRangeException());
         }
 
-        private Variable<T> AccessVariable<T>(Dictionary<string, Variable<T>> dictionary, string name, EntityTypes entityType)
+        private Variable<T> AccessVariable<T>(Dictionary<string, Variable<T>> dictionary, string name, EntityType entityType)
         {
             var variable = AccessDictionary(dictionary, name, entityType);
             Calculate(variable, name, entityType);
             return variable;
         }
 
-        private void Calculate<T>(ICalculatable<T> target, string name, EntityTypes entityType)
+        private void Calculate<T>(ICalculatable<T> target, string name, EntityType entityType)
         {
             try
             {

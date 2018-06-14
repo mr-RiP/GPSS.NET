@@ -13,7 +13,7 @@ using System.Text;
 namespace GPSS.Entities.Resources
 {
     // http://www.minutemansoftware.com/reference/r4.htm#4.3
-    internal class Facility : ICloneable, IFacilityAttributes, IResetable
+    internal class Facility : ICloneable, IFacilityAttributes, IResetable, IRetryChainContainer
     {
         private double busyTime = 0.0;
         private double lastUsageTime = -1.0;

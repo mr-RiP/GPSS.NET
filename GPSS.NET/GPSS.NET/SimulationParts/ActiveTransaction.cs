@@ -38,7 +38,7 @@ namespace GPSS.SimulationParts
                 return modelGeneral.Blocks[blockIndex].TransactionsCount > 0 && FindMatrchInChains(blockIndex);
             }
             else
-                throw new StandardAttributeAccessException("Block with given name does not exists.", EntityTypes.Transaction);
+                throw new StandardAttributeAccessException("Block with given name does not exists.", EntityType.Transaction);
         }
 
         private bool FindMatrchInChains(int blockIndex)
@@ -57,7 +57,7 @@ namespace GPSS.SimulationParts
             if (Transaction.Parameters.ContainsKey(parameterName))
                 return Transaction.Parameters[parameterName];
             else
-                throw new StandardAttributeAccessException("Active transaction does not have parameter with given name.", EntityTypes.Transaction);
+                throw new StandardAttributeAccessException("Active transaction does not have parameter with given name.", EntityType.Transaction);
         }
 
         public double TransitTime(string parameterName)

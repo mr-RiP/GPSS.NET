@@ -7,24 +7,25 @@ namespace GPSS.Enums
     // http://www.minutemansoftware.com/reference/r7.htm#GATE
     public enum GateCondition
     {
-        FacilityAvailable = 0,
+        FacilityAvailable,
         FacilityUnavailable,
         FacilityInterrupted,
         FacilityNotInterrupted,
         FacilityIdle,
         FacilityBusy,
 
-        StorageEmpty = 100,
+        StorageEmpty,
         StorageFull,
         StorageNotEmpty,
         StorageNotFull,
         StorageAvailable,
         StorageUnavailable,
 
-        LogicswitchSet = 200,
+        LogicswitchSet,
         LogicswitchReset,
 
-        Match = 300,
+        Match,
         NotMatch,
     }
 }
+

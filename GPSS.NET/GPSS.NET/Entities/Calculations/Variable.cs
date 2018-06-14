@@ -44,14 +44,14 @@ namespace GPSS.Entities.Calculations
         public Variable<T> Clone() => new Variable<T>(Expression);      
         object ICloneable.Clone() => Clone();
 
-        private EntityTypes GetEntityType()
+        private EntityType GetEntityType()
         {
             if (Result is double)
-                return EntityTypes.FloatVariable;
+                return EntityType.FloatVariable;
             else if (Result is bool)
-                return EntityTypes.BoolVariable;
+                return EntityType.BoolVariable;
             else
-                return EntityTypes.Variable;
+                return EntityType.Variable;
         }
     }
 }

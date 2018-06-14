@@ -1,5 +1,4 @@
-﻿using GPSS.Entities.General.Transactions.RetryChainTransactions;
-using GPSS.Enums;
+﻿using GPSS.Enums;
 using GPSS.Exceptions;
 using GPSS.SimulationParts;
 using System;
@@ -203,10 +202,11 @@ namespace GPSS.Entities.General.Blocks
             int increment)
         {
             var statements = simulation.Model.Statements;
-            var retry = new TransferRetry(transaction, primaryBlockIndex, secondaryBlockIndex, increment);
-
             for (int index = primaryBlockIndex; index <= secondaryBlockIndex; index += increment)
-                statements.Blocks[index].AddRetry(simulation, retry);
+                statements.Blocks[index].AddRetry(simulation, index);
+
+            transaction.State = TransactionState.Suspended;
+            simulation.Scheduler.CurrentEvents.Remove(transaction);
         }
 
         private void AddToRetryChainsBoth(
@@ -216,9 +216,11 @@ namespace GPSS.Entities.General.Blocks
             int secondaryBlockIndex)
         {
             var statements = simulation.Model.Statements;
-            var retry = new TransferRetry(transaction, primaryBlockIndex, secondaryBlockIndex, -1);
-            statements.Blocks[primaryBlockIndex].AddRetry(simulation, retry);
-            statements.Blocks[secondaryBlockIndex].AddRetry(simulation, retry);
+            statements.Blocks[primaryBlockIndex].AddRetry(simulation, primaryBlockIndex);
+            statements.Blocks[secondaryBlockIndex].AddRetry(simulation, secondaryBlockIndex);
+
+            transaction.State = TransactionState.Suspended;
+            simulation.Scheduler.CurrentEvents.Remove(transaction);
         }
 
         public static bool ResolveTransferAll(

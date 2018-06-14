@@ -1,7 +1,9 @@
-﻿using GPSS.Enums;
+﻿using GPSS.Entities.General.Transactions;
+using GPSS.Enums;
 using GPSS.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace GPSS.Entities.General.Blocks
@@ -62,6 +64,23 @@ namespace GPSS.Entities.General.Blocks
                 chains.PlaceInCurrentEvents(transaction);
             else 
                 chains.PlaceInFutureEvents(transaction, time);
+        }
+
+        public override void AddRetry(Simulation simulation, int? destinationBlockIndex = null)
+        {
+            var transaction = simulation.ActiveTransaction.Transaction;
+            if (transaction.Preempted)
+            {
+                var facilities = simulation.Model.Resources.Facilities.Values
+                    .Where(f => f.Interrupted && f.InterruptChain.Any(fe => fe.InnerTransaction == transaction));
+                int blockIndex = simulation.Model.Statements.Blocks.IndexOf(this);
+
+                foreach (var facility in facilities)
+                    facility.RetryChain.AddLast(new RetryChainTransaction(
+                        transaction,
+                        (() => !transaction.Preempted),
+                        destinationBlockIndex));
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 using GPSS.Extensions;
 using GPSS.StandardAttributes;
 using System;
+using System.Linq;
 
 namespace GPSS.Entities.General
 {
@@ -22,7 +23,7 @@ namespace GPSS.Entities.General
             return false;
         }
 
-        public virtual void AddRetry(Simulation simulation, RetryChainTransaction retry)
+        public virtual void AddRetry(Simulation simulation, int? destinationBlockIndex = null)
         {
         }
 

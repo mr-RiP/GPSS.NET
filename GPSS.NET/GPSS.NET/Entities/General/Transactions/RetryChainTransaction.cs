@@ -1,18 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using GPSS.SimulationParts;
 
 namespace GPSS.Entities.General.Transactions
 {
-    abstract internal class RetryChainTransaction : TransactionDecorator
+    internal class RetryChainTransaction : TransactionDecorator
     {
-        public RetryChainTransaction(Transaction innerTransaction) : base(innerTransaction)
+        public RetryChainTransaction(Transaction innerTransaction, Func<bool> test, int? destinationBlockIndex) : base(innerTransaction)
         {
+            Test = test;
+            DestinationBlockIndex = destinationBlockIndex;
         }
 
-        // Transfer - не может войти в блок?
-        // Test - 2 сущности не соответствуют условию?
-        // Gate - 1 сущность не соответствует условию?
-        abstract public bool Resolve(Simulation simulation);
+        public Func<bool> Test { get; private set; }
+
+        public int? DestinationBlockIndex { get; private set; }
+
+        public void ReturnToCurrentEvents(TransactionScheduler scheduler)
+        {
+            if (DestinationBlockIndex.HasValue)
+                InnerTransaction.NextBlock = DestinationBlockIndex.Value;
+
+            scheduler.PlaceInCurrentEvents(InnerTransaction);
+            scheduler.RemoveFromRetryChains(InnerTransaction);
+        }
     }
 }

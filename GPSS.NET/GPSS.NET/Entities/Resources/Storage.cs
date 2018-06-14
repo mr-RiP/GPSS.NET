@@ -90,6 +90,7 @@ namespace GPSS.Entities.Resources
             {
                 UpdateUsageHistory(scheduler);
                 MoveDelayChain(scheduler);
+                TestRetryChain(scheduler);
             }
         }
 
@@ -157,7 +158,25 @@ namespace GPSS.Entities.Resources
             UpdateUsageHistory(scheduler);
             OccupiedCapacity -= capacity;
             if (Available)
+            {
                 MoveDelayChain(scheduler);
+                TestRetryChain(scheduler);
+            }
+                
+        }
+
+        private void TestRetryChain(TransactionScheduler scheduler)
+        {
+            var node = RetryChain.First;
+            while (node != null)
+            {
+                var retry = node.Value;
+                if (retry.Test())
+                {
+                    retry.ReturnToCurrentEvents(scheduler);
+                    node = RetryChain.First;
+                }
+            }
         }
 
         public void UpdateUsageHistory(TransactionScheduler scheduler)

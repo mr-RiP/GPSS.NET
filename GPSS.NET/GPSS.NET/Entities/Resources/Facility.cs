@@ -69,6 +69,7 @@ namespace GPSS.Entities.Resources
                 UpdateUsageHistory(scheduler);
                 Owner = null;
                 MoveChains(scheduler);
+                TestRetryChain(scheduler);
             }
             else if (Interrupted && InterruptChain.Any(fe => fe.InnerTransaction == transaction))
             {
@@ -78,6 +79,20 @@ namespace GPSS.Entities.Resources
             }
             else
                 throw new ArgumentOutOfRangeException(nameof(transaction));
+        }
+
+        private void TestRetryChain(TransactionScheduler scheduler)
+        {
+            var node = RetryChain.First;
+            while (node != null)
+            {
+                var retry = node.Value;
+                if (retry.Test())
+                {
+                    retry.ReturnToCurrentEvents(scheduler);
+                    node = RetryChain.First;
+                }
+            }
         }
 
         private void UpdateCaptureCount()
@@ -108,33 +123,32 @@ namespace GPSS.Entities.Resources
         // http://www.minutemansoftware.com/reference/r7.htm#PREEMPT
         // http://www.minutemansoftware.com/reference/r9.htm#9.4
         public void Preempt(
-            Simulation simulation,
+            TransactionScheduler scheduler,
+            Transaction transaction,
             bool priorityMode,
             string parameterName,
             int? newNextBlock,
             bool removeMode)
         {
-            var transaction = simulation.ActiveTransaction.Transaction;
-
             if (PreemptedByThis(transaction))
-                Refuse(simulation.Scheduler, transaction);
+                Refuse(scheduler, transaction);
             else if (Available && Idle)
             {
-                UpdateUsageHistory(simulation.Scheduler);
+                UpdateUsageHistory(scheduler);
                 Owner = transaction;
                 UpdateCaptureCount();
             }
             else if (Available && (priorityMode && transaction.Priority > Owner.Priority || !Interrupted))
             {
-                UpdateUsageHistory(simulation.Scheduler);
-                RemoveFromOwnership(simulation, parameterName, removeMode, newNextBlock);
+                UpdateUsageHistory(scheduler);
+                RemoveFromOwnership(scheduler, parameterName, removeMode, newNextBlock);
                 Owner = transaction;
                 UpdateCaptureCount();
             }
             else if (priorityMode)
-                PlaceInDelayChain(simulation.Scheduler, transaction);
+                PlaceInDelayChain(scheduler, transaction);
             else
-                PlaceInPendingChain(simulation.Scheduler, transaction);
+                PlaceInPendingChain(scheduler, transaction);
         }
 
         private bool PreemptedByThis(Transaction transaction)
@@ -151,7 +165,7 @@ namespace GPSS.Entities.Resources
             scheduler.PlaceInCurrentEvents(transaction);
         }
 
-        private void RemoveFromOwnership(Simulation simulation, string parameterName, bool removeMode, int? newNextBlock)
+        private void RemoveFromOwnership(TransactionScheduler scheduler, string parameterName, bool removeMode, int? newNextBlock)
         {
             if (removeMode && newNextBlock == null)
                 throw new ArgumentNullException(nameof(newNextBlock));
@@ -159,19 +173,18 @@ namespace GPSS.Entities.Resources
             if (newNextBlock.HasValue)
             {
                 Owner.NextBlock = newNextBlock.Value;
-                RemoveOwnerFromRetryChains(simulation.Scheduler);
+                RemoveOwnerFromRetryChains(scheduler);
             }
 
             FutureEventTransaction interrupted = null;
             if (Owner.State == TransactionState.Suspended)
-                interrupted = GetInterruptedFromFutureEvents(simulation.Scheduler, parameterName);
+                interrupted = GetInterruptedFromFutureEvents(scheduler, parameterName);
             else if (Owner.State == TransactionState.Passive && newNextBlock.HasValue)
-                MoveInterruptedToCurrentEvents(simulation.Scheduler);
+                MoveInterruptedToCurrentEvents(scheduler);
 
             PlaceInInterruptChain(interrupted, removeMode);
         }
 
-        // TODO 
         private void RemoveOwnerFromRetryChains(TransactionScheduler scheduler)
         {
             scheduler.RemoveFromRetryChains(Owner);
@@ -251,6 +264,7 @@ namespace GPSS.Entities.Resources
             {
                 UpdateUsageHistory(scheduler);
                 MoveChains(scheduler);
+                TestRetryChain(scheduler);
             }
         }
 
@@ -310,7 +324,6 @@ namespace GPSS.Entities.Resources
             }
         }
 
-        // TODO
         public void UpdateUsageHistory(TransactionScheduler scheduler)
         {
             if (lastUsageTime < scheduler.RelativeClock)

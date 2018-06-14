@@ -77,10 +77,16 @@ namespace GPSS.Entities.General.Blocks
             TransactionsCount = TransactionsCount,
         };
 
-        public override void AddRetry(Simulation simulation, RetryChainTransaction retry)
+        public override void AddRetry(Simulation simulation, int? destinationBlockIndex = null)
         {
+            var transaction = simulation.ActiveTransaction.Transaction;
             var name = FacilityName(simulation.StandardAttributes);
-            simulation.Model.Resources.Facilities[name].RetryChain.AddLast(retry);
+            var facility = simulation.Model.Resources.Facilities[name];
+
+            facility.RetryChain.AddLast(new RetryChainTransaction(
+                transaction,
+                () => facility.Available && facility.Idle,
+                destinationBlockIndex));
         }
     }
 }

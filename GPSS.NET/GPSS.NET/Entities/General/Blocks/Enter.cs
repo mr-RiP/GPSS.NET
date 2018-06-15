@@ -77,8 +77,8 @@ namespace GPSS.Entities.General.Blocks
                     "Attempt to occupy non-positive number of Storage Capacity Units.",
                     simulation.ActiveTransaction.Transaction.CurrentBlock);
 
-                simulation.Model.Resources.Storages[name]
-                    .Enter(simulation.Scheduler, transaction, capacity);
+                var storage = simulation.Model.Resources.Storages[name];
+                storage.Enter(simulation.Scheduler, transaction, capacity);
 
                 if (transaction.State == TransactionState.Active)
                     base.EnterBlock(simulation);

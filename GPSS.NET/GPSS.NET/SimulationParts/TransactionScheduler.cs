@@ -60,7 +60,7 @@ namespace GPSS.SimulationParts
 
         public Transaction GetActiveTransaction()
         {
-            return CurrentEvents.First.Value;
+            return CurrentEvents.First?.Value;
         }
 
         public void RemoveFromRetryChains(Transaction transaction)
@@ -104,7 +104,7 @@ namespace GPSS.SimulationParts
         public void UpdateEvents()
         {
             double releaseTime = FutureEvents.First.Value.DepartureTime;
-            while (FutureEvents.First.Value.DepartureTime == releaseTime)
+            while (FutureEvents.Count > 0 && FutureEvents.First.Value.DepartureTime == releaseTime)
             {
                 PlaceInCurrentEvents(FutureEvents.First.Value.InnerTransaction);
                 FutureEvents.RemoveFirst();

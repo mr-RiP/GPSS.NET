@@ -67,7 +67,10 @@ namespace GPSS.Entities.Resources
 
         public int MaximumCapacityUsed()
         {
-            return usageHistory.Keys.Max();
+            if (usageHistory.Count == 0)
+                return 0;
+            else
+                return usageHistory.Keys.Max();
         }
 
         public double AverageHoldingTime()
@@ -140,7 +143,7 @@ namespace GPSS.Entities.Resources
 
         private void PlaceInDelayChain(Transaction transaction, int capacity)
         {
-            if (transaction.Priority <= DelayChain.Last.Value.Priority)
+            if (DelayChain.Count == 0 || transaction.Priority <= DelayChain.Last.Value.Priority)
                 DelayChain.AddLast(new StorageDelayTransaction(transaction, capacity));
             else
             {

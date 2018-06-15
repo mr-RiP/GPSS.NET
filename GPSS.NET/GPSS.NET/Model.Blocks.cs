@@ -120,6 +120,7 @@ namespace GPSS
                 creationLimit ?? (sna => null),
                 priority ?? (sna => 0));
 
+            Statements.Generators.Add(generate, Statements.Blocks.Count);
             Statements.Blocks.Add(generate);
             return this;
         }

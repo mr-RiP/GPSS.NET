@@ -1,5 +1,6 @@
 ﻿using GPSS.Enums;
 using GPSS.Exceptions;
+using GPSS.Extensions;
 using GPSS.SimulationParts;
 using System;
 using System.Collections.Generic;

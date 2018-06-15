@@ -1,5 +1,6 @@
 ﻿using GPSS.Entities.General.Blocks;
 using GPSS.Enums;
+using GPSS.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -53,7 +54,7 @@ namespace GPSS
 
             double min = generationIntervalMean - generationIntervalHalfRange;
             double max = generationIntervalMean + generationIntervalHalfRange;
-            return Generate((sna => sna.RandomNumberGenerator().ProbabilityDistributions.Uniform(min, max)));
+            return Generate((sna => sna.RandomNumberGenerator().Uniform(min, max)));
         }
 
         /// <summary>
@@ -89,7 +90,7 @@ namespace GPSS
 
             double min = generationIntervalMean - generationIntervalHalfRange;
             double max = generationIntervalMean + generationIntervalHalfRange;
-            return Generate((sna => sna.RandomNumberGenerator().ProbabilityDistributions.Uniform(min, max)), (sna => firstTransactionDelay));
+            return Generate((sna => sna.RandomNumberGenerator().Uniform(min, max)), (sna => firstTransactionDelay));
         }
 
         /// <summary>
@@ -175,7 +176,7 @@ namespace GPSS
 
             double min = delayMean - delayHalfRange;
             double max = delayMean + delayHalfRange;
-            return Advance((sna => sna.RandomNumberGenerator().ProbabilityDistributions.Uniform(min, max)));
+            return Advance((sna => sna.RandomNumberGenerator().Uniform(min, max)));
         }
 
         /// <summary>

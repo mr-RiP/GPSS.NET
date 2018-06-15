@@ -12,11 +12,14 @@
         /// <returns>
         /// Random integer between 0 and 999.
         /// </returns>
-        int RandomNumber();
+        int RandomInteger();
 
         /// <summary>
-        /// Probability Distributions Generators access using current Random Number Generator.
+        /// Random double value between 0 and 0.99999999999999978.
         /// </summary>
-        IProbabilityDistributions ProbabilityDistributions { get; }
+        /// <returns>
+        /// Pseudo random double value between 0 and 1.
+        /// </returns>
+        double RandomDouble();
     }
 }

@@ -3,8 +3,14 @@ using System;
 
 namespace GPSS
 {
+    /// <summary>
+    /// GPSS Model class.
+    /// </summary>
     public partial class Model : ICloneable
     {
+        /// <summary>
+        /// Model's primary constructor.
+        /// </summary>
         public Model()
         {
             Clear();
@@ -16,6 +22,10 @@ namespace GPSS
         internal Resources Resources { get; private set; }
         internal Statistics Statistics { get; private set; }
 
+        /// <summary>
+        /// Clone model.
+        /// </summary>
+        /// <returns>Model's clone.</returns>
         public Model Clone() => new Model()
         {
             Statements = Statements.Clone(),
@@ -46,6 +56,9 @@ namespace GPSS
             return this;
         }
 
+        /// <summary>
+        /// Clear model from all content.
+        /// </summary>
         public void Clear()
         {
             Statements = new Statements();

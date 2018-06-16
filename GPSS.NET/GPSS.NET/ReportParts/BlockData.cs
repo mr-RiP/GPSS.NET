@@ -9,6 +9,9 @@ using System.Text;
 
 namespace GPSS.ReportParts
 {
+    /// <summary>
+    /// Model Block's simulation data class.
+    /// </summary>
     public class BlockData : IBlockAttributes
     {
         internal BlockData(Statements statements, int index)
@@ -35,16 +38,34 @@ namespace GPSS.ReportParts
             RetryCount = block.RetryCount;
         }
 
+        /// <summary>
+        /// Block Index.
+        /// </summary>
         public int Index { get; private set; }
 
+        /// <summary>
+        /// Block label names.
+        /// </summary>
         public ReadOnlyCollection<string> Names { get; private set; }
 
+        /// <summary>
+        /// The GPSS Block Type Name.
+        /// </summary>
         public string TypeName { get; private set; }
 
+        /// <summary>
+        /// Block's transactions entry count.
+        /// </summary>
         public int EntryCount { get; private set; }
 
+        /// <summary>
+        /// Block's current transactions count.
+        /// </summary>
         public int TransactionsCount { get; private set; }
 
+        /// <summary>
+        /// Block's Retry Chain content count.
+        /// </summary>
         public int RetryCount { get; private set; }
     }
 }

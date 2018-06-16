@@ -6,8 +6,15 @@ using System.Linq;
 
 namespace GPSS
 {
+    /// <summary>
+    /// GPSS Simulation class.
+    /// </summary>
     public class Simulation
     {
+        /// <summary>
+        /// Main constructor for Simulation object.
+        /// </summary>
+        /// <param name="model">Model to use for simulation purposes.</param>
         public Simulation(Model model)
         {
             ValidateModel(model);
@@ -64,6 +71,11 @@ namespace GPSS
             initialModel = model.Clone();
         }
 
+        /// <summary>
+        /// Simulation start.
+        /// </summary>
+        /// <param name="terminationCount">Termination count value must be positive.</param>
+        /// <returns>Report for simulation object.</returns>
         public Report Start(int terminationCount)
         {
             InitializeStart(terminationCount);
@@ -80,11 +92,18 @@ namespace GPSS
             run = true;            
         }
 
+        /// <summary>
+        /// Stops simulation process.
+        /// </summary>
         public void Halt()
         {
             run = false;
         }
 
+        /// <summary>
+        /// Continue previously halted simulation.
+        /// </summary>
+        /// <returns>Report object.</returns>
         public Report Continue()    
         {
             run = true; 
@@ -95,6 +114,9 @@ namespace GPSS
             return new Report(this);
         }
 
+        /// <summary>
+        /// Resets model data in simulation object.
+        /// </summary>
         public void Clear()
         {
             run = false;

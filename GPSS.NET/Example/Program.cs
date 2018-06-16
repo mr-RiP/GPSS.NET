@@ -12,7 +12,7 @@ namespace Example
     class Program
     {
         static void Main(string[] args)
-        {
+        { 
             var model = new Model()
                 .Storage("Queue", 10)
                 .Storage("Tables", 10)
@@ -36,6 +36,32 @@ namespace Example
                 .Terminate(1)
                 .Label("Overload")
                 .Terminate(0);
+
+            /*
+            var model = new Model()
+                .Storage("ReqQueue", 10)
+                .Generate(3, 1)
+                .Label("Process")
+                .Gate(
+                    (sna => GateCondition.StorageNotFull),
+                    (sna => "ReqQueue"),
+                    (sna => "Overload"))
+                .Enter(sna => "ReqQueue")
+                .Seize(sna => "Processor")
+                .Leave(sna => "ReqQueue")
+                .Advance(0.5, 0.5)
+                .Release(sna => "Processor")
+                .Transfer(
+                    (sna => TransferMode.Fractional),
+                    (sna => 0.1),
+                    (sna => "Finish"),
+                    (sna => "Process"),
+                    null)
+                .Label("Finish")
+                .Terminate(1)
+                .Label("Overload")
+                .Terminate(0);
+            */  
 
             var simulation = new Simulation(model);
             var report = simulation.Start(1000);

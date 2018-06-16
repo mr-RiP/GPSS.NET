@@ -8,12 +8,7 @@ namespace GPSS
         public Model()
         {
             Clear();
-        }
-
-        public Simulation CreateSimulation()
-        {
-            return new Simulation(this);
-        }   
+        } 
 
         internal Statements Statements { get; private set; }
         internal Calculations Calculations { get; private set; }

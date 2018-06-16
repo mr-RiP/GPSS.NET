@@ -8,7 +8,7 @@ namespace GPSS
 {
     public class Simulation
     {
-        internal Simulation(Model model)
+        public Simulation(Model model)
         {
             ValidateModel(model);
             CloneInitialModel(model);

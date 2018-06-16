@@ -31,7 +31,7 @@ namespace Example
                 .Advance(3, 2)
                 .Release(sna => "CashDesk")
                 .Enter(sna => "Tables")
-                .Advance(sna => sna.RandomNumberGenerator().Normal(20, 4))
+                .Advance(20, 4)
                 .Leave(sna => "Tables")
                 .Terminate(1)
                 .Label("Overload")

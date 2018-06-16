@@ -3,11 +3,25 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>GPSS</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.1.0</Version>
+    <Authors>Paradox.rip</Authors>
+    <Company />
+    <Description>GPSS World subset implementation via .NET Standard Library</Description>
+    <PackageLicenseUrl>https://github.com/mr-RiP/GPSS.NET/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl />
+    <RepositoryUrl>https://github.com/mr-RiP/GPSS.NET</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Optimize>false</Optimize>
     <DocumentationFile>bin\Debug\netstandard2.0\GPSS.NET.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>

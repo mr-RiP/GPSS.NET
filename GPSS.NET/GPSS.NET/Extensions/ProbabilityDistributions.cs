@@ -49,7 +49,7 @@ namespace GPSS.Extensions
             for (int i = 0; i < 12; ++i)
                 sum += generator.StandardUniform();
             sum -= 6.0;
-
+            sum /= 6.0;
             return sum;
         }
 

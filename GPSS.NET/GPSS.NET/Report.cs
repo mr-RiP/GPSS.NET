@@ -8,6 +8,9 @@ using GPSS.SimulationParts;
 
 namespace GPSS
 {
+    /// <summary>
+    /// Report class.
+    /// </summary>
     public class Report
     {
         internal Report(Simulation simulation)
@@ -77,18 +80,45 @@ namespace GPSS
             RelativeTime = scheduler.RelativeTime;
         }
 
+        /// <summary>
+        /// Simulation object's Absolute Time value at the beginning of the simulation process.
+        /// </summary>
         public double BeginTime { get; private set; }
+        /// <summary>
+        /// Simulation object's Absolute Time value at the end of the simulation process.
+        /// </summary>
         public double EndTime { get; private set; }
+        /// <summary>
+        /// Simulation object's Relative Time value at the end of the simulation process.
+        /// </summary>
         public double RelativeTime { get; private set; }
 
+        /// <summary>
+        /// Model Blocks' simulation data collection.
+        /// </summary>
         public ReadOnlyCollection<BlockData> Blocks { get; private set; }
 
+        /// <summary>
+        /// Simulation object FEC data.
+        /// </summary>
         public ReadOnlyCollection<FutureEventData> FutureEventsChain { get; private set; }
+        /// <summary>
+        /// Simulation object CEC data.
+        /// </summary>
         public ReadOnlyCollection<CurrentEventData> CurrentEventsChain { get; private set; }
 
+        /// <summary>
+        /// Model Storages' simulation data collection.
+        /// </summary>
         public ReadOnlyCollection<StorageData> Storages { get; private set; }
+        /// <summary>
+        /// Model Facilities' simulation data collection.
+        /// </summary>
         public ReadOnlyCollection<FacilityData> Facilities { get; private set; }
 
+        /// <summary>
+        /// Model Savevalues' simulation data collection.
+        /// </summary>
         public ReadOnlyCollection<SavevalueData> Savevalues { get; private set; }
     }
 }

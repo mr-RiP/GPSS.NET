@@ -37,7 +37,7 @@ namespace Example
                 .Label("Overload")
                 .Terminate(0);
 
-            var simulation = model.CreateSimulation();
+            var simulation = new Simulation(model);
             var report = simulation.Start(1000);
 
             Console.WriteLine("EndTime: " + report.EndTime);

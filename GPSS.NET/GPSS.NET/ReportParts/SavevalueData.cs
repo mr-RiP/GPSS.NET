@@ -17,19 +17,24 @@ namespace GPSS.ReportParts
             RetryChainCount = savevalue.RetryChain.Count;
         }
 
+        internal SavevalueData()
+        {
+
+        }
+
         /// <summary>
         /// Savevalue Entity name.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; internal set; }
 
         /// <summary>
         /// Savevalue value.
         /// </summary>
-        public dynamic Value { get; private set; }
+        public dynamic Value { get; internal set; }
 
         /// <summary>
         /// Savevalue's Retry Chain content count.
         /// </summary>
-        public int RetryChainCount { get; private set; }
+        public int RetryChainCount { get; internal set; }
     }
 }

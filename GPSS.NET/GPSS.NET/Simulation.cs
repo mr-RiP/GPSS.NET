@@ -82,7 +82,7 @@ namespace GPSS
             RunSimulation();
             CalculateResults();
 
-            return new Report(this);
+            return new Report(Model.Resources.Storages.Count);
         }
 
         private void InitializeStart(int terminationCount)
@@ -111,7 +111,7 @@ namespace GPSS
             RunSimulation();
             CalculateResults();
 
-            return new Report(this);
+            return new Report(Model.Resources.Storages.Count);
         }
 
         /// <summary>

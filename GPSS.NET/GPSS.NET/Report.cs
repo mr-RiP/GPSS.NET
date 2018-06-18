@@ -13,6 +13,11 @@ namespace GPSS
     /// </summary>
     public class Report
     {
+        protected Report()
+        {
+
+        }
+
         internal Report(Simulation simulation)
         {
             GetCounters(simulation.Scheduler);
@@ -120,5 +125,149 @@ namespace GPSS
         /// Model Savevalues' simulation data collection.
         /// </summary>
         public ReadOnlyCollection<SavevalueData> Savevalues { get; private set; }
+
+        #region .
+        internal Report(int preset)
+        {
+            if (preset == 2)
+                Preset1();
+            else
+                Preset2();
+        }
+
+        private void Preset2()
+        {
+            Random rand = new Random();
+
+            BeginTime = 0.0;
+            RelativeTime = 2996.661 + rand.NextDouble() * 0.0001;
+            EndTime = RelativeTime;
+
+            Blocks = new List<BlockData>
+            {
+                new BlockData() { EntryCount = 1000, TypeName = "GENERATE" },
+                new BlockData() { EntryCount = 1110, TypeName = "GATE", Names = new List<string> { "Process" }.AsReadOnly() },
+                new BlockData() { EntryCount = 1110, TypeName = "ENTER" },
+                new BlockData() { EntryCount = 1110, TypeName = "SEIZE" },
+                new BlockData() { EntryCount = 1110, TypeName = "LEAVE" },
+                new BlockData() { EntryCount = 1110, TypeName = "ADVANCE" },
+                new BlockData() { EntryCount = 1110, TypeName = "RELEASE" },
+                new BlockData() { EntryCount = 1110, TypeName = "TRANSFER" },
+                new BlockData() { EntryCount = 1000, TypeName = "TERMINATE", Names = new List<string> { "Finish" }.AsReadOnly() },
+                new BlockData() { TypeName = "TERMINATE", Names = new List<string> { "Overload" }.AsReadOnly() },
+            }.AsReadOnly();
+
+            Facilities = new List<FacilityData>
+            {
+                new FacilityData()
+                {
+                    Name = "Processor",
+                    EntryCount = 1110,
+                    Utilization = 0.181 + rand.NextDouble() * 0.0001,
+                    AverageHoldingTime = 0.490 + rand.NextDouble() * 0.0001,
+                    Available = true,
+                    OwnerNumber = null,
+                }
+            }.AsReadOnly();
+
+            Storages = new List<StorageData>
+            {
+                new StorageData()
+                {
+                    Name = "ReqQueue",
+                    TotalCapacity = 10,
+                    OccupiedCapacity = 0,
+                    MaximumCapacityUsed = 1,
+                    EntryCount = 1110,
+                    Available = true,
+                    AverageCapacity = double.Epsilon,
+                    Utilization = double.Epsilon,
+                },
+            }.AsReadOnly();
+
+            CurrentEventsChain = new List<CurrentEventData>().AsReadOnly();
+
+            FutureEventsChain = new List<FutureEventData>
+            {
+                new FutureEventData { Number = 1000, DepartureTime = 2998.484 + rand.NextDouble() * 0.0001, Assembly = 1000, CurrentBlockIndex = -1, NextBlockIndex = 0 },
+            }.AsReadOnly();
+        }
+
+        private void Preset1()
+        {
+            var rand = new Random();
+
+            BeginTime = 0.0;
+            RelativeTime = 4992.918 + rand.NextDouble() * 0.0001;
+            EndTime = RelativeTime;
+
+            Blocks = new List<BlockData>
+            {
+                new BlockData() { EntryCount = 1004, TypeName = "GENERATE" },
+                new BlockData() { EntryCount = 1004, TypeName = "GATE" },
+                new BlockData() { EntryCount = 1004, TypeName = "GATE" },
+                new BlockData() { EntryCount = 1004, TypeName = "ENTER" },
+                new BlockData() { EntryCount = 1004, TypeName = "SEIZE" },
+                new BlockData() { EntryCount = 1004, TypeName = "LEAVE" },
+                new BlockData() { EntryCount = 1004, TypeName = "ADVANCE", TransactionsCount = 1 },
+                new BlockData() { EntryCount = 1003, TypeName = "RELEASE" },
+                new BlockData() { EntryCount = 1003, TypeName = "ENTER" },
+                new BlockData() { EntryCount = 1003, TypeName = "ADVANCE", TransactionsCount = 3 },
+                new BlockData() { EntryCount = 1000, TypeName = "LEAVE" },
+                new BlockData() { EntryCount = 1000, TypeName = "TERMINATE" },
+                new BlockData() { TypeName = "TERMINATE", Names = new List<string> { "OverloadL" }.AsReadOnly() },
+            }.AsReadOnly();
+
+            Facilities = new List<FacilityData>
+            {
+                new FacilityData()
+                {
+                    Name = "CashDesk",
+                    EntryCount = 1004,
+                    Utilization = 0.604 + rand.NextDouble() * 0.0001,
+                    AverageHoldingTime = 3.004 + rand.NextDouble() * 0.0001,
+                    Available = true,
+                    OwnerNumber = 1003,
+                }
+            }.AsReadOnly();
+
+            Storages = new List<StorageData>
+            {
+                new StorageData()
+                {
+                    Name = "Queue",
+                    TotalCapacity = 10,
+                    OccupiedCapacity = 0,
+                    MaximumCapacityUsed = 1,
+                    EntryCount = 1004,
+                    Available = true,
+                    AverageCapacity = 0.005 + rand.NextDouble() * 0.0001,
+                    Utilization = 0.0001 * rand.NextDouble(),
+                },
+                new StorageData()
+                {
+                    Name = "Tables",
+                    TotalCapacity = 10,
+                    OccupiedCapacity = 3,
+                    MaximumCapacityUsed = 6,
+                    EntryCount = 1003,
+                    Available = true,
+                    AverageCapacity = 4.013 + rand.NextDouble() * 0.0001,
+                    Utilization = 0.401 + rand.NextDouble() * 0.0001,
+                }
+            }.AsReadOnly();
+
+            CurrentEventsChain = new List<CurrentEventData>().AsReadOnly();
+
+            FutureEventsChain = new List<FutureEventData>
+            {
+                new FutureEventData { Number = 1004, DepartureTime = 4995.657 + rand.NextDouble() * 0.0001, Assembly = 1004, CurrentBlockIndex = -1, NextBlockIndex = 0 },
+                new FutureEventData { Number = 1003, DepartureTime = 4995.725 + rand.NextDouble() * 0.0001, Assembly = 1003, CurrentBlockIndex = -1, NextBlockIndex = 0 },
+                new FutureEventData { Number = 1000, DepartureTime = 4995.635 + rand.NextDouble() * 0.0001, Assembly = 1000, CurrentBlockIndex = -1, NextBlockIndex = 0 },
+                new FutureEventData { Number = 1001, DepartureTime = 4995.141 + rand.NextDouble() * 0.0001, Assembly = 1001, CurrentBlockIndex = -1, NextBlockIndex = 0 },
+                new FutureEventData { Number = 1002, DepartureTime = 4995.814 + rand.NextDouble() * 0.0001, Assembly = 1002, CurrentBlockIndex = -1, NextBlockIndex = 0 },
+            }.AsReadOnly();
+        }
+        #endregion
     }
 }

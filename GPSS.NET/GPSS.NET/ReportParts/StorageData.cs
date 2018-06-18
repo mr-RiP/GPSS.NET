@@ -25,59 +25,64 @@ namespace GPSS.ReportParts
             RetryChainCount = storage.RetryChain.Count;
         }
 
+        internal StorageData()
+        {
+
+        }
+
         /// <summary>
         /// Storage Entity name.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; internal set; }
 
         /// <summary>
         /// Storage total capacity.
         /// </summary>
-        public int TotalCapacity { get; private set; }
+        public int TotalCapacity { get; internal set; }
 
         /// <summary>
         /// Storage currently occupied capacity.
         /// </summary>
-        public int OccupiedCapacity { get; private set; }
+        public int OccupiedCapacity { get; internal set; }
 
         /// <summary>
         /// Storage's transactions entry count.
         /// </summary>
-        public int EntryCount { get; private set; }
+        public int EntryCount { get; internal set; }
 
         /// <summary>
         /// Storage Available flag.
         /// </summary>
-        public bool Available { get; private set; }
+        public bool Available { get; internal set; }
 
         /// <summary>
         /// Storage time-weighted average capacity.
         /// </summary>
-        public double AverageCapacity { get; private set; }
+        public double AverageCapacity { get; internal set; }
 
         /// <summary>
         /// Storage average holding time.
         /// </summary>
-        public double AverageHoldingTime { get; private set; }
+        public double AverageHoldingTime { get; internal set; }
 
         /// <summary>
         /// Storage maximum capacity used. The "high water mark".
         /// </summary>
-        public int MaximumCapacityUsed { get; private set; }
+        public int MaximumCapacityUsed { get; internal set; }
 
         /// <summary>
         /// Storage utilization value.
         /// </summary>
-        public double Utilization { get; private set; }
+        public double Utilization { get; internal set; }
 
         /// <summary>
         /// Storage's Delay Chain content count.
         /// </summary>
-        public int DelayChainCount { get; private set; }
+        public int DelayChainCount { get; internal set; }
 
         /// <summary>
         /// Storage's Retry Chain content count.
         /// </summary>
-        public int RetryChainCount { get; private set; }
+        public int RetryChainCount { get; internal set; }
     }
 }

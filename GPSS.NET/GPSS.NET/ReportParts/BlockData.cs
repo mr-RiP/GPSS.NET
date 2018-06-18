@@ -38,34 +38,38 @@ namespace GPSS.ReportParts
             RetryCount = block.RetryCount;
         }
 
+        internal BlockData()
+        {
+        }
+
         /// <summary>
         /// Block Index.
         /// </summary>
-        public int Index { get; private set; }
+        public int Index { get; internal set; }
 
         /// <summary>
         /// Block label names.
         /// </summary>
-        public ReadOnlyCollection<string> Names { get; private set; }
+        public ReadOnlyCollection<string> Names { get; internal set; }
 
         /// <summary>
         /// The GPSS Block Type Name.
         /// </summary>
-        public string TypeName { get; private set; }
+        public string TypeName { get; internal set; }
 
         /// <summary>
         /// Block's transactions entry count.
         /// </summary>
-        public int EntryCount { get; private set; }
+        public int EntryCount { get; internal set; }
 
         /// <summary>
         /// Block's current transactions count.
         /// </summary>
-        public int TransactionsCount { get; private set; }
+        public int TransactionsCount { get; internal set; }
 
         /// <summary>
         /// Block's Retry Chain content count.
         /// </summary>
-        public int RetryCount { get; private set; }
+        public int RetryCount { get; internal set; }
     }
 }

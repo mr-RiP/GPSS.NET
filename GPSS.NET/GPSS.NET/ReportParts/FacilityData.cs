@@ -14,7 +14,7 @@ namespace GPSS.ReportParts
         internal FacilityData(string name, Facility facility)
         {
             Name = name;
-            CaptureCount = facility.CaptureCount;
+            EntryCount = facility.CaptureCount;
             Available = facility.Available;
             AverageHoldingTime = facility.AverageHoldingTime();
             Utilization = facility.Utilization();
@@ -25,54 +25,59 @@ namespace GPSS.ReportParts
             RetryChainCount = facility.RetryChain.Count;
         }
 
+        internal FacilityData()
+        {
+
+        }
+
         /// <summary>
         /// Facility Entity name.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; internal set; }
 
         /// <summary>
         /// Facility capture count.
         /// </summary>
-        public int CaptureCount { get; private set; }
+        public int EntryCount { get; internal set; }
 
         /// <summary>
         /// Facility Available flag.
         /// </summary>
-        public bool Available { get; private set; }
+        public bool Available { get; internal set; }
 
         /// <summary>
         /// Facility Average Holding Time. 
         /// </summary>
-        public double AverageHoldingTime { get; private set; }
+        public double AverageHoldingTime { get; internal set; }
 
         /// <summary>
         /// Facility Utilization value.
         /// </summary>
-        public double Utilization { get; private set; }
+        public double Utilization { get; internal set; }
 
         /// <summary>
         /// Facility owner transaction Number. Null if facility is Idle.
         /// </summary>
-        public int? OwnerNumber { get; private set; }
+        public int? OwnerNumber { get; internal set; }
 
         /// <summary>
         /// Facility's Interrupt Chain content count.
         /// </summary>
-        public int InterruptChainCount { get; private set; }
+        public int InterruptChainCount { get; internal set; }
 
         /// <summary>
         /// Facility's Pending Chain content count.
         /// </summary>
-        public int PendingChainCount { get; private set; }
+        public int PendingChainCount { get; internal set; }
 
         /// <summary>
         /// Facility's Delay Chain content count.
         /// </summary>
-        public int DelayChainCount { get; private set; }
+        public int DelayChainCount { get; internal set; }
 
         /// <summary>
         /// Facility's Retry Chain content count.
         /// </summary>
-        public int RetryChainCount { get; private set; }
+        public int RetryChainCount { get; internal set; }
     }
 }

@@ -7,6 +7,7 @@ using System;
 namespace GPSS.Entities.Calculations
 {
 	internal class Variable<T> : ICloneable, IVariableAttributes<T>, ICalculatable<T>
+		where T : struct
 	{
 		public Variable(Func<IStandardAttributes, T> expression)
 		{

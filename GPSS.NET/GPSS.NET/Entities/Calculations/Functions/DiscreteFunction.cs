@@ -11,20 +11,20 @@ namespace GPSS.Entities.Calculations.Functions
 		}
 
 		// http://www.minutemansoftware.com/reference/r6.htm#FUNCTION
-		public DiscreteFunction(Func<IStandardAttributes, double> argument, IEnumerable<KeyValuePair<double, double>> values)
+		public DiscreteFunction(Func<IStandardAttributes, double> argument, IDictionary<double, double> values)
 		{
 			Argument = argument;
-			Values = values.Select(i => new KeyValuePair<double, double>(i.Key, i.Value)).OrderBy(i => i.Key).ToList();
+			Values = new SortedList<double, double>(values);
 		}
 
 		public Func<IStandardAttributes, double> Argument { get; private set; }
 
-		public List<KeyValuePair<double, double>> Values { get; private set; }
+		public SortedList<double, double> Values { get; private set; }
 
 		public override void Calculate(IStandardAttributes sna)
 		{
 			double argument = CalculateArgument(Argument, sna);
-			Result = FindDiscreteValue(Values, argument);
+			Result = FindDiscreteValue(Values.Select(v => v).ToList(), argument);
 		}
 
 		public override Function Clone() => new DiscreteFunction

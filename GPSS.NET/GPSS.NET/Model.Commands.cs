@@ -108,8 +108,7 @@ namespace GPSS
 		/// <exception cref="ArgumentNullException">All arguments must not be null.</exception>
 		/// <exception cref="ArgumentOutOfRangeException"><paramref name="values"/> must not be empty.</exception>
 		/// <exception cref="ArgumentOutOfRangeException"><paramref name="name"/> must be unique for the Model Function Entities.</exception>
-		public Model ContinuousFunction(string name, Func<IStandardAttributes, double> argument,
-			IEnumerable<KeyValuePair<double, double>> values)
+		public Model ContinuousFunction(string name, Func<IStandardAttributes, double> argument, IDictionary<double, double> values)
 		{
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
@@ -118,7 +117,7 @@ namespace GPSS
 			if (values == null)
 				throw new ArgumentNullException(nameof(values));
 			if (!values.Any())
-				throw new ArgumentOutOfRangeException(nameof(values), "Collection must not be empty.");
+				throw new ArgumentException(nameof(values), "Collection must not be empty.");
 
 			if (Calculations.Functions.ContainsKey(name))
 				throw new ArgumentOutOfRangeException(nameof(name), "Function with given name already exists in the Model.");
@@ -141,7 +140,7 @@ namespace GPSS
 		/// <exception cref="ArgumentOutOfRangeException"><paramref name="values"/> must not be empty.</exception>
 		/// <exception cref="ArgumentOutOfRangeException"><paramref name="name"/> must be unique for the Model Function Entities.</exception>
 		public Model DiscreteFunction(string name, Func<IStandardAttributes, double> argument,
-			IEnumerable<KeyValuePair<double, double>> values)
+			IDictionary<double, double> values)
 		{
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));

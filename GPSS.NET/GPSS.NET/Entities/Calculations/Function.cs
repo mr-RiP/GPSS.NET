@@ -33,12 +33,12 @@ namespace GPSS.Entities.Calculations
 			}
 		}
 
-		protected static T FindDiscreteValue<T>(List<KeyValuePair<double, T>> values, double argument)
+		protected static T FindDiscreteValue<T>(IList<KeyValuePair<double, T>> values, double argument)
 		{
 			if (argument > values.Last().Key)
 				return values.Last().Value;
 			else
-				return values.Find(kvp => kvp.Key >= argument).Value;
+				return values.FirstOrDefault(kvp => kvp.Key >= argument).Value;
 		}
 
 		protected static T GetListValue<T>(List<T> values, int argument)

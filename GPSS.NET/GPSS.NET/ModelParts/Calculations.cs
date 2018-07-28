@@ -42,8 +42,10 @@ namespace GPSS.ModelParts
 
 		public Savevalue GetSavevalue(string name, TransactionScheduler scheduler)
 		{
-			if (Savevalues.ContainsKey(name))
-				return Savevalues[name];
+			if (Savevalues.TryGetValue(name, out Savevalue result))
+			{
+				return result;
+			}
 			else
 			{
 				var sv = new Savevalue();

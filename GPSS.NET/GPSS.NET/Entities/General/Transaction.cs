@@ -30,7 +30,7 @@ namespace GPSS.Entities.General
 
         public virtual bool Preempted { get => PreemptionCount > 0; }
 
-        public virtual Dictionary<string, dynamic> Parameters { get; private set; } = new Dictionary<string, dynamic>();
+        public virtual Dictionary<string, dynamic> Parameters { get; protected set; } = new Dictionary<string, dynamic>();
 
         public virtual Transaction Clone() => new Transaction
         {

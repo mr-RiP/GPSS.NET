@@ -1,36 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GPSS.Enums
+﻿namespace GPSS.Enums
 {
-    public enum EntityType
-    {
-        // General
-        Block,
-        Transaction,
+	public enum EntityType
+	{
+		None = 0,
 
-        // Calculations
-        Function,
-        Matrix,
-        RandomGenerator,
-        Savevalue,
-        BoolVariable,
-        FloatVariable,
-        Variable,
+		// General
+		Block,
+		Transaction,
 
-        // Groups
-        NumericGroup,
-        TransactionGroup,
-        Userchain,
+		// Calculations
+		Function,
+		Matrix,
+		RandomGenerator,
+		Savevalue,
+		BoolVariable,
+		FloatVariable,
+		Variable,
 
-        // Resources
-        Facility,
-        Logicswitch,
-        Storage,
+		// Groups
+		NumericGroup,
+		TransactionGroup,
+		Userchain,
 
-        // Statistics
-        Queue,
-        Table
-    }
+		// Resources
+		Facility,
+		Logicswitch,
+		Storage,
+
+		// Statistics
+		Queue,
+		Table
+	}
 }

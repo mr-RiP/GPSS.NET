@@ -48,9 +48,13 @@ namespace GPSS.Entities.Calculations.Functions
 				double highBound = keys[index];
 				double lowBound = keys[index - 1];
 
-				return Values[lowBound] +
+				var values = Values.Values;
+				double highValues = values[index];
+				double lowValues = values[index - 1];
+
+				return lowValues +
 					(argument - lowBound) *
-					(Values[highBound] - Values[lowBound]) / (highBound - lowBound);
+					(highValues - lowValues) / (highBound - lowBound);
 			}
 		}
 

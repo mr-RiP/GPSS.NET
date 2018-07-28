@@ -1,18 +1,17 @@
-﻿using GPSS.Extensions;
-using GPSS.StandardAttributes;
+﻿using GPSS.StandardAttributes;
 using System;
 
 namespace GPSS.Entities.Groups
 {
-    internal class NumericGroup : ICloneable, INumericGroupAttributes
-    {
-        public int Count => throw new NotImplementedException();
+	internal class NumericGroup : ICloneable, INumericGroupAttributes
+	{
+		public int Count => throw new NotImplementedException();
 
-        public NumericGroup Clone()
-        {
-            throw new NotImplementedException();
-        }
+		public NumericGroup Clone()
+		{
+			throw new NotImplementedException();
+		}
 
-        object ICloneable.Clone() => Clone();
-    }
+		object ICloneable.Clone() => Clone();
+	}
 }

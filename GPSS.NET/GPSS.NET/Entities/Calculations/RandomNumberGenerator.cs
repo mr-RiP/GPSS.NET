@@ -5,6 +5,10 @@ namespace GPSS.Entities.Calculations
 {
 	internal class RandomNumberGenerator : ICloneable, IRandomNumberGeneratorAttributes
 	{
+		private readonly object lockObject = new object();
+
+		private readonly Random random;
+
 		public RandomNumberGenerator()
 		{
 			random = new Random();
@@ -14,15 +18,6 @@ namespace GPSS.Entities.Calculations
 		{
 			random = new Random(seed);
 		}
-
-		private RandomNumberGenerator(object lockObject, Random random)
-		{
-			this.lockObject = lockObject;
-			this.random = random;
-		}
-
-		private object lockObject = new object();
-		private Random random;
 
 		public double RandomDouble()
 		{
@@ -40,7 +35,14 @@ namespace GPSS.Entities.Calculations
 			}
 		}
 
-		public RandomNumberGenerator Clone() => new RandomNumberGenerator(lockObject, random);
+		public RandomNumberGenerator Clone()
+		{
+			lock (lockObject)
+			{
+				return new RandomNumberGenerator(random.Next());
+			}
+		}
+
 		object ICloneable.Clone() => Clone();
 	}
 }

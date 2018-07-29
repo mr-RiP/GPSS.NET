@@ -1,34 +1,34 @@
 ﻿namespace GPSS.Enums
 {
-	public enum EntityType
-	{
-		None = 0,
+    public enum EntityType
+    {
+        None = 0,
 
-		// General
-		Block,
-		Transaction,
+        // General
+        Block,
+        Transaction,
 
-		// Calculations
-		Function,
-		Matrix,
-		RandomGenerator,
-		Savevalue,
-		BoolVariable,
-		FloatVariable,
-		Variable,
+        // Calculations
+        Function,
+        Matrix,
+        RandomGenerator,
+        Savevalue,
+        BoolVariable,
+        FloatVariable,
+        Variable,
 
-		// Groups
-		NumericGroup,
-		TransactionGroup,
-		Userchain,
+        // Groups
+        NumericGroup,
+        TransactionGroup,
+        Userchain,
 
-		// Resources
-		Facility,
-		Logicswitch,
-		Storage,
+        // Resources
+        Facility,
+        Logicswitch,
+        Storage,
 
-		// Statistics
-		Queue,
-		Table
-	}
+        // Statistics
+        Queue,
+        Table
+    }
 }

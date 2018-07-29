@@ -6,22 +6,22 @@ using System.Collections.Generic;
 
 namespace GPSS.Entities.Resources
 {
-	internal class Logicswitch : ICloneable, ILogicswitchAttributes, IRetryChainContainer
-	{
-		public bool Set => throw new NotImplementedException();
+    internal class Logicswitch : ICloneable, ILogicswitchAttributes, IRetryChainContainer
+    {
+        public bool Set => throw new NotImplementedException();
 
-		public LinkedList<RetryChainTransaction> RetryChain => throw new NotImplementedException();
+        public LinkedList<RetryChainTransaction> RetryChain => throw new NotImplementedException();
 
-		public Logicswitch Clone()
-		{
-			throw new NotImplementedException();
-		}
+        public Logicswitch Clone()
+        {
+            throw new NotImplementedException();
+        }
 
-		public void Clear()
-		{
-			throw new NotImplementedException();
-		}
+        public void Clear()
+        {
+            throw new NotImplementedException();
+        }
 
-		object ICloneable.Clone() => Clone();
-	}
+        object ICloneable.Clone() => Clone();
+    }
 }

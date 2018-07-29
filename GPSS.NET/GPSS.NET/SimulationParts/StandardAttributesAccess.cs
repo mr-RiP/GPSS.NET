@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace GPSS.SimulationParts
 {
-	internal class StandardAttributesAccess : IStandardAttributes
+	internal sealed class StandardAttributesAccess : IStandardAttributes
 	{
 		public StandardAttributesAccess(Simulation simulation)
 		{
@@ -166,6 +166,7 @@ namespace GPSS.SimulationParts
 		}
 
 		private Variable<T> AccessVariable<T>(Dictionary<string, Variable<T>> dictionary, string name, EntityType entityType)
+			where T : struct
 		{
 			var variable = AccessDictionary(dictionary, name, entityType);
 			Calculate(variable, name, entityType);

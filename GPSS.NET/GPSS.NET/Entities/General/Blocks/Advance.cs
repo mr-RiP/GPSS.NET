@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace GPSS.Entities.General.Blocks
 {
-	internal class Advance : Block
+	internal sealed class Advance : Block
 	{
 		private Advance()
 		{

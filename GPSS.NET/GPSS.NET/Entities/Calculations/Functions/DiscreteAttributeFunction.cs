@@ -23,6 +23,7 @@ namespace GPSS.Entities.Calculations.Functions
 
 		public Func<IStandardAttributes, double> Argument { get; private set; }
 
+		// TODO: move binary search to base class and rework this list too
 		public List<KeyValuePair<double, Func<IStandardAttributes, double>>> Values { get; private set; }
 
 		public override void Calculate(IStandardAttributes sna)

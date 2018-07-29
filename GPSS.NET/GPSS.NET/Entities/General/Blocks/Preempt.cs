@@ -5,7 +5,7 @@ using System;
 
 namespace GPSS.Entities.General.Blocks
 {
-	internal class Preempt : Block
+	internal sealed class Preempt : Block
 	{
 		private Preempt()
 		{
@@ -57,7 +57,7 @@ namespace GPSS.Entities.General.Blocks
 			{
 				throw new ModelStructureException(
 					"Attempt to access Facility Entity by null name.",
-					simulation.ActiveTransaction.Transaction.CurrentBlock,
+					GetCurrentBlockIndex(simulation),
 					error);
 			}
 		}

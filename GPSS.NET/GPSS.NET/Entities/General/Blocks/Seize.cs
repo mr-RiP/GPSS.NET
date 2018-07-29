@@ -40,7 +40,7 @@ namespace GPSS.Entities.General.Blocks
 			{
 				throw new ModelStructureException(
 					"Attempt to access Facility Entity by null name.",
-					simulation.ActiveTransaction.Transaction.CurrentBlock,
+					GetCurrentBlockIndex(simulation),
 					error);
 			}
 		}
@@ -62,7 +62,7 @@ namespace GPSS.Entities.General.Blocks
 			{
 				throw new ModelStructureException(
 					"Attempt to access Facility Entity by null name.",
-					simulation.ActiveTransaction.Transaction.CurrentBlock,
+					GetCurrentBlockIndex(simulation),
 					error);
 			}
 		}

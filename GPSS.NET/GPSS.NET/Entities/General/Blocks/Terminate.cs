@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace GPSS.Entities.General.Blocks
 {
-	internal class Terminate : Block
+	internal sealed class Terminate : Block
 	{
 		private Terminate()
 		{

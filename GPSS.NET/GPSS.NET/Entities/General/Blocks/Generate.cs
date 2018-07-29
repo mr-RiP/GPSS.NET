@@ -4,7 +4,7 @@ using System;
 
 namespace GPSS.Entities.General.Blocks
 {
-	internal class Generate : Block
+	internal sealed class Generate : Block
 	{
 		private Generate()
 		{
@@ -98,7 +98,7 @@ namespace GPSS.Entities.General.Blocks
 
 		public override void EnterBlock(Simulation simulation)
 		{
-			if (simulation.ActiveTransaction.Transaction.CurrentBlock < 0)
+			if (GetCurrentBlockIndex(simulation) < 0)
 				base.EnterBlock(simulation);
 			else
 				throw new ModelStructureException(

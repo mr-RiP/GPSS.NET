@@ -3,7 +3,7 @@ using System;
 
 namespace GPSS.Entities.General.Blocks
 {
-	internal class Release : Block
+	internal sealed class Release : Block
 	{
 		private Release()
 		{
@@ -34,14 +34,14 @@ namespace GPSS.Entities.General.Blocks
 			{
 				throw new ModelStructureException(
 					"Attempt to access Facility Entity by null name.",
-					simulation.ActiveTransaction.Transaction.CurrentBlock,
+					GetCurrentBlockIndex(simulation),
 					error);
 			}
 			catch (ArgumentOutOfRangeException error)
 			{
 				throw new ModelStructureException(
 					"Attempt to release Facility entity from Transaction not owning or preempted from it.",
-					simulation.ActiveTransaction.Transaction.CurrentBlock,
+					GetCurrentBlockIndex(simulation),
 					error);
 			}
 		}

@@ -40,5 +40,9 @@ namespace GPSS.Entities.General
 		{
 			return true;
 		}
+
+		protected static ModelParts.Resources GetResources(Simulation simulation) => simulation.Model.Resources;
+
+		protected static int GetCurrentBlockIndex(Simulation simulation) => GetCurrentBlockIndex(simulation);
 	}
 }

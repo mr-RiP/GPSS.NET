@@ -43,17 +43,34 @@ namespace GPSS.ModelParts
 
 		public Facility GetFacility(string name, TransactionScheduler scheduler)
 		{
-			if (Facilities.ContainsKey(name))
-				return Facilities[name];
+			Facility facility = null;
+			if (Facilities.TryGetValue(name, out facility))
+			{
+				return facility;
+			}
 			else
 			{
-				var facility = new Facility();
+				facility = new Facility();
 				Facilities.Add(name, facility);
 				scheduler.FacilityDelayChains.Add(name, facility.DelayChain);
 				scheduler.FacilityPendingChains.Add(name, facility.PendingChain);
 				scheduler.RetryChains.Add(facility, facility.RetryChain);
 				return facility;
 			}
+		}
+
+		// TODO: change this way for every facility
+		public Facility TryGetFacility(string name)
+		{
+			Facilities.TryGetValue(name, out var facility);
+			return facility;
+		}
+
+		// TODO: mark collections as private and move all interactions with them to methods
+		public Storage TryGetStorage(string name)
+		{
+			Storages.TryGetValue(name, out var storage);
+			return storage;
 		}
 	}
 }

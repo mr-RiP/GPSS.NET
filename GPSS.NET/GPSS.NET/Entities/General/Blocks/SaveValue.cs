@@ -4,7 +4,7 @@ using System;
 
 namespace GPSS.Entities.General.Blocks
 {
-	internal class SaveValue : Block
+	internal sealed class SaveValue : Block
 	{
 		private SaveValue()
 		{
@@ -39,7 +39,7 @@ namespace GPSS.Entities.General.Blocks
 			{
 				throw new ModelStructureException(
 					"Attempt to access Savevalue entity by null name.",
-					simulation.ActiveTransaction.Transaction.CurrentBlock,
+					GetCurrentBlockIndex(simulation),
 					error);
 			}
 		}

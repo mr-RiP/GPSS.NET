@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace GPSS.Entities.General.Blocks
 {
-	internal class Gate : Block
+	internal sealed class Gate : Block
 	{
 		private Gate()
 		{
@@ -39,14 +39,14 @@ namespace GPSS.Entities.General.Blocks
 			{
 				throw new ModelStructureException(
 					"Attempt to perform test on entity with null name.",
-					simulation.ActiveTransaction.Transaction.CurrentBlock,
+					GetCurrentBlockIndex(simulation),
 					error);
 			}
 			catch (KeyNotFoundException error)
 			{
 				throw new ModelStructureException(
 					"Attempt to perform test on non-existing entity.",
-					simulation.ActiveTransaction.Transaction.CurrentBlock,
+					GetCurrentBlockIndex(simulation),
 					error);
 			}
 		}
@@ -99,7 +99,11 @@ namespace GPSS.Entities.General.Blocks
 				case EntityType.Facility:
 					return simulation.Model.Resources.GetFacility(name, simulation.Scheduler);
 				case EntityType.Storage:
-					return simulation.Model.Resources.Storages[name];
+					bool storageExists = simulation.Model.Resources.Storages.TryGetValue(name, out var storage);
+					return storageExists ? storage :
+						throw new ModelStructureException(
+						"Storage entity with given name does not exists in thes Model",
+						GetCurrentBlockIndex(simulation));
 
 				default:
 					throw new NotImplementedException();
@@ -118,7 +122,7 @@ namespace GPSS.Entities.General.Blocks
 			{
 				throw new ModelStructureException(
 					"Attempt to move transaction to non-existing Block.",
-					simulation.ActiveTransaction.Transaction.CurrentBlock,
+					GetCurrentBlockIndex(simulation),
 					error);
 			}
 		}

@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace GPSS.Entities.General.Blocks
 {
-	internal class Transfer : Block
+	internal sealed class Transfer : Block
 	{
 		private Transfer()
 		{

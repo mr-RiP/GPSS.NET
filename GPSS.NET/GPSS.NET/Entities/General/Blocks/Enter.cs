@@ -2,12 +2,11 @@
 using GPSS.Enums;
 using GPSS.Exceptions;
 using System;
-using System.Collections.Generic;
 
 namespace GPSS.Entities.General.Blocks
 {
 	// http://www.minutemansoftware.com/reference/r7.htm#ENTER
-	internal class Enter : Block
+	internal sealed class Enter : Block
 	{
 		private Enter()
 		{
@@ -44,9 +43,14 @@ namespace GPSS.Entities.General.Blocks
 				if (capacity <= 0)
 					throw new ModelStructureException(
 					"Attempt to occupy non-positive number of Storage Capacity Units.",
-					simulation.ActiveTransaction.Transaction.CurrentBlock);
+					GetCurrentBlockIndex(simulation));
 
-				var storage = simulation.Model.Resources.Storages[name];
+				if (!simulation.Model.Resources.Storages.TryGetValue(name, out var storage))
+				{
+					throw new ModelStructureException(
+						"Storage entity with given name does not exists in thes Model",
+						GetCurrentBlockIndex(simulation));
+				}
 
 				bool allow = storage.Available && storage.AvailableCapacity >= capacity;
 				if (!allow)
@@ -58,7 +62,7 @@ namespace GPSS.Entities.General.Blocks
 			{
 				throw new ModelStructureException(
 					"Attempt to access Storage Entity by null name.",
-					simulation.ActiveTransaction.Transaction.CurrentBlock,
+					GetCurrentBlockIndex(simulation),
 					error);
 			}
 		}
@@ -73,9 +77,14 @@ namespace GPSS.Entities.General.Blocks
 				if (capacity <= 0)
 					throw new ModelStructureException(
 					"Attempt to occupy non-positive number of Storage Capacity Units.",
-					simulation.ActiveTransaction.Transaction.CurrentBlock);
+					GetCurrentBlockIndex(simulation));
 
-				var storage = simulation.Model.Resources.Storages[name];
+				if (!simulation.Model.Resources.Storages.TryGetValue(name, out var storage))
+				{
+					throw new ModelStructureException(
+						"Storage entity with given name does not exists in thes Model",
+						GetCurrentBlockIndex(simulation));
+				}
 				storage.Enter(simulation.Scheduler, transaction, capacity);
 
 				if (transaction.State == TransactionState.Active)
@@ -85,21 +94,14 @@ namespace GPSS.Entities.General.Blocks
 			{
 				throw new ModelStructureException(
 					"Attempt to access Storage Entity by null name.",
-					simulation.ActiveTransaction.Transaction.CurrentBlock,
-					error);
-			}
-			catch (KeyNotFoundException error)
-			{
-				throw new ModelStructureException(
-					"Storage entity with given name does not exists in thes Model.",
-					simulation.ActiveTransaction.Transaction.CurrentBlock,
+					GetCurrentBlockIndex(simulation),
 					error);
 			}
 			catch (ArgumentOutOfRangeException error)
 			{
 				throw new ModelStructureException(
 					"Attempt to occupy more storage capacity than total capacity of given Storage Entity.",
-					simulation.ActiveTransaction.Transaction.CurrentBlock,
+					GetCurrentBlockIndex(simulation),
 					error);
 			}
 		}
@@ -107,8 +109,14 @@ namespace GPSS.Entities.General.Blocks
 		public override void AddRetry(Simulation simulation, int? destinationBlockIndex = null)
 		{
 			var transaction = simulation.ActiveTransaction.Transaction;
+
 			string name = StorageName(simulation.StandardAttributes);
-			var storage = simulation.Model.Resources.Storages[name];
+			if (!simulation.Model.Resources.Storages.TryGetValue(name, out var storage))
+			{
+				throw new ModelStructureException(
+					"Storage entity with given name does not exists in thes Model",
+					GetCurrentBlockIndex(simulation));
+			}
 			int capacity = StorageCapacity(simulation.StandardAttributes);
 
 			storage.RetryChain.AddLast(new RetryChainTransaction(

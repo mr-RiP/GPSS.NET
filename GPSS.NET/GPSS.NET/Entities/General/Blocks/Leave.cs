@@ -1,11 +1,10 @@
 ﻿using GPSS.Exceptions;
 using System;
-using System.Collections.Generic;
 
 namespace GPSS.Entities.General.Blocks
 {
 	// http://www.minutemansoftware.com/reference/r7.htm#LEAVE
-	internal class Leave : Block
+	internal sealed class Leave : Block
 	{
 		private Leave()
 		{
@@ -40,28 +39,27 @@ namespace GPSS.Entities.General.Blocks
 			{
 				string name = StorageName(simulation.StandardAttributes);
 				int capacity = StorageCapacity(simulation.StandardAttributes);
-				simulation.Model.Resources.Storages[name]
-					.Leave(simulation.Scheduler, capacity);
+
+				if (!simulation.Model.Resources.Storages.TryGetValue(name, out var storage))
+				{
+					throw new ModelStructureException(
+						"Storage entity with given name does not exists in thes Model",
+						GetCurrentBlockIndex(simulation));
+				}
+				storage.Leave(simulation.Scheduler, capacity);
 			}
 			catch (ArgumentNullException error)
 			{
 				throw new ModelStructureException(
 					"Attempt to access Storage Entity by null name.",
-					simulation.ActiveTransaction.Transaction.CurrentBlock,
-					error);
-			}
-			catch (KeyNotFoundException error)
-			{
-				throw new ModelStructureException(
-					"Storage entity with given name does not exists in thes Model.",
-					simulation.ActiveTransaction.Transaction.CurrentBlock,
+					GetCurrentBlockIndex(simulation),
 					error);
 			}
 			catch (ArgumentOutOfRangeException error)
 			{
 				throw new ModelStructureException(
 					"Attempt to release more storage capacity than occupied.",
-					simulation.ActiveTransaction.Transaction.CurrentBlock,
+					GetCurrentBlockIndex(simulation),
 					error);
 			}
 		}

@@ -3,6 +3,8 @@
 	// http://www.minutemansoftware.com/reference/r7.htm#GATE
 	public enum GateCondition
 	{
+		None = 0,
+
 		FacilityAvailable,
 		FacilityUnavailable,
 		FacilityInterrupted,

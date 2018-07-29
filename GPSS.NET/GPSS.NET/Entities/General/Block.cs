@@ -44,6 +44,6 @@ namespace GPSS.Entities.General
 		// TODO: implement this way everywhere
 		protected static ModelParts.Resources GetResources(Simulation simulation) => simulation.Model.Resources;
 
-		protected static int GetCurrentBlockIndex(Simulation simulation) => GetCurrentBlockIndex(simulation);
+		protected static int GetCurrentBlockIndex(Simulation simulation) => simulation.ActiveTransaction.Transaction.CurrentBlock;
 	}
 }

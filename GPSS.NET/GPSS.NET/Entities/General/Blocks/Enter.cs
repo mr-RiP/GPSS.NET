@@ -45,7 +45,8 @@ namespace GPSS.Entities.General.Blocks
 					"Attempt to occupy non-positive number of Storage Capacity Units.",
 					GetCurrentBlockIndex(simulation));
 
-				if (!simulation.Model.Resources.Storages.TryGetValue(name, out var storage))
+				var storage = GetResources(simulation).TryGetStorage(name);
+				if (storage == null)
 				{
 					throw new ModelStructureException(
 						"Storage entity with given name does not exists in thes Model",

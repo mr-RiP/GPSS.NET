@@ -1,8 +1,6 @@
 ﻿using GPSS.Enums;
-using GPSS.StandardAttributes;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace GPSS.Entities.General
 {
@@ -69,4 +67,4 @@ namespace GPSS.Entities.General
                 Parameters.Add(name, value);
         }
     }
-}                      
+}

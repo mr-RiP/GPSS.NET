@@ -1,4 +1,5 @@
 ﻿using GPSS.Entities.General.Transactions;
+using GPSS.Entities.Resources;
 using GPSS.Enums;
 using GPSS.Exceptions;
 using System;
@@ -69,16 +70,22 @@ namespace GPSS.Entities.General.Blocks
 			var transaction = simulation.ActiveTransaction.Transaction;
 			if (transaction.Preempted)
 			{
-				var facilities = simulation.Model.Resources.Facilities.Values
-					.Where(f => f.Interrupted && f.InterruptChain.Any(fe => fe.InnerTransaction == transaction));
 				int blockIndex = simulation.Model.Statements.Blocks.IndexOf(this);
 
-				foreach (var facility in facilities)
-					facility.RetryChain.AddLast(new RetryChainTransaction(
-						transaction,
-						(() => !transaction.Preempted),
-						destinationBlockIndex));
+				simulation.Model.Resources.Facilities.Values
+					.AsParallel()
+					.Where(f => f.Interrupted && f.InterruptChain.Any(fe => fe.InnerTransaction == transaction))
+					.ForAll(f => AddLastTransaction(f, transaction, destinationBlockIndex));
 			}
 		}
+
+		private static void AddLastTransaction(Facility facility, Transaction transaction, int? destinationBlockIndex)
+		{
+			facility.RetryChain.AddLast(new RetryChainTransaction(
+				transaction,
+				() => !transaction.Preempted,
+				destinationBlockIndex));
+		}
+
 	}
 }

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace GPSS.Extensions
 {
-	internal interface IRetryChainContainer
-	{
-		LinkedList<RetryChainTransaction> RetryChain { get; }
-	}
+    internal interface IRetryChainContainer
+    {
+        LinkedList<RetryChainTransaction> RetryChain { get; }
+    }
 }

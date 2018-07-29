@@ -1,22 +1,22 @@
 ﻿namespace GPSS.StandardAttributes
 {
-	public interface IMatrixAttributes
-	{
-		/// <summary>
-		/// Matrix Savevalue.
-		/// </summary>
-		/// <remarks>
-		/// GPSS World MX$Entnum(m,n) SNA.
-		/// </remarks>
-		/// <param name="row">
-		/// Matrix row index.
-		/// </param>
-		/// <param name="column">
-		/// Matrix column index.
-		/// </param>
-		/// <returns>
-		/// Interface to access Attributes of Savevalue stored in the Matrix.
-		/// </returns>
-		ISavevalueAttributes Savevalue(int row, int column);
-	}
+    public interface IMatrixAttributes
+    {
+        /// <summary>
+        /// Matrix Savevalue.
+        /// </summary>
+        /// <remarks>
+        /// GPSS World MX$Entnum(m,n) SNA.
+        /// </remarks>
+        /// <param name="row">
+        /// Matrix row index.
+        /// </param>
+        /// <param name="column">
+        /// Matrix column index.
+        /// </param>
+        /// <returns>
+        /// Interface to access Attributes of Savevalue stored in the Matrix.
+        /// </returns>
+        ISavevalueAttributes Savevalue(int row, int column);
+    }
 }
